@@ -116,10 +116,10 @@ body.menu-ouvert .menu-groupe:nth-child(4){transition-delay:.36s}
 /* en-tête figé : eyebrow + gros titre + boutons de saut */
 .cs-entete{position:relative;flex:0 0 auto;max-width:1500px;margin:0 auto;width:100%;padding:0 28px;z-index:3;background:var(--fond)}
 .cs-eyebrow{display:block;max-width:1500px;margin:0 auto 8px;width:100%;padding:0 28px}
-.cs-titre-rang{display:flex;align-items:flex-end;gap:28px}
+.cs-titre-rang{display:flex;align-items:flex-start;gap:28px}
 .cs-entete h2{margin:0}
 /* boutons de saut haut/bas : en ligne, entre parenthèses dorées, plus gros et gras */
-.cs-sauts{display:flex;flex-direction:row;gap:18px;margin-bottom:6px}
+.cs-sauts{display:flex;flex-direction:row;gap:18px;margin:0 0 0 auto}
 .cs-sauts a{display:inline-flex;align-items:center;gap:6px;
   text-decoration:none;font-family:'Anton',sans-serif;font-weight:400;
   font-size:1.5rem;letter-spacing:.02em;text-transform:uppercase;
@@ -159,7 +159,7 @@ body.menu-ouvert .menu-groupe:nth-child(4){transition-delay:.36s}
 .cs-tuile p+p{margin-top:12px}
 /* références versets : taille = texte des tuiles, alignées en bas de la tuile */
 .cs-tuile .versets{margin-top:auto;padding-top:20px;font-size:.93rem;color:var(--bleu);line-height:1.9}
-.cs-tuile .versets::before{content:"Passages bibliques // ";color:var(--or);text-transform:uppercase;letter-spacing:.12em;font-size:.7rem;display:block;margin-bottom:6px}
+.cs-tuile .versets::before{content:none}
 /* chaque référence : soulignée, cliquable */
 .cs-ref{color:var(--bleu);text-decoration:underline;text-underline-offset:3px;cursor:pointer;transition:color .2s;border-radius:3px;padding:0;white-space:nowrap}
 .cs-ref:hover{color:var(--or)}
@@ -205,13 +205,12 @@ body.menu-ouvert .menu-groupe:nth-child(4){transition-delay:.36s}
   /* l'intro reste dans le flux, pas de transform mobile */
   .cs-intro{transform:none !important;opacity:1 !important;margin-top:8px}
   .cs-intro .texte-bloc p{font-size:.9rem}
-  /* la piste devient une pile verticale */
-  .cs-piste{display:block;padding:12px 12px 40px;transform:none !important;overflow:visible}
+  /* la piste devient une pile verticale, alignée comme les cartes « pourquoi J33 » (28px) */
+  .cs-piste{display:block;padding:12px 28px 40px;transform:none !important;overflow:visible}
   /* empilement : chaque tuile se fige sous l'en-tête, la suivante vient la recouvrir */
   .cs-tuile{width:100%;max-height:none;margin:0 0 14px;z-index:2;
     position:sticky;top:var(--cs-tuile-top,150px);
-    padding:18px 18px;
-    box-shadow:0 -10px 26px rgba(16,22,34,.07)}
+    padding:18px 18px;border-radius:0;box-shadow:none}
   .cs-tuile:last-child{margin-bottom:0}
   .cs-tuile h3{font-size:clamp(1.4rem,6vw,1.95rem);margin-bottom:10px;padding-right:54px;line-height:1.02}
   .cs-tuile .cs-num{top:14px;right:16px;font-size:1.95rem}
@@ -717,7 +716,7 @@ h1.ap-titre{position:relative;z-index:1;margin:17px auto 0;width:fit-content;max
   </div>
 </section>
 
-<section id="croyances" class="reveal" style="padding-top:0">
+<section id="croyances" class="reveal" style="padding:0 0 110px">
   <div class="croyances-scroll" id="croyancesScroll">
     <div class="cs-colle">
       <span class="eyebrow cs-eyebrow">nos fondements</span>
