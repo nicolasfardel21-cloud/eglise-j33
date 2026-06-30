@@ -115,7 +115,7 @@ body.menu-ouvert .menu-groupe:nth-child(4){transition-delay:.36s}
 .cs-colle{position:sticky;top:0;height:100svh;overflow:hidden;padding-top:72px;display:flex;flex-direction:column}
 /* en-tête figé : eyebrow + gros titre + boutons de saut */
 .cs-entete{position:relative;flex:0 0 auto;max-width:1500px;margin:0 auto;width:100%;padding:0 28px;z-index:3;background:var(--fond)}
-.cs-entete .eyebrow{display:block;margin-bottom:8px}
+.cs-eyebrow{display:block;max-width:1500px;margin:0 auto 8px;width:100%;padding:0 28px}
 .cs-titre-rang{display:flex;align-items:flex-end;gap:28px}
 .cs-entete h2{margin:0}
 /* boutons de saut haut/bas : en ligne, entre parenthèses dorées, plus gros et gras */
@@ -187,21 +187,38 @@ body.menu-ouvert .menu-groupe:nth-child(4){transition-delay:.36s}
   /* mobile : on annule le mécanisme horizontal, place à l'empilement vertical sticky */
   .croyances-scroll{height:auto !important}
   .cs-colle{position:static;height:auto;overflow:visible;padding-top:0}
-  /* en-tête de la confession : reste figé en haut */
-  .cs-entete{position:sticky;top:0;padding-top:70px;padding-bottom:14px}
-  .cs-titre-rang{gap:14px;flex-wrap:wrap}
-  .cs-sauts{flex-direction:row;gap:14px}
-  .cs-sauts a{font-size:1.15rem}
+  /* titre figé juste sous le header du site ; nos fondements défile au-dessus et disparaît */
+  .cs-entete{position:sticky;top:58px;padding-top:0;padding-bottom:12px}
+  /* voile blanc au-dessus du titre épinglé : masque l'intro qui défile derrière le header */
+  .cs-entete::before{content:"";position:absolute;left:0;right:0;bottom:100%;height:30px;background:var(--fond)}
+  .cs-eyebrow{position:relative;z-index:4}
+  /* titre à gauche (prend la place), flèches de saut empilées à sa droite */
+  .cs-titre-rang{display:flex;flex-wrap:nowrap;align-items:flex-start;
+    justify-content:space-between;gap:14px}
+  .cs-titre-rang h2{flex:1 1 auto;min-width:0;margin:0}
+  /* boutons : colonne de flèches noires entre parenthèses dorées, sans texte */
+  .cs-sauts{flex:0 0 auto;flex-direction:column;gap:6px;margin:4px 0 0}
+  .cs-sauts a{font-size:0;gap:2px;padding:4px 2px;color:var(--encre)}
+  .cs-sauts a::before,.cs-sauts a::after{font-size:1.35rem;color:var(--or)}
+  .cs-sauts a .fl{font-size:1.7rem;line-height:1;color:var(--encre)}
+  .cs-sauts a:hover .fl{color:var(--or)}
   /* l'intro reste dans le flux, pas de transform mobile */
-  .cs-intro{transform:none !important;opacity:1 !important}
+  .cs-intro{transform:none !important;opacity:1 !important;margin-top:8px}
+  .cs-intro .texte-bloc p{font-size:.9rem}
   /* la piste devient une pile verticale */
-  .cs-piste{display:block;padding:16px 16px 40px;transform:none !important;overflow:visible}
-  /* chaque tuile se fige sous l'en-tête (les boutons) → le haut de la tuile reste lisible */
-  .cs-tuile{width:100%;max-height:none;margin:0 0 18px;
+  .cs-piste{display:block;padding:12px 12px 40px;transform:none !important;overflow:visible}
+  /* empilement : chaque tuile se fige sous l'en-tête, la suivante vient la recouvrir */
+  .cs-tuile{width:100%;max-height:none;margin:0 0 14px;z-index:2;
     position:sticky;top:var(--cs-tuile-top,150px);
-    box-shadow:none}
+    padding:18px 18px;
+    box-shadow:0 -10px 26px rgba(16,22,34,.07)}
   .cs-tuile:last-child{margin-bottom:0}
-  .cs-tuile .versets{font-size:.88rem}
+  .cs-tuile h3{font-size:clamp(1.4rem,6vw,1.95rem);margin-bottom:10px;padding-right:54px;line-height:1.02}
+  .cs-tuile .cs-num{top:14px;right:16px;font-size:1.95rem}
+  .cs-tuile p,.cs-tuile .versets,.cs-tuile .cs-vtxt{font-size:.83rem}
+  .cs-tuile p{line-height:1.5}
+  .cs-tuile p+p{margin-top:8px}
+  .cs-tuile .versets{padding-top:12px;line-height:1.7}
   .cs-progres{display:none}
 }
 @media(prefers-reduced-motion: reduce) and (min-width:821px){
@@ -473,8 +490,8 @@ h1.ap-titre{position:relative;z-index:1;margin:17px auto 0;width:fit-content;max
 }
 /* mobile : 2 colonnes (3 sous-titres par colonne) */
 @media(max-width:560px){
-  .ap-sous{grid-template-columns:repeat(2,auto);gap:16px 34px}
-  .ap-sous a{font-size:1rem;letter-spacing:.04em}
+  .ap-sous{grid-template-columns:1fr 1fr;gap:16px 14px;width:100%;justify-items:center}
+  .ap-sous a{font-size:.82rem;letter-spacing:.02em;white-space:nowrap;text-align:center}
 }
 @media(prefers-reduced-motion: reduce){
   h1.ap-titre{transform:none !important}
@@ -510,8 +527,8 @@ h1.ap-titre{position:relative;z-index:1;margin:17px auto 0;width:fit-content;max
         <div class="menu-sous">
           <a href="a-propos.html#mission">Notre mission</a>
           <a href="a-propos.html#vision">Notre vision</a>
-          <a href="a-propos.html#valeurs">Nos valeurs</a>
           <a href="a-propos.html#pourquoi">Pourquoi J33</a>
+          <a href="a-propos.html#valeurs">Nos valeurs</a>
           <a href="a-propos.html#croyances">Nos fondements</a>
           <a href="a-propos.html#responsables">Nos responsables</a>
         </div>
@@ -565,8 +582,8 @@ h1.ap-titre{position:relative;z-index:1;margin:17px auto 0;width:fit-content;max
       <nav class="ap-sous" aria-label="Sommaire de la page">
         <a href="#mission">Notre mission</a>
         <a href="#vision">Notre vision</a>
-        <a href="#valeurs">Nos valeurs</a>
         <a href="#pourquoi">Pourquoi J33</a>
+        <a href="#valeurs">Nos valeurs</a>
         <a href="#croyances">Nos fondements</a>
         <a href="#responsables">Nos responsables</a>
       </nav>
@@ -574,7 +591,7 @@ h1.ap-titre{position:relative;z-index:1;margin:17px auto 0;width:fit-content;max
   </div>
 
   <section id="mission">
-    <span class="eyebrow">notre mission &amp; vision</span>
+    <span class="eyebrow">notre mission</span>
     <h2 class="titre-bloc">Voir un réveil<br><span class="or">naître ici</span></h2>
     <div class="texte-bloc">
       <p><strong>Notre vision est de voir un réveil naître à Is-sur-Tille et ses environs</strong> à travers une église qui forme des disciples matures et passionnés, vivant la plénitude de Dieu, qui restaure les cœurs brisés et rallume la flamme spirituelle de cette région.</p>
@@ -611,6 +628,44 @@ h1.ap-titre{position:relative;z-index:1;margin:17px auto 0;width:fit-content;max
       <h3>Annoncer l'Évangile et rallumer la flamme de la région</h3>
       <p>Témoignage public, évangélisation locale, faire des nations des disciples.</p>
       <div class="versets">Matthieu 5.14-16 · Actes 1.8 · Romains 10.14-15 · Habacuc 3.2 · Marc 16.15 · Actes 13.47 · Romains 1.16 · Psaume 67.1-3</div>
+    </div>
+  </div>
+</section>
+
+<section id="pourquoi" class="reveal" style="padding-top:0">
+  <span class="eyebrow">pourquoi J33 ?</span>
+  <h2 class="titre-bloc">Notre nom raconte<br><span class="or">une histoire</span></h2>
+  <div class="texte-bloc"><p>Chaque lettre et chaque chiffre raconte une partie de notre histoire, de notre foi et de notre vision.</p></div>
+  <div class="grille-cartes" style="margin-top:50px">
+    <div class="carte">
+      <div class="num">J·33</div>
+      <h3><b class="g">J</b>érémie <b class="g">3</b><b class="g">3</b>, notre promesse</h3>
+      <p>Dans une saison où il n'y avait plus d'église dans la région, nous avons prié et jeûné pour chercher la direction de Dieu. Il nous a mis à cœur ce passage : promesse de guérison, de restauration, de joie et de louange retrouvées.</p>
+    </div>
+    <div class="carte">
+      <div class="num">J33</div>
+      <h3>Jésus au centre de tout</h3>
+      <p><b class="g">J</b> nous rappelle Jésus-Christ, Dieu fait homme, qui a donné Sa vie pour nous sur la croix. Le chiffre évoque son ministère terrestre : commencé à <b class="g">3</b>0 ans, exercé pleinement pendant <b class="g">3</b> ans.</p>
+    </div>
+    <div class="carte">
+      <div class="num">30+3</div>
+      <h3>Maturité &amp; plénitude</h3>
+      <p><b class="g">3</b>0, l'âge biblique de la maturité et de l'entrée au service (Joseph, David, les Lévites, Jésus) ; <b class="g">3</b>, la plénitude du Dieu trois fois saint. Notre désir : des disciples matures vivant la plénitude de Dieu.</p>
+    </div>
+    <div class="carte">
+      <div class="num">3·3</div>
+      <h3>Dieu trinitaire, homme tout entier</h3>
+      <p>Le premier <b class="g">3</b> pour le Père, le Fils et le Saint-Esprit ; le second <b class="g">3</b> pour l'être humain dans sa totalité — corps, âme et esprit — créé pour vivre pleinement.</p>
+    </div>
+    <div class="carte">
+      <div class="num">3~</div>
+      <h3>Le pays des <b class="g">3</b> rivières</h3>
+      <p>Comme les rivières de notre territoire : <b class="g">accueillir et bénir</b> toutes les personnes, <b class="g">façonner et former</b> des disciples enracinés, <b class="g">étendre l'Évangile</b> pour irriguer toute la région.</p>
+    </div>
+    <div class="carte">
+      <div class="num">✝</div>
+      <h3>Un outil de témoignage</h3>
+      <p>Un nom qui interpelle, attire l'attention et suscite la curiosité : une occasion naturelle de donner l'Évangile et d'expliquer notre foi aux personnes autour de nous.</p>
     </div>
   </div>
 </section>
@@ -662,49 +717,11 @@ h1.ap-titre{position:relative;z-index:1;margin:17px auto 0;width:fit-content;max
   </div>
 </section>
 
-<section id="pourquoi" class="reveal" style="padding-top:0">
-  <span class="eyebrow">pourquoi J33 ?</span>
-  <h2 class="titre-bloc">Notre nom raconte<br><span class="or">une histoire</span></h2>
-  <div class="texte-bloc"><p>Chaque lettre et chaque chiffre raconte une partie de notre histoire, de notre foi et de notre vision.</p></div>
-  <div class="grille-cartes" style="margin-top:50px">
-    <div class="carte">
-      <div class="num">J·33</div>
-      <h3><b class="g">J</b>érémie <b class="g">3</b><b class="g">3</b>, notre promesse</h3>
-      <p>Dans une saison où il n'y avait plus d'église dans la région, nous avons prié et jeûné pour chercher la direction de Dieu. Il nous a mis à cœur ce passage : promesse de guérison, de restauration, de joie et de louange retrouvées.</p>
-    </div>
-    <div class="carte">
-      <div class="num">J33</div>
-      <h3>Jésus au centre de tout</h3>
-      <p><b class="g">J</b> nous rappelle Jésus-Christ, Dieu fait homme, qui a donné Sa vie pour nous sur la croix. Le chiffre évoque son ministère terrestre : commencé à <b class="g">3</b>0 ans, exercé pleinement pendant <b class="g">3</b> ans.</p>
-    </div>
-    <div class="carte">
-      <div class="num">30+3</div>
-      <h3>Maturité &amp; plénitude</h3>
-      <p><b class="g">3</b>0, l'âge biblique de la maturité et de l'entrée au service (Joseph, David, les Lévites, Jésus) ; <b class="g">3</b>, la plénitude du Dieu trois fois saint. Notre désir : des disciples matures vivant la plénitude de Dieu.</p>
-    </div>
-    <div class="carte">
-      <div class="num">3·3</div>
-      <h3>Dieu trinitaire, homme tout entier</h3>
-      <p>Le premier <b class="g">3</b> pour le Père, le Fils et le Saint-Esprit ; le second <b class="g">3</b> pour l'être humain dans sa totalité — corps, âme et esprit — créé pour vivre pleinement.</p>
-    </div>
-    <div class="carte">
-      <div class="num">3~</div>
-      <h3>Le pays des <b class="g">3</b> rivières</h3>
-      <p>Comme les rivières de notre territoire : <b class="g">accueillir et bénir</b> toutes les personnes, <b class="g">façonner et former</b> des disciples enracinés, <b class="g">étendre l'Évangile</b> pour irriguer toute la région.</p>
-    </div>
-    <div class="carte">
-      <div class="num">✝</div>
-      <h3>Un outil de témoignage</h3>
-      <p>Un nom qui interpelle, attire l'attention et suscite la curiosité : une occasion naturelle de donner l'Évangile et d'expliquer notre foi aux personnes autour de nous.</p>
-    </div>
-  </div>
-</section>
-
 <section id="croyances" class="reveal" style="padding-top:0">
   <div class="croyances-scroll" id="croyancesScroll">
     <div class="cs-colle">
+      <span class="eyebrow cs-eyebrow">nos fondements</span>
       <div class="cs-entete">
-        <span class="eyebrow">nos fondements</span>
         <div class="cs-titre-rang">
           <h2 class="titre-bloc">Notre confession<br><span class="or">de foi</span></h2>
           <div class="cs-sauts">
@@ -1036,7 +1053,7 @@ if(!reduit){
     if(window.innerWidth <= 820){
       csScroll.style.height = '';
       /* les tuiles se figent juste SOUS l'en-tête (eyebrow + titre + boutons avant/après) */
-      if(entete) csScroll.style.setProperty('--cs-tuile-top', (Math.round(entete.getBoundingClientRect().height) + 8) + 'px');
+      if(entete) csScroll.style.setProperty('--cs-tuile-top', (58 + Math.round(entete.getBoundingClientRect().height) + 2) + 'px');
       return;
     }
     csScroll.style.removeProperty('--cs-tuile-top');
