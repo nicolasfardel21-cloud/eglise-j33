@@ -761,14 +761,14 @@ h1.ap-titre{position:relative;z-index:1;margin:17px auto 0;width:fit-content;max
       <article class="cs-tuile">
         <div class="cs-num">04</div>
         <h3>Jésus-Christ</h3>
-        <p>Nous croyons en Jésus-Christ, le Fils unique de Dieu, éternellement engendré du Père, vrai Dieu et vrai homme. Conçu du Saint-Esprit, né de la vierge Marie, il a vécu une vie sans péché, manifestant parfaitement la grâce et la vérité de Dieu. Par sa mort à notre place sur la croix, il a offert un sacrifice parfait et suffisant pour l'expiation des péchés ; par son sang versé, il a réconcilié l'humanité avec Dieu.</p>
+        <p>Nous croyons en Jésus-Christ, le Fils unique de Dieu, éternellement engendré du Père, vrai Dieu et vrai homme. Conçu du Saint-Esprit, né de la vierge Marie, il a vécu une vie sans péché, manifestant parfaitement la grâce et la vérité de Dieu. Sa mort à notre place sur la croix est le sacrifice parfait et suffisant pour l'expiation des péchés ; par son sang versé, il a réconcilié l'humanité avec Dieu.</p>
         <p>Réellement ressuscité des morts le troisième jour, monté au ciel et assis à la droite de Dieu où il intercède pour les siens, il est le Chef de l'Église et le Seigneur de toute la création. Il reviendra en gloire pour ressusciter les morts, juger le monde avec justice et établir son règne éternel.</p>
         <div class="versets">Jean 1.1-5 · Jean 1.14 · Luc 1.30-35 · Hébreux 4.15 · Jean 1.29 · 1 Corinthiens 15.3-8 · Romains 5.8-9 · Éphésiens 2.8-9 · Hébreux 10.10-12 · Colossiens 1.18 · Actes 1.11 · 1 Thessaloniciens 4.13-18</div>
       </article>
       <article class="cs-tuile">
         <div class="cs-num">05</div>
         <h3>Le Saint-Esprit</h3>
-        <p>Nous croyons au Saint-Esprit, troisième personne de la Trinité, pleinement Dieu, éternel, saint et souverain. Il n'est pas une force impersonnelle, mais une personne divine qui parle, enseigne, console et conduit le peuple de Dieu. Il a inspiré les Saintes Écritures, convainc le monde de péché, régénère ceux qui croient et demeure en chaque croyant dès sa nouvelle naissance.</p>
+        <p>Nous croyons au Saint-Esprit, troisième personne de la Trinité, pleinement Dieu, éternel, saint et souverain. Il est une personne divine qui parle, enseigne, console et conduit le peuple de Dieu. Il a inspiré les Saintes Écritures, convainc le monde de péché, régénère ceux qui croient et demeure en chaque croyant dès sa nouvelle naissance.</p>
         <p>Il scelle le croyant pour le jour de la rédemption, l'éclaire dans la vérité, le sanctifie et produit en lui le fruit d'une vie transformée. Il unit tous les croyants en un seul corps, l'Église, distribue des dons spirituels variés pour son édification et opère des miracles. Il est le garant de notre héritage éternel jusqu'au retour de Christ.</p>
         <div class="versets">Matthieu 28.19 · Actes 5.3-4 · Jean 14.16-17 · 2 Pierre 1.21 · Jean 16.8 · Tite 3.5 · Romains 8.9-14 · Éphésiens 1.13-14 · Galates 5.22-23 · 1 Corinthiens 12.4-13 · Actes 1.8 · Romains 8.16</div>
       </article>
@@ -1051,6 +1051,27 @@ if(!reduit){
   const csPiste  = document.getElementById('csPiste');
   const csBarre  = document.getElementById('csBarre');
   const csTuiles = csScroll ? Array.from(csScroll.querySelectorAll('.cs-tuile')) : [];
+  function alignerFlechesConfession(){
+    const h2 = csScroll ? csScroll.querySelector('.cs-entete h2') : null;
+    const fleches = csScroll ? csScroll.querySelectorAll('.cs-sauts a') : [];
+    if(!h2 || !fleches.length) return;
+    /* mesure les rectangles de chaque ligne réellement rendue du titre (via Range API,
+       fiable quelle que soit la police chargée) et cale chaque flèche sur sa ligne */
+    const range = document.createRange();
+    const lignes = [];
+    (function parcourir(n){
+      if(n.nodeType === 3 && n.textContent.trim()){
+        range.selectNodeContents(n);
+        Array.from(range.getClientRects()).forEach(r=>lignes.push(r));
+      } else { n.childNodes.forEach(parcourir); }
+    })(h2);
+    if(!lignes.length) return;
+    const hautDep = lignes[0].top;
+    fleches.forEach((a,i)=>{
+      const ligne = lignes[i] || lignes[lignes.length-1];
+      a.style.height = Math.round(ligne.bottom - hautDep - (lignes[i-1] ? lignes[i-1].bottom - hautDep : 0)) + 'px';
+    });
+  }
   function dimensionnerCs(){
     if(!csScroll || !csPiste) return;
     const entete = csScroll.querySelector('.cs-entete');
@@ -1058,6 +1079,7 @@ if(!reduit){
       csScroll.style.height = '';
       /* les tuiles se figent juste SOUS l'en-tête (eyebrow + titre + boutons avant/après) */
       if(entete) csScroll.style.setProperty('--cs-tuile-top', (58 + Math.round(entete.getBoundingClientRect().height)) + 'px');
+      alignerFlechesConfession();
       return;
     }
     csScroll.style.removeProperty('--cs-tuile-top');
