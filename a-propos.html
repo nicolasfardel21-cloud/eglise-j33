@@ -1050,6 +1050,7 @@ if(!reduit){
   });
   const csPiste  = document.getElementById('csPiste');
   const csBarre  = document.getElementById('csBarre');
+  const csTuiles = csScroll ? Array.from(csScroll.querySelectorAll('.cs-tuile')) : [];
   function dimensionnerCs(){
     if(!csScroll || !csPiste) return;
     const entete = csScroll.querySelector('.cs-entete');
@@ -1060,6 +1061,7 @@ if(!reduit){
       return;
     }
     csScroll.style.removeProperty('--cs-tuile-top');
+    csTuiles.forEach(t=>{ t.style.clipPath = ''; });
     csScroll.style.height = (csPiste.scrollWidth - window.innerWidth + vh() * 1.55) + 'px';
   }
   window.addEventListener('resize', dimensionnerCs);
@@ -1152,6 +1154,19 @@ if(!reduit){
       const maxX = csPiste.scrollWidth - (colle ? colle.clientWidth : window.innerWidth) + 84;
       csPiste.style.transform = `translate(${-pc * maxX}px, ${yTuiles}px)`;
       if(csBarre) csBarre.style.width = (pc * 100) + '%';
+    } else if(csScroll && csTuiles.length && window.innerWidth <= 820){
+      /* mobile : la tuile précédente se fait « rogner » par le bas au fil du scroll,
+         comme si un masque montait devant elle, à mesure que la tuile suivante arrive */
+      const pinTop = parseFloat(getComputedStyle(csScroll).getPropertyValue('--cs-tuile-top')) || 0;
+      csTuiles.forEach((tuile,i)=>{
+        const suivante = csTuiles[i+1];
+        if(!suivante){ tuile.style.clipPath = ''; return; }
+        const hautSuivante = suivante.getBoundingClientRect().top;
+        const h = tuile.offsetHeight;
+        const basVisible = Math.min(Math.max(hautSuivante, pinTop), pinTop + h);
+        const rogne = Math.max(0, Math.min(h, pinTop + h - basVisible));
+        tuile.style.clipPath = rogne > 0.5 ? `inset(0 0 ${rogne}px 0)` : '';
+      });
     }
     ticking=false;
   }
