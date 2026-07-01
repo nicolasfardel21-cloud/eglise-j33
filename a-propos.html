@@ -27,7 +27,7 @@ body{background:var(--fond);color:var(--encre);font-family:'Archivo',sans-serif;
 a{color:inherit} img{max-width:100%}
 .display{font-family:'Anton',sans-serif;font-weight:400;letter-spacing:.01em;line-height:1}
 
-.lien-paren{display:inline-block;text-decoration:none;font-size:.95rem;font-weight:500;padding:10px 4px;transition:color .25s}
+.lien-paren{display:inline-block;text-decoration:none;font-size:1rem;font-weight:500;padding:10px 4px;transition:color .25s}
 .lien-paren::before{content:"(\00a0"} .lien-paren::after{content:"\00a0)"}
 .lien-paren:hover{color:var(--or)}
 .lien-paren.plein{border:1px solid var(--encre);border-radius:999px;padding:12px 26px;transition:background .25s,color .25s}
@@ -158,10 +158,10 @@ body.menu-ouvert .menu-groupe:nth-child(4){transition-delay:.36s}
 .cs-tuile p{color:var(--gris);font-size:.93rem}
 .cs-tuile p+p{margin-top:12px}
 /* références versets : taille = texte des tuiles, alignées en bas de la tuile */
-.cs-tuile .versets{margin-top:auto;padding-top:20px;font-size:.93rem;color:var(--bleu);line-height:1.9}
+.cs-tuile .versets{margin-top:auto;padding-top:20px;font-size:.93rem;color:var(--gris);line-height:1.9}
 .cs-tuile .versets::before{content:none}
-/* chaque référence : soulignée, cliquable */
-.cs-ref{color:var(--bleu);text-decoration:underline;text-underline-offset:3px;cursor:pointer;transition:color .2s;border-radius:3px;padding:0;white-space:nowrap}
+/* chaque référence : couleur du texte, soulignée, cliquable */
+.cs-ref{color:var(--gris);text-decoration:underline;text-underline-offset:3px;cursor:pointer;transition:color .2s;border-radius:3px;padding:0;white-space:nowrap}
 .cs-ref:hover{color:var(--or)}
 /* actif en doré, sans gras (le gras décalait la liste) */
 .cs-ref.actif{color:var(--or);text-decoration:underline}
@@ -205,7 +205,7 @@ body.menu-ouvert .menu-groupe:nth-child(4){transition-delay:.36s}
   .cs-sauts a:hover .fl{color:var(--or)}
   /* l'intro reste dans le flux, pas de transform mobile */
   .cs-intro{transform:none !important;opacity:1 !important;margin-top:8px}
-  .cs-intro .texte-bloc p{font-size:.9rem}
+  .cs-intro .texte-bloc p{font-size:.88rem}
   /* la piste devient une pile verticale, alignée comme les cartes « pourquoi J33 » (28px) */
   .cs-piste{display:block;padding:12px 28px 0;transform:none !important;overflow:visible}
   /* empilement : chaque tuile se fige sous l'en-tête, la suivante vient la recouvrir (sans écart : pas de tuile visible dessous) */
@@ -215,7 +215,7 @@ body.menu-ouvert .menu-groupe:nth-child(4){transition-delay:.36s}
   .cs-tuile:last-child{margin-bottom:0}
   .cs-tuile h3{font-size:clamp(1.4rem,6vw,1.95rem);margin-bottom:10px;padding-right:54px;line-height:1.02}
   .cs-tuile .cs-num{top:14px;right:16px;font-size:1.95rem}
-  .cs-tuile p,.cs-tuile .versets,.cs-tuile .cs-vtxt{font-size:.83rem}
+  .cs-tuile p,.cs-tuile .versets,.cs-tuile .cs-vtxt{font-size:.88rem}
   .cs-tuile p{line-height:1.5}
   .cs-tuile p+p{margin-top:8px}
   .cs-tuile .versets{padding-top:12px;line-height:1.7}
@@ -270,7 +270,7 @@ body.menu-ouvert .menu-groupe:nth-child(4){transition-delay:.36s}
 
 /* ---------- sections ---------- */
 section{padding:110px 28px;max-width:1500px;margin:0 auto}
-.eyebrow{text-transform:uppercase;letter-spacing:.2em;font-size:.75rem;font-weight:600;color:var(--or);display:block;margin-bottom:28px}
+.eyebrow{text-transform:uppercase;letter-spacing:.2em;font-size:.78rem;font-weight:600;color:var(--or);display:block;margin-bottom:28px}
 .eyebrow::before{content:"( "} .eyebrow::after{content:" )"}
 .titre-bloc{font-family:'Anton',sans-serif;font-weight:400;line-height:1.12;font-size:clamp(2.2rem,6vw,5rem);text-transform:uppercase;letter-spacing:.04em}
 .titre-bloc .or{color:var(--or)}
@@ -342,8 +342,9 @@ section{padding:110px 28px;max-width:1500px;margin:0 auto}
 .pilier .tag{font-size:.72rem;text-transform:uppercase;letter-spacing:.18em;color:var(--or)}
 .pilier h3{font-family:'Anton',sans-serif;font-weight:400;font-size:1.5rem;line-height:1.1;margin:14px 0 12px}
 .pilier p{font-size:.88rem;color:var(--gris)}
-.pilier .versets{margin-top:auto;padding-top:16px;font-size:.74rem;color:var(--bleu);line-height:1.8}
-.pilier .versets::before{content:"Passages bibliques // ";color:var(--or);text-transform:uppercase;letter-spacing:.12em;font-size:.66rem}
+.pilier .versets{margin-top:auto;padding-top:16px;font-size:.72rem;color:var(--gris);line-height:1.8}
+.pilier .versets::before{content:none}
+.pilier .versets .ref{text-decoration:underline;text-underline-offset:3px}
 
 /* ---------- valeurs (liste numérotée façon 2819) ---------- */
 .valeurs-liste{margin-top:60px;border-top:1px solid var(--ligne)}
@@ -411,18 +412,18 @@ section{padding:110px 28px;max-width:1500px;margin:0 auto}
 /* ---------- footer ---------- */
 footer{padding:90px 28px 40px;max-width:1500px;margin:0 auto;border-top:1px solid var(--ligne)}
 .footer-colonnes{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:40px;padding-bottom:70px}
-.titre-col{font-size:.76rem;letter-spacing:.18em;text-transform:uppercase;color:var(--gris);margin-bottom:16px}
+.titre-col{font-size:.78rem;letter-spacing:.18em;text-transform:uppercase;color:var(--gris);margin-bottom:16px}
 .titre-col::before{content:"( "} .titre-col::after{content:" )"}
 .footer-colonnes ul{list-style:none}
 .footer-colonnes ul li{padding:5px 0}
-.footer-colonnes ul a{text-decoration:none;font-size:.95rem;transition:color .25s}
+.footer-colonnes ul a{text-decoration:none;font-size:1rem;transition:color .25s}
 .footer-colonnes ul a:hover{color:var(--or)}
 .j33-geant{font-family:'Anton',sans-serif;font-size:clamp(6rem,24vw,22rem);line-height:.8;letter-spacing:.02em;user-select:none}
-.footer-bas{display:flex;justify-content:space-between;flex-wrap:wrap;gap:10px;font-size:.75rem;color:var(--gris);margin-top:30px;border-top:1px solid var(--ligne);padding-top:20px}
+.footer-bas{display:flex;justify-content:space-between;flex-wrap:wrap;gap:10px;font-size:.72rem;color:var(--gris);margin-top:30px;border-top:1px solid var(--ligne);padding-top:20px}
 
 /* ---------- tuiles animées (pourquoi J33) ---------- */
 .carte-anim{cursor:pointer}
-.carte-anim .indice{display:block;font-size:.68rem;letter-spacing:.16em;text-transform:uppercase;color:var(--or);margin-top:16px;opacity:.65;transition:opacity .25s}
+.carte-anim .indice{display:block;font-size:.69rem;letter-spacing:.16em;text-transform:uppercase;color:var(--or);margin-top:16px;opacity:.65;transition:opacity .25s}
 .carte-anim:hover .indice{opacity:1}
 .a-titre{font-weight:600;font-size:1rem;text-transform:uppercase;letter-spacing:.08em;margin:16px 0 10px;min-height:1.5em}
 .a-corps{font-size:.88rem;color:var(--gris);min-height:1.5em}
@@ -611,25 +612,25 @@ h1.ap-titre{position:relative;z-index:1;margin:17px auto 0;width:fit-content;max
       <span class="tag">pilier 01</span>
       <h3>Former des disciples enracinés et authentiques</h3>
       <p>Enseignement biblique, accompagnement spirituel, vie de foi concrète.</p>
-      <div class="versets">Matthieu 28.19-20 · Jean 8.31-32 · Jean 15.5-8 · Actes 2.42 · Colossiens 2.6-7 · Éphésiens 4.11-15 · 2 Timothée 2.2</div>
+      <div class="versets"><span class="ref">Matthieu 28.19-20</span> · <span class="ref">Jean 8.31-32</span> · <span class="ref">Jean 15.5-8</span> · <span class="ref">Actes 2.42</span> · <span class="ref">Colossiens 2.6-7</span> · <span class="ref">Éphésiens 4.11-15</span> · <span class="ref">2 Timothée 2.2</span></div>
     </div>
     <div class="pilier">
       <span class="tag">pilier 02</span>
       <h3>Faire de la prière et de la présence de Dieu le centre</h3>
       <p>Louange, adoration, intercession et dépendance au Saint-Esprit.</p>
-      <div class="versets">Psaume 16.11 · Psaume 27.4 · Jean 7.38-39 · Actes 1.8 · Romains 8.14 · Éphésiens 5.18-19 · Jacques 5.16</div>
+      <div class="versets"><span class="ref">Psaume 16.11</span> · <span class="ref">Psaume 27.4</span> · <span class="ref">Jean 7.38-39</span> · <span class="ref">Actes 1.8</span> · <span class="ref">Romains 8.14</span> · <span class="ref">Éphésiens 5.18-19</span> · <span class="ref">Jacques 5.16</span></div>
     </div>
     <div class="pilier">
       <span class="tag">pilier 03</span>
       <h3>Accueillir et restaurer les cœurs brisés</h3>
       <p>Accompagnement des personnes en recherche, soutien des familles, restauration des cœurs.</p>
-      <div class="versets">Matthieu 11.28 · Ésaïe 61.1 · Jean 13.34-35 · Romains 15.7 · Galates 6.1-2 · 1 Thessaloniciens 5.14 · Hébreux 13.2</div>
+      <div class="versets"><span class="ref">Matthieu 11.28</span> · <span class="ref">Ésaïe 61.1</span> · <span class="ref">Jean 13.34-35</span> · <span class="ref">Romains 15.7</span> · <span class="ref">Galates 6.1-2</span> · <span class="ref">1 Thessaloniciens 5.14</span> · <span class="ref">Hébreux 13.2</span></div>
     </div>
     <div class="pilier">
       <span class="tag">pilier 04</span>
       <h3>Annoncer l'Évangile et rallumer la flamme de la région</h3>
       <p>Témoignage public, évangélisation locale, faire des nations des disciples.</p>
-      <div class="versets">Matthieu 5.14-16 · Actes 1.8 · Romains 10.14-15 · Habacuc 3.2 · Marc 16.15 · Actes 13.47 · Romains 1.16 · Psaume 67.1-3</div>
+      <div class="versets"><span class="ref">Matthieu 5.14-16</span> · <span class="ref">Actes 1.8</span> · <span class="ref">Romains 10.14-15</span> · <span class="ref">Habacuc 3.2</span> · <span class="ref">Marc 16.15</span> · <span class="ref">Actes 13.47</span> · <span class="ref">Romains 1.16</span> · <span class="ref">Psaume 67.1-3</span></div>
     </div>
   </div>
 </section>
