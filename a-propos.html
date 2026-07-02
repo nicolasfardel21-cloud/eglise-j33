@@ -1054,21 +1054,34 @@ if(!reduit){
   const csPiste  = document.getElementById('csPiste');
   const csBarre  = document.getElementById('csBarre');
   const csTuiles = csScroll ? Array.from(csScroll.querySelectorAll('.cs-tuile')) : [];
+  function hauteurStable(){
+    /* 100svh = plus petite hauteur de viewport possible (barre d'adresse considérée
+       comme toujours affichée) : valeur stable, ne bouge pas quand elle se cache/montre
+       pendant le scroll — contrairement à window.innerHeight ou visualViewport.height */
+    let sonde = document.getElementById('svhSonde');
+    if(!sonde){
+      sonde = document.createElement('div');
+      sonde.id = 'svhSonde';
+      sonde.style.cssText = 'position:fixed;top:0;left:0;height:100svh;width:0;pointer-events:none;visibility:hidden';
+      document.body.appendChild(sonde);
+    }
+    return sonde.getBoundingClientRect().height;
+  }
   function ajusterTailleTuiles(){
     if(window.innerWidth > 760 || !csScroll || !csTuiles.length){
       document.documentElement.style.removeProperty('--tt');
       return;
     }
-    /* repart de la taille idéale (15px), puis réduit si besoin — mesuré en direct sur
-       l'appareil. On réserve en plus une marge fixe pour le bandeau système du bas
-       (bouton home/retour Android, home indicator iOS) : les téléphones ne renseignent
-       pas tous env(safe-area-inset-bottom), donc on prend le plus grand des deux. */
+    /* repart de la taille idéale (15px), puis réduit si besoin. On réserve une marge
+       fixe pour le bandeau système du bas (bouton home/retour Android, home indicator/
+       barre de balayage iOS) : les téléphones ne renseignent pas tous
+       env(safe-area-inset-bottom), donc on prend le plus grand des deux. */
     document.documentElement.style.setProperty('--tt', '15px');
     const pinTop = parseFloat(getComputedStyle(csScroll).getPropertyValue('--cs-tuile-top')) || 0;
-    const hVisible = window.visualViewport ? window.visualViewport.height : window.innerHeight;
+    const hVisible = hauteurStable();
     const zoneSysteme = Math.max(
       parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--barre-bas')) || 0,
-      48 /* hauteur type d'un bandeau de navigation Android/iOS */
+      24 /* hauteur type d'un bandeau de navigation Android/iOS */
     );
     const dispo = hVisible - pinTop - zoneSysteme;
     let taille = 15;
@@ -1099,7 +1112,6 @@ if(!reduit){
     csScroll.style.height = (csPiste.scrollWidth - window.innerWidth + vh() * 1.55) + 'px';
   }
   window.addEventListener('resize', dimensionnerCs);
-  if(window.visualViewport) window.visualViewport.addEventListener('resize', ajusterTailleTuiles);
   window.addEventListener('load', dimensionnerCs);
   const vh = () => window.innerHeight;
   dimensionnerCs();
