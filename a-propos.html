@@ -1076,7 +1076,6 @@ if(!reduit){
        fixe pour le bandeau système du bas (bouton home/retour Android, home indicator/
        barre de balayage iOS) : les téléphones ne renseignent pas tous
        env(safe-area-inset-bottom), donc on prend le plus grand des deux. */
-    document.documentElement.style.setProperty('--tt', '15px');
     const pinTop = parseFloat(getComputedStyle(csScroll).getPropertyValue('--cs-tuile-top')) || 0;
     const hVisible = hauteurStable();
     const zoneSysteme = Math.max(
@@ -1084,15 +1083,27 @@ if(!reduit){
       0
     );
     const dispo = hVisible - pinTop - zoneSysteme;
-    let taille = 15;
-    let essais = 0;
-    while(essais < 40){
-      const plusHaute = Math.max(...csTuiles.map(t=>t.getBoundingClientRect().height));
-      if(plusHaute <= dispo) break;
-      taille -= 0.25;
-      document.documentElement.style.setProperty('--tt', taille + 'px');
-      essais++;
-      if(taille <= 11) break; /* garde-fou : taille minimale lisible */
+    /* recherche dichotomique : convergence fine vers la taille maximale qui tient,
+       au lieu de paliers fixes de 0.25px (qui pouvaient sauter par-dessus une rupture
+       de ligne et retenir une taille bien plus petite que nécessaire) */
+    const MINI = 11, MAXI = 15;
+    function tient(t){
+      document.documentElement.style.setProperty('--tt', t.toFixed(2) + 'px');
+      return Math.max(...csTuiles.map(el=>el.getBoundingClientRect().height)) <= dispo;
+    }
+    let taille, essais = 0;
+    if(tient(MAXI)){
+      taille = MAXI;
+    } else if(!tient(MINI)){
+      taille = MINI; /* garde-fou : même au minimum lisible, ça dépasse */
+    } else {
+      let lo = MINI, hi = MAXI;
+      for(essais = 0; essais < 8 && (hi - lo) > 0.05; essais++){
+        const mid = (lo + hi) / 2;
+        if(tient(mid)) lo = mid; else hi = mid;
+      }
+      taille = lo;
+      tient(taille); /* réapplique la valeur retenue (lo) après le dernier test */
     }
     /* ---- DIAGNOSTIC TEMPORAIRE : encart visible en bas d'écran, à retirer ensuite ---- */
     let debug = document.getElementById('debugTT');
