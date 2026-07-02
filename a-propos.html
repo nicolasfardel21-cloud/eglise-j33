@@ -215,6 +215,11 @@ body.menu-ouvert .menu-groupe:nth-child(4){transition-delay:.36s}
   .cs-tuile{width:100%;max-height:none;margin:0 0 16px;z-index:2;
     position:sticky;top:var(--cs-tuile-top,150px);
     padding:18px 18px;border-radius:0;box-shadow:none}
+  /* à partir de la 2e tuile : point de figement 16px plus haut (= la marge). Cette
+     tranche supplémentaire glisse et disparaît sous l'en-tête opaque (z-index supérieur)
+     au moment où la tuile se cale, au lieu de laisser un espace visible entre les tuiles.
+     Le padding existant (18px) absorbe la différence, aucun texte n'est rogné. */
+  .cs-tuile:not(:first-child){top:calc(var(--cs-tuile-top,150px) - 16px)}
   .cs-tuile:last-child{margin-bottom:0}
   .cs-tuile h3{font-size:clamp(1.4rem,6vw,1.95rem);margin-bottom:10px;padding-right:54px;line-height:1.02}
   .cs-tuile .cs-num{top:14px;right:16px;font-size:1.95rem}
