@@ -1066,7 +1066,6 @@ if(!reduit){
       document.body.appendChild(sonde);
     }
     const h = sonde.getBoundingClientRect().height;
-    window.__lvhSupporte = h > 0;
     return h > 0 ? h : window.innerHeight; /* garde-fou si lvh non supporté */
   }
   function ajusterTailleTuiles(){
@@ -1112,25 +1111,6 @@ if(!reduit){
       taille = lo;
       tient(taille); /* réapplique la valeur retenue (lo) après le dernier test */
     }
-    /* ---- DIAGNOSTIC TEMPORAIRE : à retirer une fois le problème identifié ---- */
-    let debug = document.getElementById('debugTT');
-    if(!debug){
-      debug = document.createElement('div');
-      debug.id = 'debugTT';
-      debug.style.cssText = 'position:fixed;left:0;right:0;bottom:0;z-index:99999;background:#000;color:#0f0;font:11px monospace;padding:8px;white-space:pre-line;line-height:1.4';
-      document.body.appendChild(debug);
-    }
-    const plusHauteFinale = Math.max(...csTuiles.map(t=>t.getBoundingClientRect().height));
-    debug.textContent =
-      'lvhSupporte=' + window.__lvhSupporte +
-      ' | hVisible=' + Math.round(hVisible) +
-      ' | innerH=' + window.innerHeight +
-      ' | pinTop=' + Math.round(pinTop) +
-      ' | zoneSysteme=' + Math.round(zoneSysteme) +
-      ' | dispo=' + Math.round(dispo) +
-      ' | tuile=' + Math.round(plusHauteFinale) +
-      ' | tt=' + taille.toFixed(2) + 'px' +
-      ' | essais=' + essais;
   }
   function dimensionnerCs(){
     ajusterTitresSection();
