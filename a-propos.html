@@ -1081,7 +1081,7 @@ if(!reduit){
     const hVisible = hauteurStable();
     const zoneSysteme = Math.max(
       parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--barre-bas')) || 0,
-      24 /* hauteur type d'un bandeau de navigation Android/iOS */
+      12 /* hauteur type d'un bandeau de navigation Android/iOS */
     );
     const dispo = hVisible - pinTop - zoneSysteme;
     let taille = 15;
