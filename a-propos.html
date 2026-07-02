@@ -1094,6 +1094,24 @@ if(!reduit){
       essais++;
       if(taille <= 11) break; /* garde-fou : taille minimale lisible */
     }
+    /* ---- DIAGNOSTIC TEMPORAIRE : encart visible en bas d'écran, à retirer ensuite ---- */
+    let debug = document.getElementById('debugTT');
+    if(!debug){
+      debug = document.createElement('div');
+      debug.id = 'debugTT';
+      debug.style.cssText = 'position:fixed;left:0;right:0;bottom:0;z-index:99999;background:#000;color:#0f0;font:11px monospace;padding:8px;white-space:pre-line;line-height:1.4';
+      document.body.appendChild(debug);
+    }
+    const plusHauteFinale = Math.max(...csTuiles.map(t=>t.getBoundingClientRect().height));
+    debug.textContent =
+      'pinTop=' + Math.round(pinTop) +
+      ' | svh=' + Math.round(hVisible) +
+      ' | innerH=' + window.innerHeight +
+      ' | zoneSysteme=' + Math.round(zoneSysteme) +
+      ' | dispo=' + Math.round(dispo) +
+      ' | tuile=' + Math.round(plusHauteFinale) +
+      ' | tt=' + taille.toFixed(2) + 'px' +
+      ' | essais=' + essais;
   }
   function dimensionnerCs(){
     ajusterTitresSection();
