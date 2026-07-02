@@ -1086,7 +1086,7 @@ if(!reduit){
     /* recherche dichotomique : convergence fine vers la taille maximale qui tient,
        au lieu de paliers fixes de 0.25px (qui pouvaient sauter par-dessus une rupture
        de ligne et retenir une taille bien plus petite que nécessaire) */
-    const MINI = 11, MAXI = 15;
+    const MINI = 11, MAXI = 19;
     function tient(t){
       document.documentElement.style.setProperty('--tt', t.toFixed(2) + 'px');
       return Math.max(...csTuiles.map(el=>el.getBoundingClientRect().height)) <= dispo;
