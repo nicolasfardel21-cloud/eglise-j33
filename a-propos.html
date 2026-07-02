@@ -1054,18 +1054,19 @@ if(!reduit){
   const csPiste  = document.getElementById('csPiste');
   const csBarre  = document.getElementById('csBarre');
   const csTuiles = csScroll ? Array.from(csScroll.querySelectorAll('.cs-tuile')) : [];
-  function hauteurStable(){
-    /* 100svh = plus petite hauteur de viewport possible (barre d'adresse considérée
-       comme toujours affichée) : valeur stable, ne bouge pas quand elle se cache/montre
-       pendant le scroll — contrairement à window.innerHeight ou visualViewport.height */
-    let sonde = document.getElementById('svhSonde');
+  function hauteurMax(){
+    /* 100lvh = hauteur du viewport en supposant la barre d'adresse REPLIÉE, même si
+       elle est visible à l'instant du calcul : on se cale d'emblée sur l'espace final,
+       pas besoin d'attendre que la barre disparaisse réellement pendant le scroll. */
+    let sonde = document.getElementById('lvhSonde');
     if(!sonde){
       sonde = document.createElement('div');
-      sonde.id = 'svhSonde';
-      sonde.style.cssText = 'position:fixed;top:0;left:0;height:100svh;width:0;pointer-events:none;visibility:hidden';
+      sonde.id = 'lvhSonde';
+      sonde.style.cssText = 'position:fixed;top:0;left:0;height:100lvh;width:0;pointer-events:none;visibility:hidden';
       document.body.appendChild(sonde);
     }
-    return sonde.getBoundingClientRect().height;
+    const h = sonde.getBoundingClientRect().height;
+    return h > 0 ? h : window.innerHeight; /* garde-fou si lvh non supporté */
   }
   function ajusterTailleTuiles(){
     if(window.innerWidth > 760 || !csScroll || !csTuiles.length){
@@ -1077,11 +1078,12 @@ if(!reduit){
        barre de balayage iOS) : les téléphones ne renseignent pas tous
        env(safe-area-inset-bottom), donc on prend le plus grand des deux. */
     const pinTop = parseFloat(getComputedStyle(csScroll).getPropertyValue('--cs-tuile-top')) || 0;
-    /* window.innerHeight reflète déjà, à l'instant du calcul, la hauteur réellement
-       visible compte tenu de l'état courant du navigateur — pas besoin de traiter
-       ce cas à part. La seule réservation à faire nous-mêmes, c'est celle du bandeau
-       système (barre de gestes/boutons Android, home indicator iOS), via zoneSysteme. */
-    const hVisible = window.innerHeight;
+    /* on se base sur 100lvh (barre d'adresse supposée repliée dès le départ) : la
+       taille de police ne bougera plus au fil du scroll quand la barre disparaît
+       réellement, puisqu'on a déjà calculé large depuis le début. La seule
+       réservation à faire nous-mêmes, c'est celle du bandeau système (barre de
+       gestes/boutons Android, home indicator iOS), via zoneSysteme. */
+    const hVisible = hauteurMax();
     const zoneSysteme = Math.max(
       parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--barre-bas')) || 0,
       0
@@ -1128,9 +1130,8 @@ if(!reduit){
   }
   let derniereLargeur = window.innerWidth;
   window.addEventListener('resize', () => {
-    /* ignore les changements de hauteur seuls (barre d'adresse qui se replie/déplie
-       pendant le scroll) : on ne recalcule que sur un vrai changement de largeur
-       (rotation d'écran, redimensionnement de fenêtre) */
+    /* 100lvh gère déjà l'état de la barre d'adresse : on ne recalcule que sur un
+       vrai changement de largeur (rotation d'écran, redimensionnement de fenêtre) */
     if(window.innerWidth !== derniereLargeur){
       derniereLargeur = window.innerWidth;
       dimensionnerCs();
