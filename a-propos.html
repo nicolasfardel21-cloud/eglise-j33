@@ -193,12 +193,14 @@ body.menu-ouvert .menu-groupe:nth-child(4){transition-delay:.36s}
   .cs-entete::before{content:"";position:absolute;left:0;right:0;bottom:100%;height:30px;background:var(--fond)}
   .cs-eyebrow{position:relative;z-index:4}
   /* titre à gauche (prend la place), flèches de saut empilées à sa droite */
-  .cs-titre-rang{display:flex;flex-wrap:nowrap;align-items:flex-start;
+  .cs-titre-rang{display:flex;flex-wrap:nowrap;align-items:stretch;
     justify-content:space-between;gap:8px}
   .cs-titre-rang h2{flex:1 1 auto;min-width:0;margin:0}
-  /* boutons : 2 flèches noires entre parenthèses dorées, chacune calée sur une ligne du titre */
-  .cs-sauts{flex:0 0 auto;flex-direction:column;gap:0;margin:0;align-self:flex-start}
-  .cs-sauts a{height:calc(clamp(2.2rem,6vw,5rem) * 1.12);font-size:0;gap:2px;padding:0 2px;
+  /* boutons : 2 flèches noires entre parenthèses dorées ; la colonne s'étire sur toute
+     la hauteur du titre (align-items:stretch) et se divise en 2 parts égales, puisque
+     les 2 lignes du titre ont la même taille de police donc la même hauteur de ligne */
+  .cs-sauts{display:flex;flex-direction:column;gap:0;margin:0}
+  .cs-sauts a{flex:1 1 0;font-size:0;gap:2px;padding:0 2px;
     display:flex;align-items:flex-end;justify-content:center;color:var(--encre)}
   .cs-sauts a::before,.cs-sauts a::after{font-size:1.35rem;line-height:1;color:var(--or)}
   .cs-sauts a .fl{font-size:1.7rem;line-height:1;color:var(--encre)}
@@ -209,8 +211,13 @@ body.menu-ouvert .menu-groupe:nth-child(4){transition-delay:.36s}
   /* la piste devient une pile verticale, alignée comme les cartes « pourquoi J33 » (28px) */
   .cs-piste{display:block;padding:12px 28px 0;transform:none !important;overflow:visible}
   /* empilement : chaque tuile se fige sous l'en-tête, la suivante vient la recouvrir (sans écart : pas de tuile visible dessous) */
-  .cs-tuile{width:100%;max-height:none;margin:0 0 16px;z-index:2;
+  .cs-tuile{width:100%;margin:0 0 16px;z-index:2;
     position:sticky;top:var(--cs-tuile-top,150px);
+    /* la tuile ne dépasse jamais l'espace réellement visible sous le titre figé,
+       même si la barre d'adresse/barre système réduit la hauteur d'écran ;
+       si le texte est malgré tout plus long, on peut le faire défiler DANS la tuile */
+    max-height:calc(100svh - var(--cs-tuile-top,150px) - 16px);
+    overflow-y:auto;-webkit-overflow-scrolling:touch;
     padding:18px 18px;border-radius:0;box-shadow:none}
   .cs-tuile:last-child{margin-bottom:0}
   .cs-tuile h3{font-size:clamp(1.4rem,6vw,1.95rem);margin-bottom:10px;padding-right:54px;line-height:1.02}
@@ -1051,29 +1058,6 @@ if(!reduit){
   const csPiste  = document.getElementById('csPiste');
   const csBarre  = document.getElementById('csBarre');
   const csTuiles = csScroll ? Array.from(csScroll.querySelectorAll('.cs-tuile')) : [];
-  function alignerFlechesConfession(){
-    const h2 = csScroll ? csScroll.querySelector('.cs-entete h2') : null;
-    const fleches = csScroll ? csScroll.querySelectorAll('.cs-sauts a') : [];
-    if(!h2 || fleches.length < 2) return;
-    /* mesure les rectangles de chaque ligne réellement rendue du titre (via Range API,
-       fiable quelle que soit la police chargée). Robuste quel que soit le nombre réel de
-       lignes (2 sur la plupart des écrans, parfois 3 sur un écran plus étroit) :
-       la 1ère flèche couvre toujours la 1ère ligne, la 2de va jusqu'au bas RÉEL du titre. */
-    const range = document.createRange();
-    const lignes = [];
-    (function parcourir(n){
-      if(n.nodeType === 3 && n.textContent.trim()){
-        range.selectNodeContents(n);
-        Array.from(range.getClientRects()).forEach(r=>lignes.push(r));
-      } else { n.childNodes.forEach(parcourir); }
-    })(h2);
-    if(!lignes.length) return;
-    const hautDep = lignes[0].top;
-    const basPremiere = lignes[0].bottom - hautDep;
-    const basTotal = lignes[lignes.length-1].bottom - hautDep;
-    fleches[0].style.height = Math.round(basPremiere) + 'px';
-    fleches[1].style.height = Math.round(basTotal - basPremiere) + 'px';
-  }
   function dimensionnerCs(){
     ajusterTitresSection();
     if(!csScroll || !csPiste) return;
@@ -1082,7 +1066,6 @@ if(!reduit){
       csScroll.style.height = '';
       /* les tuiles se figent juste SOUS l'en-tête (eyebrow + titre + boutons avant/après) */
       if(entete) csScroll.style.setProperty('--cs-tuile-top', (58 + Math.round(entete.getBoundingClientRect().height)) + 'px');
-      alignerFlechesConfession();
       return;
     }
     csScroll.style.removeProperty('--cs-tuile-top');
