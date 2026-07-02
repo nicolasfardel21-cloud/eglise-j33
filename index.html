@@ -209,9 +209,11 @@ body.menu-ouvert .menu-groupe:nth-child(4){transition-delay:.36s}
 .hero-suite.montre{opacity:1}
 @media(max-width:1100px){.hero-suite{left:8%;max-width:min(32ch,34vw);bottom:10svh}}
 @media(max-width:760px){
-  /* mobile : la suite s'insère DANS le flux sous le verset et pousse vers le bas */
-  .hero-suite{position:relative;z-index:7;left:auto;bottom:auto;max-width:none;width:100%;
-    margin:0 auto;padding:0 24px;
+  /* mobile : la suite s'insère DANS le flux sous le verset et pousse vers le bas.
+     Largeur et taille de police calées en JS (ajusterSuite) sur « Et je te répondrai »,
+     pour tenir sur 4 lignes maximum. */
+  .hero-suite{position:relative;z-index:7;left:auto;bottom:auto;max-width:none;
+    margin:0 auto;
     text-align:justify;text-align-last:justify;
     max-height:0;overflow:hidden;opacity:0;
     transition:max-height .55s ease,opacity .4s ease,margin .55s ease}
@@ -329,6 +331,7 @@ section{padding:110px 28px;max-width:1500px;margin:0 auto}
 
 /* ---------- table rendez-vous ---------- */
 .table-rdv{border-top:1px solid var(--ligne)}
+#rendezvous{padding-bottom:40px}
 .rdv{display:grid;grid-template-columns:1.6fr 1fr 1fr 1fr;gap:18px;align-items:center;padding:32px 0;border-bottom:1px solid var(--ligne);transition:padding .3s;position:relative}
 .rdv:hover{padding-left:18px}
 .rdv::before{content:"";position:absolute;left:0;top:0;bottom:0;width:0;background:var(--or);transition:width .3s}
@@ -653,7 +656,6 @@ footer{padding:90px 28px 40px;max-width:1500px;margin:0 auto;border-top:1px soli
       <div class="lieu">En visio</div>
     </div>
   </div>
-  <p class="note-table"><b>Et plus encore //</b> accompagnement baptême · accompagnement mariage · suivi pastoral · et bien d'autres à venir</p>
 </section>
 
 </div><!-- /page : fin zone immersive -->
@@ -1211,8 +1213,32 @@ if(cartesAnim.length === 6){
       verset.style.fontSize=''; verset.style.width=''; verset.style.marginLeft='';
       verset.style.marginRight=''; verset.style.textAlign=''; verset.style.whiteSpace='';
       if(ref){ ref.style.width=''; ref.style.marginLeft=''; ref.style.marginRight=''; }
-      if(suite){ suite.style.width=''; suite.style.bottom=''; suite.style.left=''; suite.style.right=''; }
       { const c=document.getElementById('heroCta'); if(c){ c.style.left=''; c.style.width=''; c.style.right=''; } }
+      /* suite du verset : largeur = celle de « Et je te répondrai », taille de police
+         ajustée par dichotomie pour tenir sur 4 lignes maximum */
+      if(suite){
+        suite.style.bottom=''; suite.style.left=''; suite.style.right=''; suite.style.top='';
+        const wVerset = Math.ceil(verset.getBoundingClientRect().width);
+        suite.style.width = wVerset + 'px';
+        const MINI = 10, MAXI = 22;
+        function tientSuite(t){
+          suite.style.fontSize = t.toFixed(2) + 'px';
+          const lh = t * 1.14;
+          return Math.round(suite.scrollHeight / lh) <= 4;
+        }
+        if(!tientSuite(MAXI)){
+          if(!tientSuite(MINI)){
+            /* garde-fou : même au minimum lisible, ça dépasse 4 lignes */
+          } else {
+            let lo = MINI, hi = MAXI;
+            for(let k=0; k<8 && (hi-lo) > 0.1; k++){
+              const mid = (lo+hi)/2;
+              if(tientSuite(mid)) lo = mid; else hi = mid;
+            }
+            tientSuite(lo);
+          }
+        }
+      }
       return;
     }
     function rectTexte(el){ const r=document.createRange(); r.selectNodeContents(el); return r.getBoundingClientRect(); }
