@@ -215,11 +215,6 @@ body.menu-ouvert .menu-groupe:nth-child(4){transition-delay:.36s}
   .cs-tuile{width:100%;max-height:none;margin:0 0 16px;z-index:2;
     position:sticky;top:var(--cs-tuile-top,150px);
     padding:18px 18px;border-radius:0;box-shadow:none}
-  /* à partir de la 2e tuile : point de figement 16px plus haut (= la marge). Cette
-     tranche supplémentaire glisse et disparaît sous l'en-tête opaque (z-index supérieur)
-     au moment où la tuile se cale, au lieu de laisser un espace visible entre les tuiles.
-     Le padding existant (18px) absorbe la différence, aucun texte n'est rogné. */
-  .cs-tuile:not(:first-child){top:calc(var(--cs-tuile-top,150px) - 16px)}
   .cs-tuile:last-child{margin-bottom:0}
   .cs-tuile h3{font-size:clamp(1.4rem,6vw,1.95rem);margin-bottom:10px;padding-right:54px;line-height:1.02}
   .cs-tuile .cs-num{top:14px;right:16px;font-size:1.95rem}
@@ -501,8 +496,8 @@ h1.ap-titre{position:relative;z-index:1;margin:17px auto 0;width:fit-content;max
 @media(max-width:560px){
   .ap-sous{grid-template-columns:1fr 1fr;gap:16px 14px;width:100%;justify-items:center}
   .ap-sous a{font-size:.82rem;letter-spacing:.02em;white-space:nowrap;text-align:center}
-  /* infos un peu moins collées aux bords */
-  .hero .infos{padding-left:12px;padding-right:12px}
+  /* infos un peu moins collées aux bords, police légèrement réduite */
+  .hero .infos{padding-left:12px;padding-right:12px;font-size:.66rem}
 }
 @media(prefers-reduced-motion: reduce){
   h1.ap-titre{transform:none !important}
@@ -1272,17 +1267,12 @@ if(!reduit){
       if(csBarre) csBarre.style.width = (pc * 100) + '%';
     } else if(csScroll && csTuiles.length && window.innerWidth <= 820){
       /* mobile : la tuile précédente se fait « rogner » par le bas au fil du scroll,
-         comme si un masque montait devant elle, à mesure que la tuile suivante arrive.
-         On laisse une marge de MARGE_VISUELLE px entre le bord rogné et le haut de la
-         tuile suivante (au lieu de les coller) : la marge « monte » avec la tuile
-         suivante pendant toute la transition, et se referme pile quand celle-ci se
-         verrouille sous l'en-tête (top:pinTop - MARGE_VISUELLE, cf. CSS) */
-      const MARGE_VISUELLE = 16;
+         comme si un masque montait devant elle, à mesure que la tuile suivante arrive */
       const pinTop = parseFloat(getComputedStyle(csScroll).getPropertyValue('--cs-tuile-top')) || 0;
       csTuiles.forEach((tuile,i)=>{
         const suivante = csTuiles[i+1];
         if(!suivante){ tuile.style.clipPath = ''; return; }
-        const hautSuivante = suivante.getBoundingClientRect().top - MARGE_VISUELLE;
+        const hautSuivante = suivante.getBoundingClientRect().top;
         const h = tuile.offsetHeight;
         const basVisible = Math.min(Math.max(hautSuivante, pinTop), pinTop + h);
         const rogne = Math.max(0, Math.min(h, pinTop + h - basVisible));
@@ -1580,7 +1570,16 @@ if(cartesAnim.length === 6){
   function maj(){ mesurer(); largeurTrait(); placer(); }
   maj();
   if(document.fonts && document.fonts.ready) document.fonts.ready.then(maj);
-  window.addEventListener('resize', maj);
+  let largeurPrec = window.innerWidth;
+  window.addEventListener('resize', () => {
+    /* ignore un changement de hauteur seul (barre d'adresse qui apparaît/disparaît
+       pendant le scroll) : ça recalculait "dist" en plein milieu du masquage et
+       faisait sauter le titre. On ne recalcule que sur un vrai changement de largeur. */
+    if(window.innerWidth !== largeurPrec){
+      largeurPrec = window.innerWidth;
+      maj();
+    }
+  });
 
   /* tracé de la ligne (depuis le centre) + apparition des sous-titres */
   requestAnimationFrame(()=>requestAnimationFrame(()=>zone.classList.add('vu')));
