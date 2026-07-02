@@ -1075,6 +1075,7 @@ if(!reduit){
     fleches[1].style.height = Math.round(basTotal - basPremiere) + 'px';
   }
   function dimensionnerCs(){
+    ajusterTitresSection();
     if(!csScroll || !csPiste) return;
     const entete = csScroll.querySelector('.cs-entete');
     if(window.innerWidth <= 820){
@@ -1093,6 +1094,45 @@ if(!reduit){
   const vh = () => window.innerHeight;
   dimensionnerCs();
   if(document.fonts && document.fonts.ready) document.fonts.ready.then(dimensionnerCs);
+
+  /* ---------- titres de section (h2.titre-bloc) : garantit 2 lignes, quel que soit
+     l'appareil, le zoom, ou la police effectivement chargée ---------- */
+  function ajusterTitresSection(){
+    document.querySelectorAll('h2.titre-bloc').forEach(h2=>{
+      const brNode = Array.from(h2.childNodes).find(n=>n.nodeName === 'BR');
+      if(!brNode) return; /* titre sans coupure prévue : rien à garantir */
+      h2.style.fontSize = ''; /* repart de la taille CSS (clamp) de base */
+      if(window.innerWidth > 760) return; /* desktop/tablette : largeur suffisante, pas d'ajustement */
+      const avant = [], apres = [];
+      let vu = false;
+      h2.childNodes.forEach(n=>{
+        if(n === brNode){ vu = true; return; }
+        (vu ? apres : avant).push(n);
+      });
+      function nbLignesSegment(noeuds){
+        const range = document.createRange();
+        const tops = [];
+        noeuds.forEach(n=>{
+          range.selectNodeContents(n);
+          Array.from(range.getClientRects()).forEach(r=>{
+            if(r.width > 0) tops.push(Math.round(r.top));
+          });
+        });
+        return new Set(tops).size;
+      }
+      let taille = parseFloat(getComputedStyle(h2).fontSize);
+      let essais = 0;
+      while(essais < 40){
+        const nAvant = nbLignesSegment(avant);
+        const nApres = nbLignesSegment(apres);
+        if(nAvant <= 1 && nApres <= 1) break;
+        taille -= 1;
+        h2.style.fontSize = taille + 'px';
+        essais++;
+        if(taille <= 19) break; /* garde-fou : ne descend pas sous une taille lisible */
+      }
+    });
+  }
   function progression(el){
     const r = el.getBoundingClientRect();
     return Math.min(1, Math.max(0, (vh() - r.top) / (vh() + r.height)));
