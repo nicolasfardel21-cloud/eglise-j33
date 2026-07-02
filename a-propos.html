@@ -155,10 +155,10 @@ body.menu-ouvert .menu-groupe:nth-child(4){transition-delay:.36s}
 .cs-tuile:hover .cs-num{color:var(--or)}
 .cs-tuile h3{font-family:'Anton',sans-serif;font-weight:400;font-size:clamp(1.9rem,4.4vw,3.2rem);line-height:1.04;margin-bottom:20px;padding-right:84px}
 .cs-tuile .cs-corps{flex:1 1 auto}
-.cs-tuile p{color:var(--gris);font-size:.9375rem}
+.cs-tuile p{color:var(--gris);font-size:.90625rem}
 .cs-tuile p+p{margin-top:0}
 /* références versets : taille = texte des tuiles, alignées en bas de la tuile */
-.cs-tuile .versets{margin-top:auto;padding-top:20px;font-size:.9375rem;color:var(--gris);line-height:1.9;display:flex;flex-wrap:wrap;gap:0 16px}
+.cs-tuile .versets{margin-top:auto;padding-top:20px;font-size:.90625rem;color:var(--gris);line-height:1.9;display:flex;flex-wrap:wrap;gap:0 16px}
 .cs-tuile .versets::before{content:none}
 /* chaque référence : couleur du texte, soulignée, cliquable */
 .cs-ref{color:var(--gris);text-decoration:underline;text-underline-offset:3px;cursor:pointer;transition:color .2s;border-radius:3px;padding:0;white-space:nowrap}
@@ -211,18 +211,13 @@ body.menu-ouvert .menu-groupe:nth-child(4){transition-delay:.36s}
   /* la piste devient une pile verticale, alignée comme les cartes « pourquoi J33 » (28px) */
   .cs-piste{display:block;padding:12px 28px 0;transform:none !important;overflow:visible}
   /* empilement : chaque tuile se fige sous l'en-tête, la suivante vient la recouvrir (sans écart : pas de tuile visible dessous) */
-  .cs-tuile{width:100%;margin:0 0 16px;z-index:2;
+  .cs-tuile{width:100%;max-height:none;margin:0 0 16px;z-index:2;
     position:sticky;top:var(--cs-tuile-top,150px);
-    /* la tuile ne dépasse jamais l'espace réellement visible sous le titre figé,
-       même si la barre d'adresse/barre système réduit la hauteur d'écran ;
-       si le texte est malgré tout plus long, on peut le faire défiler DANS la tuile */
-    max-height:calc(100svh - var(--cs-tuile-top,150px) - 16px);
-    overflow-y:auto;-webkit-overflow-scrolling:touch;
     padding:18px 18px;border-radius:0;box-shadow:none}
   .cs-tuile:last-child{margin-bottom:0}
   .cs-tuile h3{font-size:clamp(1.4rem,6vw,1.95rem);margin-bottom:10px;padding-right:54px;line-height:1.02}
   .cs-tuile .cs-num{top:14px;right:16px;font-size:1.95rem}
-  .cs-tuile p,.cs-tuile .versets,.cs-tuile .cs-vtxt{font-size:.9375rem}
+  .cs-tuile p,.cs-tuile .versets,.cs-tuile .cs-vtxt{font-size:.90625rem}
   .cs-tuile p{line-height:1.5}
   .cs-tuile p+p{margin-top:0}
   .cs-tuile .versets{padding-top:12px;line-height:1.7}
@@ -281,7 +276,7 @@ section{padding:110px 28px;max-width:1500px;margin:0 auto}
 .eyebrow::before{content:"( "} .eyebrow::after{content:" )"}
 .titre-bloc{font-family:'Anton',sans-serif;font-weight:400;line-height:1.12;font-size:clamp(2.2rem,6vw,5rem);text-transform:uppercase;letter-spacing:.04em}
 .titre-bloc .or{color:var(--or)}
-.texte-bloc{max-width:58ch;margin-top:34px;font-size:.9375rem;color:var(--gris)}
+.texte-bloc{max-width:58ch;margin-top:34px;font-size:.90625rem;color:var(--gris)}
 .texte-bloc strong{color:var(--encre);font-weight:600}
 .texte-bloc p+p{margin-top:20px}
 
@@ -348,8 +343,8 @@ section{padding:110px 28px;max-width:1500px;margin:0 auto}
 .pilier:hover{background:var(--bleu-pale)}
 .pilier .tag{font-size:.72rem;text-transform:uppercase;letter-spacing:.18em;color:var(--or)}
 .pilier h3{font-family:'Anton',sans-serif;font-weight:400;font-size:1.5rem;line-height:1.1;margin:14px 0 12px}
-.pilier p{font-size:.9375rem;color:var(--gris)}
-.pilier .versets{margin-top:auto;padding-top:16px;font-size:.9375rem;color:var(--gris);line-height:1.8;display:flex;flex-wrap:wrap;gap:0 16px}
+.pilier p{font-size:.90625rem;color:var(--gris)}
+.pilier .versets{margin-top:auto;padding-top:16px;font-size:.90625rem;color:var(--gris);line-height:1.8;display:flex;flex-wrap:wrap;gap:0 16px}
 .pilier .versets::before{content:none}
 .pilier .versets .ref{text-decoration:underline;text-underline-offset:3px}
 
@@ -361,7 +356,7 @@ section{padding:110px 28px;max-width:1500px;margin:0 auto}
 .valeur:hover::before{width:4px}
 .valeur .vnum{font-family:'Anton',sans-serif;font-size:1.5rem;color:var(--or)}
 .valeur h3{font-family:'Anton',sans-serif;font-weight:400;font-size:clamp(1.7rem,4.4vw,3.2rem);line-height:1}
-.valeur p{font-size:.9375rem;color:var(--gris);max-width:42ch}
+.valeur p{font-size:.90625rem;color:var(--gris);max-width:42ch}
 @media(max-width:760px){.valeur{grid-template-columns:50px 1fr}.valeur p{grid-column:2}}
 
 /* ---------- cartes ---------- */
@@ -371,7 +366,7 @@ section{padding:110px 28px;max-width:1500px;margin:0 auto}
 .carte .num{font-family:'Anton',sans-serif;font-size:2.4rem;color:var(--or);line-height:1}
 .cx-glyphe{display:inline-block}
 .carte h3{font-weight:600;font-size:1rem;text-transform:uppercase;letter-spacing:.08em;margin:16px 0 10px}
-.carte p{font-size:.9375rem;color:var(--gris)}
+.carte p{font-size:.90625rem;color:var(--gris)}
 .carte .versets{margin-top:14px;font-size:.78rem;color:var(--bleu);line-height:1.9}
 
 /* ---------- désert ---------- */
