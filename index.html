@@ -70,6 +70,11 @@ body.menu-ouvert .menu-groupe:nth-child(4){transition-delay:.36s}
 @media(hover:none),(max-width:760px){.menu-sous{opacity:1;transform:none;pointer-events:auto}}
 .menu-pied{display:flex;justify-content:space-between;flex-wrap:wrap;gap:16px;border-top:1px solid var(--creme-15);padding-top:20px;font-size:.82rem;color:var(--creme-50);text-transform:uppercase;letter-spacing:.12em}
 .menu-pied b{color:var(--or);font-weight:600}
+.menu-pied .ref-verset{display:block;margin-top:4px}
+@media(max-width:560px){
+  .menu-pied{font-size:.66rem;gap:10px 16px}
+  .menu-pied span:not(.verset-pied){white-space:nowrap}
+}
 /* ── menu mobile façon 2819 : flèche pour déplier, sous-liens dorés entre parenthèses ── */
 .menu-fleche{display:none}
 @media(max-width:760px){
@@ -551,9 +556,9 @@ footer{padding:90px 28px 40px;max-width:1500px;margin:0 auto;border-top:1px soli
       </div>
     </div>
     <div class="menu-pied">
-      <span>Célébrations · dimanche // 10h — 12h</span>
+      <span>Église protestante évangélique</span>
       <span>Is-sur-Tille</span>
-      <span><b>« Fais appel à moi et je te répondrai »</b> — Jérémie 33:3</span>
+      <span class="verset-pied"><b>« Fais appel à moi et je te répondrai »</b><span class="ref-verset">Jérémie 33:3</span></span>
     </div>
   </div>
 </div>
