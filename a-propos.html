@@ -39,7 +39,7 @@ a{color:inherit} img{max-width:100%}
 nav{position:fixed;top:0;left:0;right:0;z-index:100;display:flex;justify-content:space-between;align-items:center;padding:14px 28px;background:linear-gradient(var(--fond) 60%,transparent)}
 body.menu-ouvert nav{background:transparent}
 nav .marque{font-family:'Anton',sans-serif;font-size:2.1rem;line-height:1;letter-spacing:.06em;text-decoration:none;text-transform:uppercase}
-.burger{background:none;border:none;cursor:pointer;padding:10px;display:flex;flex-direction:column;gap:6px;z-index:101}
+.burger{background:none;border:none;cursor:pointer;padding:10px;display:flex;flex-direction:column;gap:6px;z-index:101;margin-right:-10px}
 .burger span{display:block;width:30px;height:2.5px;background:var(--encre);transition:transform .35s,opacity .25s,background .35s}
 body.menu-ouvert .burger span{background:var(--creme)}
 body.menu-ouvert .burger span:nth-child(1){transform:translateY(8.5px) rotate(45deg)}
@@ -429,7 +429,7 @@ footer{padding:90px 28px 40px;max-width:1500px;margin:0 auto;border-top:1px soli
 .carte-anim .indice{display:block;font-size:.69rem;letter-spacing:.16em;text-transform:uppercase;color:var(--or);margin-top:16px;opacity:.65;transition:opacity .25s}
 .carte-anim:hover .indice{opacity:1}
 .a-titre{font-weight:600;font-size:1rem;text-transform:uppercase;letter-spacing:.08em;margin:16px 0 10px;min-height:1.5em}
-.a-corps{font-size:.88rem;color:var(--gris);min-height:1.5em}
+.a-corps{font-size:var(--tt,.9375rem);color:var(--gris);min-height:1.5em}
 .a-titre .g,.a-corps .g,.carte h3 .g,.carte p .g{color:var(--or);font-weight:700}
 .graine{color:var(--or);font-weight:700;letter-spacing:.04em;transition:opacity .6s}
 .graine span{transition:opacity .35s}
@@ -838,14 +838,6 @@ h1.ap-titre{position:relative;z-index:1;margin:17px auto 0;width:fit-content;max
         <li><a href="venir.html">Venir nous voir</a></li>
         <li><a href="connexion.html">Connexion</a></li>
         <li><a href="contact.html">Contact</a></li>
-      </ul>
-    </div>
-    <div>
-      <div class="titre-col">connexion</div>
-      <ul>
-        <li><a href="connexion.html#visio">Études bibliques en visio</a></li>
-        <li><a href="connexion.html#suivi">Suivi pastoral</a></li>
-        <li><a href="connexion.html#etapes">Baptême &amp; mariage</a></li>
       </ul>
     </div>
     <div>
