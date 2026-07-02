@@ -1109,24 +1109,6 @@ if(!reduit){
       taille = lo;
       tient(taille); /* réapplique la valeur retenue (lo) après le dernier test */
     }
-    /* ---- DIAGNOSTIC TEMPORAIRE : encart visible en bas d'écran, à retirer ensuite ---- */
-    let debug = document.getElementById('debugTT');
-    if(!debug){
-      debug = document.createElement('div');
-      debug.id = 'debugTT';
-      debug.style.cssText = 'position:fixed;left:0;right:0;bottom:0;z-index:99999;background:#000;color:#0f0;font:11px monospace;padding:8px;white-space:pre-line;line-height:1.4';
-      document.body.appendChild(debug);
-    }
-    const plusHauteFinale = Math.max(...csTuiles.map(t=>t.getBoundingClientRect().height));
-    debug.textContent =
-      'pinTop=' + Math.round(pinTop) +
-      ' | svh=' + Math.round(hVisible) +
-      ' | innerH=' + window.innerHeight +
-      ' | zoneSysteme=' + Math.round(zoneSysteme) +
-      ' | dispo=' + Math.round(dispo) +
-      ' | tuile=' + Math.round(plusHauteFinale) +
-      ' | tt=' + taille.toFixed(2) + 'px' +
-      ' | essais=' + essais;
   }
   function dimensionnerCs(){
     ajusterTitresSection();
@@ -1144,7 +1126,16 @@ if(!reduit){
     csTuiles.forEach(t=>{ t.style.clipPath = ''; });
     csScroll.style.height = (csPiste.scrollWidth - window.innerWidth + vh() * 1.55) + 'px';
   }
-  window.addEventListener('resize', dimensionnerCs);
+  let derniereLargeur = window.innerWidth;
+  window.addEventListener('resize', () => {
+    /* ignore les changements de hauteur seuls (barre d'adresse qui se replie/déplie
+       pendant le scroll) : on ne recalcule que sur un vrai changement de largeur
+       (rotation d'écran, redimensionnement de fenêtre) */
+    if(window.innerWidth !== derniereLargeur){
+      derniereLargeur = window.innerWidth;
+      dimensionnerCs();
+    }
+  });
   window.addEventListener('load', dimensionnerCs);
   const vh = () => window.innerHeight;
   dimensionnerCs();
