@@ -1272,12 +1272,17 @@ if(!reduit){
       if(csBarre) csBarre.style.width = (pc * 100) + '%';
     } else if(csScroll && csTuiles.length && window.innerWidth <= 820){
       /* mobile : la tuile précédente se fait « rogner » par le bas au fil du scroll,
-         comme si un masque montait devant elle, à mesure que la tuile suivante arrive */
+         comme si un masque montait devant elle, à mesure que la tuile suivante arrive.
+         On laisse une marge de MARGE_VISUELLE px entre le bord rogné et le haut de la
+         tuile suivante (au lieu de les coller) : la marge « monte » avec la tuile
+         suivante pendant toute la transition, et se referme pile quand celle-ci se
+         verrouille sous l'en-tête (top:pinTop - MARGE_VISUELLE, cf. CSS) */
+      const MARGE_VISUELLE = 16;
       const pinTop = parseFloat(getComputedStyle(csScroll).getPropertyValue('--cs-tuile-top')) || 0;
       csTuiles.forEach((tuile,i)=>{
         const suivante = csTuiles[i+1];
         if(!suivante){ tuile.style.clipPath = ''; return; }
-        const hautSuivante = suivante.getBoundingClientRect().top;
+        const hautSuivante = suivante.getBoundingClientRect().top - MARGE_VISUELLE;
         const h = tuile.offsetHeight;
         const basVisible = Math.min(Math.max(hautSuivante, pinTop), pinTop + h);
         const rogne = Math.max(0, Math.min(h, pinTop + h - basVisible));
