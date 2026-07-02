@@ -38,7 +38,7 @@ a{color:inherit} img{max-width:100%}
 nav{position:fixed;top:0;left:0;right:0;z-index:100;display:flex;justify-content:space-between;align-items:center;padding:14px 28px;background:linear-gradient(var(--fond) 60%,transparent)}
 body.menu-ouvert nav{background:transparent}
 nav .marque{font-family:'Anton',sans-serif;font-size:2.1rem;line-height:1;letter-spacing:.06em;text-decoration:none;text-transform:uppercase}
-.burger{background:none;border:none;cursor:pointer;padding:10px;display:flex;flex-direction:column;gap:6px;z-index:101}
+.burger{background:none;border:none;cursor:pointer;padding:10px;display:flex;flex-direction:column;gap:6px;z-index:101;margin-right:-10px}
 .burger span{display:block;width:30px;height:2.5px;background:var(--encre);transition:transform .35s,opacity .25s,background .35s}
 body.menu-ouvert .burger span{background:var(--creme)}
 body.menu-ouvert .burger span:nth-child(1){transform:translateY(8.5px) rotate(45deg)}
@@ -93,8 +93,10 @@ body.menu-ouvert .menu-groupe:nth-child(4){transition-delay:.36s}
 
 /* ---------- héros de page ---------- */
 .hero{min-height:100svh;display:flex;flex-direction:column;justify-content:center;padding:62px 28px 60px;position:relative}
-.hero-page{min-height:72svh}
+.hero-page{min-height:auto;display:block}
+.hero-page h1{margin-top:17px !important}
 .hero .infos{display:flex;justify-content:space-between;align-items:baseline;flex-wrap:wrap;gap:8px;text-transform:uppercase;letter-spacing:.14em;font-size:.78rem;font-weight:500;border-top:1px solid var(--ligne);padding-top:16px;max-width:1500px;margin:0 auto;width:100%}
+@media(max-width:560px){.hero .infos{font-size:.66rem}}
 .hero .infos .h{color:var(--or)}
 .hero h1{font-size:clamp(2rem,min(11.5vw,16svh),12rem);line-height:.98;text-transform:uppercase;letter-spacing:.04em;margin:20px 0 0;align-self:center;display:block}
 .hero h1 > span{display:block;white-space:nowrap}
@@ -464,14 +466,6 @@ footer{padding:90px 28px 40px;max-width:1500px;margin:0 auto;border-top:1px soli
         <li><a href="venir.html">Venir nous voir</a></li>
         <li><a href="connexion.html">Connexion</a></li>
         <li><a href="contact.html">Contact</a></li>
-      </ul>
-    </div>
-    <div>
-      <div class="titre-col">connexion</div>
-      <ul>
-        <li><a href="connexion.html#visio">Études bibliques en visio</a></li>
-        <li><a href="connexion.html#suivi">Suivi pastoral</a></li>
-        <li><a href="connexion.html#etapes">Baptême &amp; mariage</a></li>
       </ul>
     </div>
     <div>
