@@ -1077,7 +1077,11 @@ if(!reduit){
        barre de balayage iOS) : les téléphones ne renseignent pas tous
        env(safe-area-inset-bottom), donc on prend le plus grand des deux. */
     const pinTop = parseFloat(getComputedStyle(csScroll).getPropertyValue('--cs-tuile-top')) || 0;
-    const hVisible = hauteurStable();
+    /* window.innerHeight reflète déjà, à l'instant du calcul, la hauteur réellement
+       visible compte tenu de l'état courant du navigateur — pas besoin de traiter
+       ce cas à part. La seule réservation à faire nous-mêmes, c'est celle du bandeau
+       système (barre de gestes/boutons Android, home indicator iOS), via zoneSysteme. */
+    const hVisible = window.innerHeight;
     const zoneSysteme = Math.max(
       parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--barre-bas')) || 0,
       0
