@@ -194,7 +194,7 @@ body.menu-ouvert .menu-groupe:nth-child(4){transition-delay:.36s}
   .cs-eyebrow{position:relative;z-index:4}
   /* titre à gauche (prend la place), flèches de saut empilées à sa droite */
   .cs-titre-rang{display:flex;flex-wrap:nowrap;align-items:flex-start;
-    justify-content:space-between;gap:14px}
+    justify-content:space-between;gap:8px}
   .cs-titre-rang h2{flex:1 1 auto;min-width:0;margin:0}
   /* boutons : 2 flèches noires entre parenthèses dorées, chacune calée sur une ligne du titre */
   .cs-sauts{flex:0 0 auto;flex-direction:column;gap:0;margin:0;align-self:flex-start}
@@ -1054,9 +1054,11 @@ if(!reduit){
   function alignerFlechesConfession(){
     const h2 = csScroll ? csScroll.querySelector('.cs-entete h2') : null;
     const fleches = csScroll ? csScroll.querySelectorAll('.cs-sauts a') : [];
-    if(!h2 || !fleches.length) return;
+    if(!h2 || fleches.length < 2) return;
     /* mesure les rectangles de chaque ligne réellement rendue du titre (via Range API,
-       fiable quelle que soit la police chargée) et cale chaque flèche sur sa ligne */
+       fiable quelle que soit la police chargée). Robuste quel que soit le nombre réel de
+       lignes (2 sur la plupart des écrans, parfois 3 sur un écran plus étroit) :
+       la 1ère flèche couvre toujours la 1ère ligne, la 2de va jusqu'au bas RÉEL du titre. */
     const range = document.createRange();
     const lignes = [];
     (function parcourir(n){
@@ -1067,10 +1069,10 @@ if(!reduit){
     })(h2);
     if(!lignes.length) return;
     const hautDep = lignes[0].top;
-    fleches.forEach((a,i)=>{
-      const ligne = lignes[i] || lignes[lignes.length-1];
-      a.style.height = Math.round(ligne.bottom - hautDep - (lignes[i-1] ? lignes[i-1].bottom - hautDep : 0)) + 'px';
-    });
+    const basPremiere = lignes[0].bottom - hautDep;
+    const basTotal = lignes[lignes.length-1].bottom - hautDep;
+    fleches[0].style.height = Math.round(basPremiere) + 'px';
+    fleches[1].style.height = Math.round(basTotal - basPremiere) + 'px';
   }
   function dimensionnerCs(){
     if(!csScroll || !csPiste) return;
