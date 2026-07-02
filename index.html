@@ -189,7 +189,7 @@ body.menu-ouvert .menu-groupe:nth-child(4){transition-delay:.36s}
   font-family:'Anton',sans-serif;font-weight:400;text-transform:uppercase;letter-spacing:.01em;
   line-height:1;white-space:nowrap;cursor:help;
 }
-/* référence du verset : hors mix-blend, couleur pleine donc bien lisible, au-dessus des images */
+/* référence du verset : même effet « à effet » que le titre et le verset */
 .hero-ref{
   position:relative;z-index:4;
   margin:.55em 0 0 auto;text-align:center;
@@ -248,7 +248,7 @@ body.menu-ouvert .menu-groupe:nth-child(4){transition-delay:.36s}
   #heroCta.cta{position:absolute;left:calc(40vw + 20px);right:28px;width:auto;bottom:auto;
     top:calc(94% - 26.667vw);transform:translateY(-50%);margin:0;
     flex-direction:column;align-items:center;justify-content:center;gap:14px;text-align:center}
-  #heroCta.cta .lien-paren{white-space:normal;display:inline-block;max-width:150px}
+  #heroCta.cta .lien-paren{white-space:normal;display:inline-block;max-width:150px;transition:transform .45s cubic-bezier(.76,0,.24,1)}
 }
 /* « Qui nous sommes » : lien discret sous le bloc évangile, comme (more about 2819) */
 .lien-savoir{cursor:pointer;text-decoration:none;transition:color .25s}
@@ -362,6 +362,7 @@ section{padding:110px 28px;max-width:1500px;margin:0 auto}
 .hero h1.geant{mix-blend-mode:exclusion;color:#fff;position:relative;z-index:2}
 .hero-verset{mix-blend-mode:exclusion;position:relative;z-index:2}
 .hero-verset .vtxt{color:#fff}
+.hero-ref{mix-blend-mode:exclusion;color:#fff;z-index:2}
 .hero .cta{position:relative;z-index:5} /* liens : au-dessus, lisibles, sans effet */
 .hero .cta .lien-paren{color:var(--encre)}
 .hero .cta .lien-paren.or{color:var(--encre)}
@@ -855,9 +856,13 @@ if(!reduit){
         heroCta.style.transform = '';
         const liens = heroCta.querySelectorAll('.lien-paren');
         const rBtn = [0.28, 0.22, 0.16];             /* boutons : montée propre, constante */
+        const suiteOuverte = estMobile && heroSuite && heroSuite.classList.contains('montre');
         liens.forEach((a, i)=>{
           const r = rBtn[i % rBtn.length];
           a.style.opacity = 1;
+          /* verset ouvert sur mobile : Contact et Venir nous voir sont gérés par
+             cascadeCta (décalage vers Connexion), on ne touche pas à leur transform ici */
+          if(suiteOuverte && i < 2) return;
           a.style.transform = estMobile ? '' : `translateY(${-r*y}px)`;
         });
       }
@@ -1144,6 +1149,7 @@ if(cartesAnim.length === 6){
   const ref = document.getElementById('heroRef');
   const orLayer = document.getElementById('ligne3Or');
   const suite = document.getElementById('heroSuite');
+  const heroCta = document.getElementById('heroCta');
   const l1 = h1 ? h1.querySelector('.ligne1') : null;
   const l2 = h1 ? h1.querySelector('.ligne2') : null;
   const l3 = h1 ? h1.querySelector('.ligne3') : null;
@@ -1291,12 +1297,46 @@ if(cartesAnim.length === 6){
 
   /* 4) « Et je te répondrai » → la suite du verset apparaît */
   if(suite){
-    const montrer = ()=> suite.classList.add('montre');
-    const cacher  = ()=> suite.classList.remove('montre');
-    const tactile = window.matchMedia('(hover:none)').matches;
-    if(tactile){
-      /* mobile/tactile : uniquement bascule au tap, pas de hover/focus qui referme aussitôt */
-      verset.addEventListener('click', (e)=>{ e.preventDefault(); suite.classList.toggle('montre'); });
+    /* sur mobile, quand le verset s'ouvre : Connexion reste fixe, Contact descend
+       juste au-dessus d'elle, puis Venir nous voir descend juste au-dessus de
+       la nouvelle position de Contact (les 3 boutons se resserrent vers le bas) */
+    function cascadeCta(ouvrir){
+      if(!heroCta || window.innerWidth > 760) return;
+      const boutons = Array.from(heroCta.querySelectorAll('.lien-paren'));
+      if(boutons.length < 3) return;
+      const [venirBtn, contactBtn, connexionBtn] = boutons;
+      if(ouvrir){
+        const gapSerre = 10;
+        const rConnexion = connexionBtn.getBoundingClientRect();
+        const rContact = contactBtn.getBoundingClientRect();
+        const rVenir = venirBtn.getBoundingClientRect();
+        const decalageContact = (rConnexion.top - gapSerre) - rContact.bottom;
+        contactBtn.style.transform = decalageContact > 0 ? `translateY(${decalageContact}px)` : '';
+        const nouveauHautContact = rContact.top + Math.max(0, decalageContact);
+        const decalageVenir = (nouveauHautContact - gapSerre) - rVenir.bottom;
+        venirBtn.style.transform = decalageVenir > 0 ? `translateY(${decalageVenir}px)` : '';
+      } else {
+        contactBtn.style.transform = '';
+        venirBtn.style.transform = '';
+      }
+    }
+    const montrer = ()=> { suite.classList.add('montre'); cascadeCta(true); };
+    const cacher  = ()=> { suite.classList.remove('montre'); cascadeCta(false); };
+    /* souris desktop réelle uniquement (survol ET pointeur fin) : test plus strict que
+       hover:none seul, qui peut se déclencher à tort sur certains navigateurs mobiles */
+    const sourisDesktop = window.matchMedia('(hover:hover) and (pointer:fine)').matches;
+    if(!sourisDesktop){
+      /* tactile : le tap bascule ouvert/fermé ; un tap ailleurs referme aussi */
+      verset.addEventListener('click', (e)=>{
+        e.preventDefault();
+        e.stopPropagation();
+        if(suite.classList.contains('montre')) cacher(); else montrer();
+      });
+      document.addEventListener('click', (e)=>{
+        if(suite.classList.contains('montre') && !verset.contains(e.target) && !suite.contains(e.target)){
+          cacher();
+        }
+      });
     } else {
       /* desktop : survol */
       verset.addEventListener('mouseenter', montrer);
