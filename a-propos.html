@@ -283,6 +283,7 @@ section{padding:110px 28px;max-width:1500px;margin:0 auto}
 .titre-bloc{font-family:'Anton',sans-serif;font-weight:400;line-height:1.12;font-size:clamp(2.2rem,6vw,5rem);text-transform:uppercase;letter-spacing:.04em}
 .titre-bloc .or{color:var(--or)}
 .texte-bloc{max-width:58ch;margin-top:34px;font-size:var(--tt,.9375rem);color:var(--gris)}
+.photo-pasteur{display:block;width:min(620px,76vw);aspect-ratio:3/4;object-fit:cover;border-radius:6px;margin:30px 0}
 .texte-bloc strong{color:var(--encre);font-weight:600}
 .texte-bloc p+p{margin-top:20px}
 
@@ -363,7 +364,12 @@ section{padding:110px 28px;max-width:1500px;margin:0 auto}
 .valeur .vnum{font-family:'Anton',sans-serif;font-size:1.5rem;color:var(--or)}
 .valeur h3{font-family:'Anton',sans-serif;font-weight:400;font-size:clamp(1.7rem,4.4vw,3.2rem);line-height:1}
 .valeur p{font-size:var(--tt,.9375rem);color:var(--gris);max-width:42ch}
-@media(max-width:760px){.valeur{grid-template-columns:50px 1fr}.valeur p{grid-column:2}}
+@media(max-width:760px){
+  .valeurs-liste{border-top:2px solid var(--encre)}
+  .valeur{grid-template-columns:1fr;border-bottom:2px solid var(--encre);padding:20px 16px}
+  .valeur .vnum{display:none}
+  .valeur p{grid-column:1}
+}
 
 /* ---------- cartes ---------- */
 .grille-cartes{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:18px;margin-top:10px}
@@ -828,9 +834,9 @@ h1.ap-titre{position:relative;z-index:1;margin:17px auto 0;width:fit-content;max
   <h2 class="titre-bloc">Des bergers sous<br><span class="or">le Grand Berger</span></h2>
   <div class="texte-bloc">
     <p>Nous valorisons l'accompagnement spirituel et l'enseignement à travers nos pasteurs et responsables. Mais nous rappelons que toute autorité, toute direction et toute protection viennent de Dieu, <strong>le seul Grand Berger</strong> — « Celui qui compte » et qui veille sur chacun (Jérémie 33:12-13).</p>
-    <p style="font-style:italic">— Présentation de l'équipe pastorale à compléter : noms, photos et parcours de vos responsables. —</p>
   </div>
-  <a class="lien-paren plein" href="contact.html" style="margin-top:30px">rencontrer l'équipe</a>
+  <img src="images_a-propos/pasteur1.jpg" alt="Photo d'un pasteur de l'église J33" class="photo-pasteur" loading="lazy">
+  <p class="texte-bloc" style="font-style:italic">— Présentation de l'équipe pastorale à compléter : noms, photos et parcours de vos responsables. —</p>
 </section>
 
 
