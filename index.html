@@ -223,7 +223,7 @@ body.menu-ouvert .menu-groupe:nth-child(4){transition-delay:.36s}
   /* mobile : le verset et la référence redeviennent pleine largeur, centrés et lisibles */
   .hero-titrage{margin-top:24px}
   /* le gros titre descend d'une ligne : « Fais » prend la place de l'ancien « appel » */
-  .hero-anime h1.geant{margin-top:.98em}
+  .hero-anime h1.geant{margin-top:.98em;font-size:clamp(3.6rem,22vw,17rem)}
   .hero-verset{width:auto;margin:.4em auto 0;text-align:center;white-space:normal;
     font-size:clamp(1.1rem,5.4vw,1.9rem);letter-spacing:.04em}
   .hero-ref{width:auto;margin:.55em auto 0;text-align:center}
@@ -245,12 +245,13 @@ body.menu-ouvert .menu-groupe:nth-child(4){transition-delay:.36s}
 }
 .hero-anime .cta{position:absolute;left:-1%;right:auto;bottom:2svh;margin:0;flex-direction:row;flex-wrap:nowrap;justify-content:flex-start;align-items:center;gap:0 14px;z-index:6}
 @media(max-width:760px){
-  /* boutons casés dans l'espace libre à droite de l'illustration 2 (#hph2),
-     centrés verticalement sur sa hauteur : #hph2 va de (94% - 53.333vw) à 94% */
-  #heroCta.cta{position:absolute;left:calc(40vw + 20px);right:28px;width:auto;bottom:auto;
-    top:calc(94% - 26.667vw);transform:translateY(-50%);margin:0;
-    flex-direction:column;align-items:center;justify-content:center;gap:14px;text-align:center}
-  #heroCta.cta .lien-paren{white-space:normal;display:inline-block;max-width:150px;transition:transform .45s cubic-bezier(.76,0,.24,1)}
+  /* boutons placés SOUS l'illustration 2 : une seule ligne, centrés, descendus (marge sous l'image ~triiplée) ;
+     taille de police inchangée, espace entre boutons doublé */
+  #heroCta.cta{position:absolute;left:0;right:0;width:100%;top:auto;bottom:0.3%;
+    transform:none;margin:0;padding:0 6px;
+    flex-direction:row;flex-wrap:nowrap;align-items:center;justify-content:center;gap:0 6px;text-align:center}
+  #heroCta.cta .lien-paren{white-space:nowrap;display:inline-block;max-width:none;padding:4px 1px;
+    transition:transform .45s cubic-bezier(.76,0,.24,1)}
 }
 /* « Qui nous sommes » : lien discret sous le bloc évangile, comme (more about 2819) */
 .lien-savoir{cursor:pointer;text-decoration:none;transition:color .25s}
@@ -1184,13 +1185,18 @@ if(cartesAnim.length === 6){
     const dispo  = Math.min(window.innerWidth * 0.96, 1600);
     let limite = dispo;
     const hph3 = document.getElementById('hph3');           /* garde-fou souple : « A MOI » peut mordre un peu sur l'image de droite (comme la maquette) */
-    if(hph3){
+    if(hph3 && window.innerWidth > 760){
       const rr = hph3.getBoundingClientRect();
       const demi = (rr.left + rr.width * 0.38) - (window.innerWidth / 2); /* bord droit autorisé jusqu'à ~38% dans l'image */
       if(demi > 0) limite = Math.min(limite, demi * 2);
     }
     let bloc = Math.min(maxMot * 2.25, limite);                /* étalement encore plus large */
     if(bloc < maxMot) bloc = Math.min(maxMot, dispo);          /* sécurité : jamais plus étroit que le mot le plus large */
+    if(window.innerWidth <= 760){
+      /* mobile : bloc = presque toute la largeur d'écran, marge égale de chaque côté →
+         « Fais » calé à gauche (avec marge), « appel » centré, « a moi » à droite (avec marge, sans déborder) */
+      bloc = Math.max(maxMot, window.innerWidth * 0.88);
+    }
     titrage.style.width = bloc + 'px';
 
     /* 2) couche dorée « A MOI » posée exactement sur la ligne3 cachée (alignée à droite) */
@@ -1209,35 +1215,52 @@ if(cartesAnim.length === 6){
     /* 3) « Et je te répondrai » : EXACTEMENT la largeur VISIBLE de « A MOI »
           (le « E » sous le « A », le « i » final sous le « i » de « moi ») */
     if(window.innerWidth <= 760){
-      /* mobile : on relâche le calage (sinon la référence se trouve tronquée) */
-      verset.style.fontSize=''; verset.style.width=''; verset.style.marginLeft='';
-      verset.style.marginRight=''; verset.style.textAlign=''; verset.style.whiteSpace='';
-      if(ref){ ref.style.width=''; ref.style.marginLeft=''; ref.style.marginRight=''; }
+      /* mobile : « Et je te répondrai » et « Jérémie 33 : 3 » centrés et calés à la
+         largeur (visible) de « appel » (ligne2 du grand titre) */
+      const cibleAppel = l2 ? (rectTexte(l2).width - lsPx(l2)) : 0;
+      /* verset : même largeur que « appel » */
+      verset.style.width=''; verset.style.marginLeft=''; verset.style.marginRight='';
+      verset.style.textAlign=''; verset.style.whiteSpace='nowrap'; verset.style.fontSize='';
+      if(vtxt && cibleAppel > 0){
+        let tv = parseFloat(getComputedStyle(vtxt).fontSize) || 20;
+        for(let k=0;k<8;k++){
+          verset.style.fontSize = tv + 'px';
+          const w = rectTexte(vtxt).width - lsPx(verset);
+          if(w > 0) tv = tv * (cibleAppel / w);
+        }
+        verset.style.fontSize = tv + 'px';
+      }
+      /* référence : même largeur que « appel » */
+      if(ref){
+        ref.style.width=''; ref.style.marginLeft=''; ref.style.marginRight='';
+        ref.style.whiteSpace='nowrap'; ref.style.fontSize='';
+        if(cibleAppel > 0){
+          let tr = parseFloat(getComputedStyle(ref).fontSize) || 14;
+          for(let k=0;k<8;k++){
+            ref.style.fontSize = tr + 'px';
+            const w = rectTexte(ref).width - lsPx(ref);
+            if(w > 0) tr = tr * (cibleAppel / w);
+          }
+          ref.style.fontSize = tr + 'px';
+        }
+      }
       { const c=document.getElementById('heroCta'); if(c){ c.style.left=''; c.style.width=''; c.style.right=''; } }
-      /* suite du verset : largeur = celle de « Et je te répondrai », taille de police
-         ajustée par dichotomie pour tenir sur 4 lignes maximum */
+      /* suite du verset : largeur = celle du verset (inchangée), taille de police plafonnée
+         à celle de « Et je te répondrai » puis réduite pour tenir sur 4 lignes maximum */
       if(suite){
         suite.style.bottom=''; suite.style.left=''; suite.style.right=''; suite.style.top='';
-        const wVerset = Math.ceil(verset.getBoundingClientRect().width);
+        const wVerset = Math.ceil(rectTexte(vtxt).width);
         suite.style.width = wVerset + 'px';
-        const MINI = 10, MAXI = 22;
-        function tientSuite(t){
-          suite.style.fontSize = t.toFixed(2) + 'px';
+        suite.style.whiteSpace = 'normal';
+        const plafond = parseFloat(getComputedStyle(verset).fontSize) || 16;
+        function lignesSuite(t){
+          suite.style.fontSize = t + 'px';
           const lh = t * 1.14;
-          return Math.round(suite.scrollHeight / lh) <= 4;
+          return Math.round(suite.scrollHeight / lh);
         }
-        if(!tientSuite(MAXI)){
-          if(!tientSuite(MINI)){
-            /* garde-fou : même au minimum lisible, ça dépasse 4 lignes */
-          } else {
-            let lo = MINI, hi = MAXI;
-            for(let k=0; k<8 && (hi-lo) > 0.1; k++){
-              const mid = (lo+hi)/2;
-              if(tientSuite(mid)) lo = mid; else hi = mid;
-            }
-            tientSuite(lo);
-          }
-        }
+        let fs = plafond;
+        for(let k=0; k<40 && lignesSuite(fs) > 4 && fs > 8; k++){ fs -= 0.5; }
+        suite.style.fontSize = fs + 'px';
       }
       return;
     }
@@ -1327,6 +1350,8 @@ if(cartesAnim.length === 6){
        juste au-dessus d'elle, puis Venir nous voir descend juste au-dessus de
        la nouvelle position de Contact (les 3 boutons se resserrent vers le bas) */
     function cascadeCta(ouvrir){
+      /* boutons désormais en ligne sous l'illustration 2 : plus de repositionnement */
+      return;
       if(!heroCta || window.innerWidth > 760) return;
       const boutons = Array.from(heroCta.querySelectorAll('.lien-paren'));
       if(boutons.length < 3) return;
