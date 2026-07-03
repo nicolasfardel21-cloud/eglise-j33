@@ -53,7 +53,7 @@ body.menu-ouvert .menu-overlay{transform:translateY(0)}
 body.menu-ouvert{overflow:hidden}
 .menu-corps{flex:1;display:flex;flex-direction:column;justify-content:space-between;gap:36px;max-width:1500px;width:100%;margin:0 auto}
 .menu-groupes{display:flex;flex-direction:column}
-.menu-groupe{display:grid;grid-template-columns:1fr auto;gap:8px 30px;align-items:end;padding:16px 0;border-bottom:1px solid var(--creme-15);opacity:0;transform:translateY(26px)}
+.menu-groupe{display:grid;grid-template-columns:1fr auto;gap:8px 30px;align-items:center;padding:16px 0;border-bottom:1px solid var(--creme-15);opacity:0;transform:translateY(26px)}
 body.menu-ouvert .menu-groupe{opacity:1;transform:none;transition:opacity .5s ease,transform .5s ease}
 body.menu-ouvert .menu-groupe:nth-child(1){transition-delay:.12s}
 body.menu-ouvert .menu-groupe:nth-child(2){transition-delay:.20s}
@@ -62,11 +62,13 @@ body.menu-ouvert .menu-groupe:nth-child(4){transition-delay:.36s}
 .menu-groupe .gros{font-family:'Anton',sans-serif;font-size:clamp(2.1rem,5vw,4.2rem);line-height:1.12;white-space:nowrap;text-transform:uppercase;text-decoration:none;display:flex;align-items:baseline;gap:20px;transition:color .25s,padding-left .3s}
 .menu-groupe .gros:hover{color:var(--or);padding-left:14px}
 .menu-groupe .gros small{font-family:'Archivo',sans-serif;font-size:.74rem;letter-spacing:.2em;color:var(--or)}
-.menu-sous{display:flex;flex-wrap:wrap;gap:2px 18px;justify-content:flex-end;opacity:0;transform:translateX(26px);pointer-events:none;transition:opacity .35s ease,transform .35s ease}
+.menu-sous{display:flex;flex-wrap:wrap;gap:6px 18px;justify-content:flex-end;opacity:0;transform:translateY(16px);pointer-events:none;transition:opacity .35s ease,transform .35s ease}
 .menu-groupe:hover .menu-sous,.menu-groupe:focus-within .menu-sous{opacity:1;transform:none;pointer-events:auto}
-.menu-sous a{text-decoration:none;font-size:1.06rem;color:var(--creme-50);transition:color .25s;white-space:nowrap}
+.menu-sous a{font-family:'Anton',sans-serif;text-decoration:none;font-size:1.28rem;text-transform:uppercase;letter-spacing:.02em;color:var(--creme);transition:color .25s;white-space:nowrap}
 .menu-sous a:hover{color:var(--or)}
-.menu-sous a::before{content:"\2192\00a0";color:var(--or)}
+.menu-sous a::before{content:"(\00a0";color:var(--or)}
+.menu-sous a::after{content:"\00a0)";color:var(--or)}
+@media(min-width:761px){.menu-groupe:first-child .menu-sous{display:grid;grid-template-columns:repeat(3,auto);gap:6px 24px;justify-content:flex-end}}
 @media(hover:none),(max-width:760px){.menu-sous{opacity:1;transform:none;pointer-events:auto}}
 .menu-pied{display:flex;justify-content:space-between;flex-wrap:wrap;gap:16px;border-top:1px solid var(--creme-15);padding-top:20px;font-size:.82rem;color:var(--creme-50);text-transform:uppercase;letter-spacing:.12em}
 .menu-pied b{color:var(--or);font-weight:600}
@@ -209,7 +211,7 @@ body.menu-ouvert .menu-groupe:nth-child(4){transition-delay:.36s}
   .cs-sauts a{flex:1 1 0;font-size:0;gap:2px;padding:0 2px;
     display:flex;align-items:flex-end;justify-content:center;color:var(--encre)}
   .cs-sauts a::before,.cs-sauts a::after{font-size:1.35rem;line-height:1;color:var(--or)}
-  .cs-sauts a .fl{font-size:1.7rem;line-height:1;color:var(--encre);transform:translateY(-3px)}
+  .cs-sauts a .fl{font-size:1.7rem;line-height:1;color:var(--encre)}
   .cs-sauts a:hover .fl{color:var(--or)}
   /* l'intro reste dans le flux, pas de transform mobile */
   .cs-intro{transform:none !important;opacity:1 !important;margin-top:8px}
@@ -283,11 +285,8 @@ section{padding:110px 28px;max-width:1500px;margin:0 auto}
 .titre-bloc{font-family:'Anton',sans-serif;font-weight:400;line-height:1.12;font-size:clamp(2.2rem,6vw,5rem);text-transform:uppercase;letter-spacing:.04em}
 .titre-bloc .or{color:var(--or)}
 .texte-bloc{max-width:58ch;margin-top:34px;font-size:var(--tt,.9375rem);color:var(--gris)}
-.photo-pasteur{display:block;width:min(620px,76vw);aspect-ratio:3/4;object-fit:cover;margin:30px 0}
-@media(min-width:821px) and (max-height:800px){.photo-pasteur{width:min(820px,86vw)}}
-@media(min-width:821px) and (max-height:680px){.photo-pasteur{width:min(980px,92vw)}}
-@media(max-width:820px){.photo-pasteur{width:100%}}
 .texte-bloc strong{color:var(--encre);font-weight:600}
+.or-txt{color:var(--or)}
 .texte-bloc p+p{margin-top:20px}
 
 /* ---------- table rendez-vous ---------- */
@@ -367,12 +366,7 @@ section{padding:110px 28px;max-width:1500px;margin:0 auto}
 .valeur .vnum{font-family:'Anton',sans-serif;font-size:1.5rem;color:var(--or)}
 .valeur h3{font-family:'Anton',sans-serif;font-weight:400;font-size:clamp(1.7rem,4.4vw,3.2rem);line-height:1}
 .valeur p{font-size:var(--tt,.9375rem);color:var(--gris);max-width:42ch}
-@media(max-width:760px){
-  .valeurs-liste{border-top:2px solid var(--encre)}
-  .valeur{grid-template-columns:1fr;border-bottom:2px solid var(--encre);padding:20px 16px}
-  .valeur .vnum{display:none}
-  .valeur p{grid-column:1}
-}
+@media(max-width:760px){.valeur{grid-template-columns:50px 1fr}.valeur p{grid-column:2}}
 
 /* ---------- cartes ---------- */
 .grille-cartes{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:18px;margin-top:10px}
@@ -429,6 +423,7 @@ section{padding:110px 28px;max-width:1500px;margin:0 auto}
 /* ---------- footer ---------- */
 footer{padding:90px 28px 40px;max-width:1500px;margin:0 auto;border-top:1px solid var(--ligne)}
 .footer-colonnes{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:40px;padding-bottom:70px}
+@media(max-width:760px){.footer-colonnes{grid-template-columns:1fr 1fr;gap:24px}}
 .titre-col{font-size:.78rem;letter-spacing:.18em;text-transform:uppercase;color:var(--gris);margin-bottom:16px}
 .titre-col::before{content:"( "} .titre-col::after{content:" )"}
 .footer-colonnes ul{list-style:none}
@@ -670,7 +665,7 @@ h1.ap-titre{position:relative;z-index:1;margin:17px auto 0;width:fit-content;max
     <div class="carte">
       <div class="num">30+3</div>
       <h3>Maturité &amp; plénitude</h3>
-      <p><b class="g">3</b>0, l'âge biblique de la maturité et de l'entrée au service (Joseph, David, les Lévites, Jésus) ; <b class="g">3</b>, la plénitude du Dieu trois fois saint. Notre désir : des disciples matures vivant la plénitude de Dieu.</p>
+      <p><b class="g">3</b>0, l'âge biblique de la maturité et de l'entrée au service <span class="or-txt">(Joseph, David, les Lévites, Jésus)</span> ; <b class="g">3</b>, la plénitude du Dieu trois fois saint. Notre désir : des disciples matures vivant la plénitude de Dieu.</p>
     </div>
     <div class="carte">
       <div class="num">3·3</div>
@@ -727,12 +722,12 @@ h1.ap-titre{position:relative;z-index:1;margin:17px auto 0;width:fit-content;max
     <div class="valeur">
       <span class="vnum">7</span>
       <h3>Honneur</h3>
-      <p>Nous honorons Dieu, Sa Parole et notre prochain. Pour nous, honorer chacun, c'est traduire l'amour du Christ en actes.</p>
+      <p>Nous honorons Dieu, les choses de Dieu et notre prochain : nous aimer les uns les autres est une forme d'honneur envers chacun.</p>
     </div>
     <div class="valeur">
       <span class="vnum">8</span>
-      <h3>Authenticité</h3>
-      <p>Notre direction ne dépend que d'une chose : le Saint-Esprit. Nous voulons vivre l'Église selon Sa main, et non celle de l'homme — Il a toute la place.</p>
+      <h3>Excellence</h3>
+      <p>Notre excellence ne dépend que d'une chose : le Saint-Esprit. Nous voulons vivre l'église selon Sa main, et non selon la main de l'homme — Il a toute la place.</p>
     </div>
   </div>
 </section>
@@ -836,10 +831,10 @@ h1.ap-titre{position:relative;z-index:1;margin:17px auto 0;width:fit-content;max
   <span class="eyebrow">nos responsables</span>
   <h2 class="titre-bloc">Des bergers sous<br><span class="or">le Grand Berger</span></h2>
   <div class="texte-bloc">
-    <p>Nous valorisons l'accompagnement spirituel et l'enseignement à travers nos pasteurs et responsables. Mais nous rappelons que toute autorité, toute direction et toute protection viennent de Dieu, <strong>le seul Grand Berger</strong> — « Celui qui compte » et qui veille sur chacun (Jérémie 33:12-13).</p>
+    <p>Nous valorisons l'accompagnement spirituel et l'enseignement à travers nos pasteurs et responsables. Mais nous rappelons que toute autorité, toute direction et toute protection viennent de Dieu, <strong>le seul Grand Berger</strong> — « Celui qui compte » et qui veille sur chacun <span class="or-txt">(Jérémie 33:12-13)</span>.</p>
+    <p style="font-style:italic">— Présentation de l'équipe pastorale à compléter : noms, photos et parcours de vos responsables. —</p>
   </div>
-  <img src="images_a-propos/pasteur1.jpg" alt="Photo d'un pasteur de l'église J33" class="photo-pasteur" loading="lazy">
-  <p class="texte-bloc" style="font-style:italic">— Présentation de l'équipe pastorale à compléter : noms, photos et parcours de vos responsables. —</p>
+  <a class="lien-paren plein" href="contact.html" style="margin-top:30px">rencontrer l'équipe</a>
 </section>
 
 
@@ -906,7 +901,10 @@ function basculerMenu(){
 /* menu mobile : la flèche déplie/replie le sous-menu du groupe */
 function basculerSousMenu(btn){
   const groupe = btn.closest('.menu-groupe');
-  if(groupe) groupe.classList.toggle('ouvert');
+  if(!groupe) return;
+  const etaitOuvert = groupe.classList.contains('ouvert');
+  groupe.parentElement.querySelectorAll('.menu-groupe.ouvert').forEach(g => g.classList.remove('ouvert'));
+  if(!etaitOuvert) groupe.classList.add('ouvert');
 }
 document.addEventListener('keydown', e => {
   if(e.key === 'Escape' && document.body.classList.contains('menu-ouvert')) basculerMenu();
@@ -1307,7 +1305,7 @@ if(cartesAnim.length === 6){
       corps:"¤J nous rappelle Jésus-Christ, Dieu fait homme, qui a donné Sa vie pour nous sur la croix. Le chiffre évoque son ministère terrestre : commencé à ¤30 ans, exercé pleinement pendant ¤3 ans." },
     { seed:"J33", phase:"corps",
       titre:"Maturité & plénitude",
-      corps:"‡¤30, l'âge biblique de la maturité et de l'entrée au service (Joseph, David, les Lévites, Jésus) ; ¤3, la plénitude du Dieu trois fois saint. Notre désir : des disciples matures vivant la plénitude de Dieu." },
+      corps:"‡¤30, l'âge biblique de la maturité et de l'entrée au service «(Joseph, David, les Lévites, Jésus)» ; ¤3, la plénitude du Dieu trois fois saint. Notre désir : des disciples matures vivant la plénitude de Dieu." },
     { seed:"J33", phase:"corps",
       titre:"Dieu trinitaire, homme tout entier",
       corps:"Le premier ‡¤3 pour le Père, le Fils et le Saint-Esprit ; le second ¤3 pour l'être humain dans sa totalité — corps, âme et esprit — créé pour vivre pleinement." },
