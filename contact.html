@@ -38,7 +38,7 @@ a{color:inherit} img{max-width:100%}
 nav{position:fixed;top:0;left:0;right:0;z-index:100;display:flex;justify-content:space-between;align-items:center;padding:14px 28px;background:linear-gradient(var(--fond) 60%,transparent)}
 body.menu-ouvert nav{background:transparent}
 nav .marque{font-family:'Anton',sans-serif;font-size:2.1rem;line-height:1;letter-spacing:.06em;text-decoration:none;text-transform:uppercase}
-.burger{background:none;border:none;cursor:pointer;padding:10px;display:flex;flex-direction:column;gap:6px;z-index:101;margin-right:-10px}
+.burger{background:none;border:none;cursor:pointer;padding:10px;display:flex;flex-direction:column;gap:6px;z-index:101}
 .burger span{display:block;width:30px;height:2.5px;background:var(--encre);transition:transform .35s,opacity .25s,background .35s}
 body.menu-ouvert .burger span{background:var(--creme)}
 body.menu-ouvert .burger span:nth-child(1){transform:translateY(8.5px) rotate(45deg)}
@@ -52,7 +52,7 @@ body.menu-ouvert .menu-overlay{transform:translateY(0)}
 body.menu-ouvert{overflow:hidden}
 .menu-corps{flex:1;display:flex;flex-direction:column;justify-content:space-between;gap:36px;max-width:1500px;width:100%;margin:0 auto}
 .menu-groupes{display:flex;flex-direction:column}
-.menu-groupe{display:grid;grid-template-columns:1fr auto;gap:8px 30px;align-items:end;padding:16px 0;border-bottom:1px solid var(--creme-15);opacity:0;transform:translateY(26px)}
+.menu-groupe{display:grid;grid-template-columns:1fr auto;gap:8px 30px;align-items:center;padding:16px 0;border-bottom:1px solid var(--creme-15);opacity:0;transform:translateY(26px)}
 body.menu-ouvert .menu-groupe{opacity:1;transform:none;transition:opacity .5s ease,transform .5s ease}
 body.menu-ouvert .menu-groupe:nth-child(1){transition-delay:.12s}
 body.menu-ouvert .menu-groupe:nth-child(2){transition-delay:.20s}
@@ -61,19 +61,16 @@ body.menu-ouvert .menu-groupe:nth-child(4){transition-delay:.36s}
 .menu-groupe .gros{font-family:'Anton',sans-serif;font-size:clamp(2.1rem,5vw,4.2rem);line-height:1.12;white-space:nowrap;text-transform:uppercase;text-decoration:none;display:flex;align-items:baseline;gap:20px;transition:color .25s,padding-left .3s}
 .menu-groupe .gros:hover{color:var(--or);padding-left:14px}
 .menu-groupe .gros small{font-family:'Archivo',sans-serif;font-size:.74rem;letter-spacing:.2em;color:var(--or)}
-.menu-sous{display:flex;flex-wrap:wrap;gap:2px 18px;justify-content:flex-end;opacity:0;transform:translateX(26px);pointer-events:none;transition:opacity .35s ease,transform .35s ease}
+.menu-sous{display:flex;flex-wrap:wrap;gap:6px 18px;justify-content:flex-end;opacity:0;transform:translateY(16px);pointer-events:none;transition:opacity .35s ease,transform .35s ease}
 .menu-groupe:hover .menu-sous,.menu-groupe:focus-within .menu-sous{opacity:1;transform:none;pointer-events:auto}
-.menu-sous a{text-decoration:none;font-size:1.06rem;color:var(--creme-50);transition:color .25s;white-space:nowrap}
+.menu-sous a{font-family:'Anton',sans-serif;text-decoration:none;font-size:1.28rem;text-transform:uppercase;letter-spacing:.02em;color:var(--creme);transition:color .25s;white-space:nowrap}
 .menu-sous a:hover{color:var(--or)}
-.menu-sous a::before{content:"\2192\00a0";color:var(--or)}
+.menu-sous a::before{content:"(\00a0";color:var(--or)}
+.menu-sous a::after{content:"\00a0)";color:var(--or)}
+@media(min-width:761px){.menu-groupe:first-child .menu-sous{display:grid;grid-template-columns:repeat(3,auto);gap:6px 24px;justify-content:flex-end}}
 @media(hover:none),(max-width:760px){.menu-sous{opacity:1;transform:none;pointer-events:auto}}
 .menu-pied{display:flex;justify-content:space-between;flex-wrap:wrap;gap:16px;border-top:1px solid var(--creme-15);padding-top:20px;font-size:.82rem;color:var(--creme-50);text-transform:uppercase;letter-spacing:.12em}
 .menu-pied b{color:var(--or);font-weight:600}
-.menu-pied .ref-verset{display:block;margin-top:4px}
-@media(max-width:560px){
-  .menu-pied{font-size:.66rem;gap:10px 16px}
-  .menu-pied span:not(.verset-pied){white-space:nowrap}
-}
 .menu-fleche{display:none}
 @media(max-width:760px){
   .menu-groupe{grid-template-columns:1fr auto;gap:0;padding:6px 0;align-items:center}
@@ -98,10 +95,8 @@ body.menu-ouvert .menu-groupe:nth-child(4){transition-delay:.36s}
 
 /* ---------- héros de page ---------- */
 .hero{min-height:100svh;display:flex;flex-direction:column;justify-content:center;padding:62px 28px 60px;position:relative}
-.hero-page{min-height:auto;display:block}
-.hero-page h1{margin-top:17px !important}
+.hero-page{min-height:72svh}
 .hero .infos{display:flex;justify-content:space-between;align-items:baseline;flex-wrap:wrap;gap:8px;text-transform:uppercase;letter-spacing:.14em;font-size:.78rem;font-weight:500;border-top:1px solid var(--ligne);padding-top:16px;max-width:1500px;margin:0 auto;width:100%}
-@media(max-width:560px){.hero .infos{font-size:.66rem;margin-left:-28px;margin-right:-28px;width:calc(100% + 56px);padding-left:12px;padding-right:12px;box-sizing:border-box}}
 .hero .infos .h{color:var(--or)}
 .hero h1{font-size:clamp(2rem,min(11.5vw,16svh),12rem);line-height:.98;text-transform:uppercase;letter-spacing:.04em;margin:20px 0 0;align-self:center;display:block}
 .hero h1 > span{display:block;white-space:nowrap}
@@ -190,6 +185,7 @@ section{padding:110px 28px;max-width:1500px;margin:0 auto}
 .titre-bloc .or{color:var(--or)}
 .texte-bloc{max-width:58ch;margin-top:34px;font-size:1.05rem;color:var(--gris)}
 .texte-bloc strong{color:var(--encre);font-weight:600}
+.or-txt{color:var(--or)}
 .texte-bloc p+p{margin-top:20px}
 
 /* ---------- table rendez-vous ---------- */
@@ -325,6 +321,7 @@ section{padding:110px 28px;max-width:1500px;margin:0 auto}
 /* ---------- footer ---------- */
 footer{padding:90px 28px 40px;max-width:1500px;margin:0 auto;border-top:1px solid var(--ligne)}
 .footer-colonnes{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:40px;padding-bottom:70px}
+@media(max-width:760px){.footer-colonnes{grid-template-columns:1fr 1fr;gap:24px}}
 .titre-col{font-size:.76rem;letter-spacing:.18em;text-transform:uppercase;color:var(--gris);margin-bottom:16px}
 .titre-col::before{content:"( "} .titre-col::after{content:" )"}
 .footer-colonnes ul{list-style:none}
@@ -384,8 +381,8 @@ footer{padding:90px 28px 40px;max-width:1500px;margin:0 auto;border-top:1px soli
         <div class="menu-sous">
           <a href="a-propos.html#mission">Notre mission</a>
           <a href="a-propos.html#vision">Notre vision</a>
-          <a href="a-propos.html#valeurs">Nos valeurs</a>
           <a href="a-propos.html#pourquoi">Pourquoi J33</a>
+          <a href="a-propos.html#valeurs">Nos valeurs</a>
           <a href="a-propos.html#croyances">Nos fondements</a>
           <a href="a-propos.html#responsables">Nos responsables</a>
         </div>
@@ -415,9 +412,9 @@ footer{padding:90px 28px 40px;max-width:1500px;margin:0 auto;border-top:1px soli
       </div>
     </div>
     <div class="menu-pied">
-      <span>Église protestante évangélique</span>
+      <span>Célébrations · dimanche // 10h — 12h</span>
       <span>Is-sur-Tille</span>
-      <span class="verset-pied"><b>« Fais appel à moi et je te répondrai »</b><span class="ref-verset">Jérémie 33:3</span></span>
+      <span><b>« Fais appel à moi et je te répondrai »</b> — Jérémie 33:3</span>
     </div>
   </div>
 </div>
@@ -474,6 +471,14 @@ footer{padding:90px 28px 40px;max-width:1500px;margin:0 auto;border-top:1px soli
       </ul>
     </div>
     <div>
+      <div class="titre-col">connexion</div>
+      <ul>
+        <li><a href="connexion.html#visio">Études bibliques en visio</a></li>
+        <li><a href="connexion.html#suivi">Suivi pastoral</a></li>
+        <li><a href="connexion.html#etapes">Baptême &amp; mariage</a></li>
+      </ul>
+    </div>
+    <div>
       <div class="titre-col">réseaux</div>
       <ul>
         <li><a href="#">Instagram</a></li>
@@ -523,7 +528,10 @@ function basculerMenu(){
 /* menu mobile : la flèche déplie/replie le sous-menu du groupe */
 function basculerSousMenu(btn){
   const groupe = btn.closest('.menu-groupe');
-  if(groupe) groupe.classList.toggle('ouvert');
+  if(!groupe) return;
+  const etaitOuvert = groupe.classList.contains('ouvert');
+  groupe.parentElement.querySelectorAll('.menu-groupe.ouvert').forEach(g => g.classList.remove('ouvert'));
+  if(!etaitOuvert) groupe.classList.add('ouvert');
 }
 document.addEventListener('keydown', e => {
   if(e.key === 'Escape' && document.body.classList.contains('menu-ouvert')) basculerMenu();
@@ -706,7 +714,7 @@ if(cartesAnim.length === 6){
       corps:"¤J nous rappelle Jésus-Christ, Dieu fait homme, qui a donné Sa vie pour nous sur la croix. Le chiffre évoque son ministère terrestre : commencé à ¤30 ans, exercé pleinement pendant ¤3 ans." },
     { seed:"J33", phase:"corps",
       titre:"Maturité & plénitude",
-      corps:"‡¤30, l'âge biblique de la maturité et de l'entrée au service (Joseph, David, les Lévites, Jésus) ; ¤3, la plénitude du Dieu trois fois saint. Notre désir : des disciples matures vivant la plénitude de Dieu." },
+      corps:"‡¤30, l'âge biblique de la maturité et de l'entrée au service «(Joseph, David, les Lévites, Jésus)» ; ¤3, la plénitude du Dieu trois fois saint. Notre désir : des disciples matures vivant la plénitude de Dieu." },
     { seed:"J33", phase:"corps",
       titre:"Dieu trinitaire, homme tout entier",
       corps:"Le premier ‡¤3 pour le Père, le Fils et le Saint-Esprit ; le second ¤3 pour l'être humain dans sa totalité — corps, âme et esprit — créé pour vivre pleinement." },
