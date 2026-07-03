@@ -1215,42 +1215,55 @@ if(cartesAnim.length === 6){
     /* 3) « Et je te répondrai » : EXACTEMENT la largeur VISIBLE de « A MOI »
           (le « E » sous le « A », le « i » final sous le « i » de « moi ») */
     if(window.innerWidth <= 760){
-      /* mobile : « Et je te répondrai » et « Jérémie 33 : 3 » centrés et calés à la
-         largeur (visible) de « appel » (ligne2 du grand titre) */
-      const cibleAppel = l2 ? (rectTexte(l2).width - lsPx(l2)) : 0;
-      /* verset : même largeur que « appel » */
-      verset.style.width=''; verset.style.marginLeft=''; verset.style.marginRight='';
-      verset.style.textAlign=''; verset.style.whiteSpace='nowrap'; verset.style.fontSize='';
-      if(vtxt && cibleAppel > 0){
+      /* mobile : « Et je te répondrai », « Jérémie 33 : 3 » et la suite du verset
+         calés SOUS « a moi » (ligne3, à droite) et à la MÊME largeur visible que « a moi » */
+      const refAmoi = orLayer || l3;
+      const rAmoi = refAmoi ? rectTexte(refAmoi) : null;
+      const tRect = titrage.getBoundingClientRect();
+      const amoiInkW = rAmoi ? (rAmoi.width - lsPx(refAmoi)) : 0;
+      const amoiInkL = rAmoi ? rAmoi.left : 0;
+      const decalG = amoiInkL - tRect.left;   /* décalage gauche pour se caler sous « a moi » */
+
+      /* verset : largeur = « a moi », aligné dessous */
+      verset.style.textAlign='left'; verset.style.whiteSpace='nowrap';
+      verset.style.marginLeft='0px'; verset.style.marginRight='0px'; verset.style.width='auto'; verset.style.fontSize='';
+      if(vtxt && amoiInkW > 0){
         let tv = parseFloat(getComputedStyle(vtxt).fontSize) || 20;
         for(let k=0;k<8;k++){
           verset.style.fontSize = tv + 'px';
           const w = rectTexte(vtxt).width - lsPx(verset);
-          if(w > 0) tv = tv * (cibleAppel / w);
+          if(w > 0) tv = tv * (amoiInkW / w);
         }
         verset.style.fontSize = tv + 'px';
+        const rv = rectTexte(vtxt);
+        verset.style.width = Math.ceil((rv.width - lsPx(verset)) + 2) + 'px';
+        verset.style.marginLeft = decalG + 'px';
       }
-      /* référence : même largeur que « appel » */
+      /* référence : largeur = « a moi », alignée dessous */
       if(ref){
-        ref.style.width=''; ref.style.marginLeft=''; ref.style.marginRight='';
-        ref.style.whiteSpace='nowrap'; ref.style.fontSize='';
-        if(cibleAppel > 0){
+        ref.style.textAlign='left'; ref.style.whiteSpace='nowrap';
+        ref.style.marginLeft='0px'; ref.style.marginRight='0px'; ref.style.width='auto'; ref.style.fontSize='';
+        if(amoiInkW > 0){
           let tr = parseFloat(getComputedStyle(ref).fontSize) || 14;
           for(let k=0;k<8;k++){
             ref.style.fontSize = tr + 'px';
             const w = rectTexte(ref).width - lsPx(ref);
-            if(w > 0) tr = tr * (cibleAppel / w);
+            if(w > 0) tr = tr * (amoiInkW / w);
           }
           ref.style.fontSize = tr + 'px';
+          const rr = rectTexte(ref);
+          ref.style.width = Math.ceil((rr.width - lsPx(ref)) + 2) + 'px';
+          ref.style.marginLeft = decalG + 'px';
         }
       }
       { const c=document.getElementById('heroCta'); if(c){ c.style.left=''; c.style.width=''; c.style.right=''; } }
-      /* suite du verset : largeur = celle du verset (inchangée), taille de police plafonnée
+      /* suite du verset : largeur = « a moi » (inchangée), alignée dessous ; police plafonnée
          à celle de « Et je te répondrai » puis réduite pour tenir sur 4 lignes maximum */
-      if(suite){
+      if(suite && amoiInkW > 0){
         suite.style.bottom=''; suite.style.left=''; suite.style.right=''; suite.style.top='';
-        const wVerset = Math.ceil(rectTexte(vtxt).width);
-        suite.style.width = wVerset + 'px';
+        suite.style.marginLeft = decalG + 'px';
+        suite.style.marginRight = '0px';
+        suite.style.width = Math.ceil(amoiInkW) + 'px';
         suite.style.whiteSpace = 'normal';
         const plafond = parseFloat(getComputedStyle(verset).fontSize) || 16;
         function lignesSuite(t){
