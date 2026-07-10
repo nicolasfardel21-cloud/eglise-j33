@@ -468,7 +468,7 @@ footer{padding:90px 28px 40px;max-width:1500px;margin:0 auto;border-top:1px soli
 .ap-hero{display:block;min-height:auto;padding:0;position:relative}
 
 /* bandeau infos dégagé sous la nav (défile normalement) */
-.ap-hero > .infos{margin:62px auto 0}
+.ap-hero > .infos{margin:62px auto 0;max-width:1500px;width:calc(100% - 56px)}
 
 /* le grand titre : maintenu FIGÉ pendant la course de masquage (transform = scroll),
    puis EMPORTÉ par le scroll au-delà → il sort de l'écran et ne réapparaît jamais.
@@ -515,7 +515,7 @@ h1.ap-titre{position:relative;z-index:1;margin:17px auto 0;width:fit-content;max
   .ap-sous{grid-template-columns:1fr 1fr;gap:16px 14px;width:100%;justify-items:center}
   .ap-sous a{font-size:.82rem;letter-spacing:.02em;white-space:nowrap;text-align:center}
   /* infos un peu moins collées aux bords, police légèrement réduite */
-  .hero .infos{padding-left:12px;padding-right:12px;font-size:.66rem}
+  .hero .infos{width:auto;max-width:none;margin-left:0;margin-right:0;padding-left:12px;padding-right:12px;font-size:.66rem}
 }
 @media(prefers-reduced-motion: reduce){
   h1.ap-titre{transform:none !important}
