@@ -382,12 +382,12 @@ section{padding:110px 28px;max-width:1500px;margin:0 auto}
      (display:contents) pour que h1, l'intro et les fiches deviennent des cellules de la grille */
   .split{grid-template-columns:1fr 1fr;align-items:start;padding-top:78px}
   .split-contenu,.hero-venir{display:contents}
-  .split-media{grid-column:2;grid-row:1;position:relative;top:auto;height:auto;align-self:stretch;min-height:44svh}
+  .split-media{grid-column:2;grid-row:1;position:relative;top:auto;height:auto;align-self:stretch;min-height:44svh;will-change:transform}
   .hero-venir h1{grid-column:1;grid-row:1;align-self:end;padding:0 0 0 28px;font-size:2.6rem}
   /* une seule illustration en mobile */
   .split-media img:nth-of-type(2),.split-media img:nth-of-type(3){display:none}
   .vs-espace{display:none}
-  .hero-venir .page-intro{grid-column:1 / -1;grid-row:2;padding:26px 28px 0;margin:0;font-size:.98rem;max-width:none}
+  .hero-venir .page-intro{grid-column:1 / -1;grid-row:2;padding:74px 28px 0;margin:0;font-size:.98rem;max-width:none}
   .split-contenu .visite,.visite{grid-column:1 / -1;grid-row:3;padding:0 28px 26px}
 }
 @media(prefers-reduced-motion: reduce){
@@ -839,6 +839,28 @@ document.querySelectorAll('.reveal').forEach(el=>obs.observe(el));
 /* ligne + sous-liens sous le titre : apparition simple au chargement */
 requestAnimationFrame(()=>requestAnimationFrame(()=>document.querySelector('.hero-page')?.classList.add('vu')));
 
+/* mobile : le cadre de l'image du haut remonte moins vite que le reste de la page.
+   La course (48 px) est réservée sous l'image, l'espace se referme au défilement. */
+(function(){
+  const media = document.getElementById('vsMedia');
+  if(!media) return;
+  const COURSE = 48;
+  const reduitMvt = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const petitEcran = () => window.matchMedia('(max-width:900px)').matches;
+  let tick = false;
+
+  function maj(){
+    tick = false;
+    if(!petitEcran() || reduitMvt){ media.style.transform = ''; return; }
+    const limite = media.offsetHeight || 1;
+    const p = Math.min(1, Math.max(0, window.scrollY / limite));
+    media.style.transform = `translate3d(0, ${p * COURSE}px, 0)`;
+  }
+  addEventListener('scroll', ()=>{ if(!tick){ tick = true; requestAnimationFrame(maj); } }, {passive:true});
+  addEventListener('resize', maj);
+  maj();
+})();
+
 /* le gros titre remplit toute la largeur de sa colonne, et chaque mot est justifié
    à la même largeur en jouant sur l'espacement des lettres (mobile et desktop). */
 (function(){
@@ -967,9 +989,20 @@ requestAnimationFrame(()=>requestAnimationFrame(()=>document.querySelector('.her
     const p = Math.min(1, Math.max(0, -r.top / course));
 
     /* mouvement interne : l'image, agrandie de 40 %, glisse de ±17 % du cadre
-       (la marge de 20 % de chaque côté empêche tout bord de se découvrir) */
+       (la marge de 20 % de chaque côté empêche tout bord de se découvrir).
+       Desktop : la progression suit toute la zone, l'image étant fixe.
+       Mobile : elle suit la traversée du cadre à l'écran, de sorte que l'image
+       monte un peu moins vite que le reste de la page. */
     if(!reduitMvt){
-      const y = (p - .5) * -34;
+      let y;
+      if(window.matchMedia('(max-width:900px)').matches){
+        const m = media.getBoundingClientRect();
+        const vh = window.innerHeight;
+        const pm = Math.min(1, Math.max(0, (vh - m.top) / (vh + m.height)));
+        y = (pm - .5) * 34;
+      } else {
+        y = (p - .5) * -34;
+      }
       imgs.forEach(i => { i.style.transform = `translate3d(0, ${y}%, 0) scale(1.4)`; });
     }
 
