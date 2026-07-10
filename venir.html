@@ -352,7 +352,7 @@ section{padding:110px 28px;max-width:1500px;margin:0 auto}
 .split{display:grid;grid-template-columns:1fr 1fr;align-items:start;position:relative}
 .split-media{position:sticky;top:0;height:100svh;overflow:hidden;
   background:radial-gradient(circle at 30% 20%, var(--bleu-pale), transparent 65%),radial-gradient(circle at 75% 80%, rgba(181,151,60,.18), transparent 55%),#EDEAE2}
-.split-media img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:0;
+.split-media img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:50% 0;opacity:0;
   transform:scale(1.4);will-change:transform,opacity;transition:opacity .9s cubic-bezier(.76,0,.24,1)}
 .split-media img.actif{opacity:1}
 .split-contenu{min-width:0;padding:0 56px}
@@ -400,7 +400,8 @@ section{padding:110px 28px;max-width:1500px;margin:0 auto}
 .page-intro strong{color:var(--encre);font-weight:600}
 .visite{padding-top:70px}
 .fiche{display:grid;grid-template-columns:260px 1fr;gap:34px;padding:64px 0;border-top:1px solid var(--ligne);scroll-margin-top:80px}
-.fiche:last-of-type{border-bottom:0;padding-bottom:0}
+/* la dernière fiche suit la FAQ, qui porte déjà une bordure basse : pas de ligne en plus */
+.fiche:last-of-type{border-top:0;border-bottom:0;padding-bottom:0}
 .fiche-label{font-family:'Anton',sans-serif;font-weight:400;text-transform:uppercase;letter-spacing:.04em;
   line-height:1.1;font-size:clamp(1.25rem,2.6vw,1.8rem);color:var(--or)}
 /* horaires : nom à gauche, créneaux à droite séparés par des // dorés */
