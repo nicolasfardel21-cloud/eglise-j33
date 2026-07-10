@@ -232,7 +232,7 @@ section{padding:110px 28px;max-width:1500px;margin:0 auto}
 .rdv .heure small{display:block;font-weight:300;color:var(--gris);font-size:.8rem;text-transform:uppercase;letter-spacing:.08em}
 .rdv .lieu{font-size:.9rem;color:var(--gris);text-align:right}
 @media(max-width:760px){.rdv{grid-template-columns:1fr 1fr}.rdv .lieu{text-align:left}}
-.note-table{margin-top:22px;font-size:.85rem;color:var(--gris)}
+.note-table{margin-top:22px;font-size:.98rem;color:var(--gris)}
 .note-table b{color:var(--encre);font-weight:600}
 
 /* ---------- héro façon 2819 : images qui montent derrière le grand titre ---------- */
@@ -354,7 +354,6 @@ section{padding:110px 28px;max-width:1500px;margin:0 auto}
   background:radial-gradient(circle at 30% 20%, var(--bleu-pale), transparent 65%),radial-gradient(circle at 75% 80%, rgba(181,151,60,.18), transparent 55%),#EDEAE2}
 .split-media img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:0;transition:opacity .9s cubic-bezier(.76,0,.24,1)}
 .split-media img.actif{opacity:1}
-.split-media .vs-note{position:absolute;left:0;right:0;bottom:0;padding:16px 22px;font-size:.7rem;text-transform:uppercase;letter-spacing:.14em;color:var(--gris);z-index:2}
 .split-contenu{min-width:0;padding:0 56px}
 
 .hero-venir{min-height:100svh;display:flex;flex-direction:column;justify-content:flex-start;padding:104px 0 56px;margin:0;position:relative}
@@ -581,7 +580,6 @@ footer{padding:90px 28px 40px;max-width:1500px;margin:0 auto;border-top:1px soli
     <img class="actif" src="images_venir/Illustration_1.jpg" alt="Église J33 — célébration" onerror="this.style.display='none'">
     <img src="images_venir/Illustration_2.jpg" alt="Église J33 — louange" onerror="this.style.display='none'">
     <img src="images_venir/Illustration_3.jpg" alt="Église J33 — accueil" onerror="this.style.display='none'">
-    <span class="vs-note">// images_venir/Illustration_1-3.jpg</span>
   </div>
 
   <div class="split-contenu">
@@ -650,8 +648,8 @@ footer{padding:90px 28px 40px;max-width:1500px;margin:0 auto;border-top:1px soli
           <div class="rep">Vous serez accueilli à l'entrée, on vous indiquera où vous installer et où déposer les enfants s'il y en a. La célébration dure environ deux heures : un temps de louange, un message tiré de la Bible, puis un moment convivial. Personne ne vous mettra en avant — vous êtes libre de simplement observer.</div>
         </details>
         <details>
-          <summary>Où et quand vous réunissez-vous ?</summary>
-          <div class="rep">Nous nous réunissons les dimanches, de 10h00 à 12h00, ainsi qu'un samedi par mois, à Is-sur-Tille et à Gemeaux.<br><br>Comme nous nous réunissons actuellement dans nos maisons, en attendant d'avoir un local, nous n'affichons pas notre adresse en ligne. Écrivez-nous pour connaître le lieu du prochain rassemblement — nous vous répondrons rapidement.</div>
+          <summary>Où et quand nous retrouver ?</summary>
+          <div class="rep">Nous nous réunissons les dimanches de 10h00 à 12h00, ainsi qu'un samedi soir par mois, à Is-sur-Tille et à Gemeaux.<br><br>En attendant d'avoir notre propre local, nous nous retrouvons actuellement dans nos maisons. Écrivez-nous pour connaître le lieu de notre prochain rassemblement — nous serons ravis de vous accueillir et vous répondrons très vite !</div>
         </details>
         <details>
           <summary>Comment dois-je m'habiller ?</summary>
@@ -708,7 +706,7 @@ footer{padding:90px 28px 40px;max-width:1500px;margin:0 auto;border-top:1px soli
           </select>
         </div>
         <button type="button" id="btnVenue">Envoyer</button>
-        <p class="form-note" id="noteVenue">Votre messagerie s'ouvrira avec le message pré-rempli, à destination de <b>nicolas.fardel@eglise-j33.org</b></p>
+        <p class="form-note" id="noteVenue" hidden></p>
       </div>
     </div>
   </div>
@@ -862,6 +860,7 @@ requestAnimationFrame(()=>requestAnimationFrame(()=>document.querySelector('.her
     });
     if(!ok){
       note.innerHTML = 'Merci de compléter tous les champs avec une adresse e-mail valide.';
+      note.hidden = false;
       return;
     }
     const [p, n, e, pr] = champs.map(c=>c.value.trim());
@@ -872,6 +871,7 @@ requestAnimationFrame(()=>requestAnimationFrame(()=>document.querySelector('.her
       `À bientôt,\n${p} ${n}`;
     window.location.href = `mailto:${dest}?subject=${encodeURIComponent(sujet)}&body=${encodeURIComponent(corps)}`;
     note.innerHTML = 'Votre messagerie devrait s\'ouvrir. Si rien ne se passe, écrivez-nous à <b>' + dest + '</b>';
+    note.hidden = false;
   });
 })();
 
