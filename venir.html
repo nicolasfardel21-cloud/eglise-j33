@@ -378,15 +378,17 @@ section{padding:110px 28px;max-width:1500px;margin:0 auto}
 .split-contenu .details-grille{grid-template-columns:1fr;gap:34px}
 
 @media(max-width:900px){
-  .split{grid-template-columns:1fr}
-  .split-media{position:relative;top:auto;height:46svh}
-  .split-contenu{padding:0 28px}
-  .hero-venir{min-height:0;padding:34px 0 26px}
-  .hero-venir h1{font-size:clamp(2.2rem,10.5vw,4.2rem)}
-  .hero-venir .page-intro{margin-bottom:0;font-size:.98rem}
-  .hero-venir .page-sous{margin-top:20px;justify-content:center;grid-template-columns:1fr 1fr}
-  .vs-espace{min-height:24px}
-  .split-contenu .visite{padding:0 0 26px}
+  /* le titre occupe la moitié gauche, l'image la moitié droite : on aplatit les conteneurs
+     (display:contents) pour que h1, l'intro et les fiches deviennent des cellules de la grille */
+  .split{grid-template-columns:1fr 1fr;align-items:start;padding-top:78px}
+  .split-contenu,.hero-venir{display:contents}
+  .split-media{grid-column:2;grid-row:1;position:relative;top:auto;height:auto;align-self:stretch;min-height:44svh}
+  .hero-venir h1{grid-column:1;grid-row:1;align-self:start;padding:0 0 0 28px;font-size:2.6rem}
+  /* largeur du contenu réel, pour pouvoir mesurer et justifier chaque mot */
+  .hero-venir h1 > span{width:max-content}
+  .vs-espace{display:none}
+  .hero-venir .page-intro{grid-column:1 / -1;grid-row:2;padding:26px 28px 0;margin:0;font-size:.98rem;max-width:none}
+  .split-contenu .visite,.visite{grid-column:1 / -1;grid-row:3;padding:0 28px 26px}
 }
 @media(prefers-reduced-motion: reduce){
   .split-media{position:relative;height:52svh}
@@ -664,12 +666,8 @@ footer{padding:90px 28px 40px;max-width:1500px;margin:0 auto;border-top:1px soli
           <div class="rep">Un club enfants a lieu pendant les célébrations du dimanche : les enfants y découvrent la Bible à leur rythme, avec des activités adaptées à leur âge.</div>
         </details>
         <details>
-          <summary>Comment rejoindre une étude biblique ?</summary>
-          <div class="rep">Nos études bibliques ont lieu un dimanche par mois, de 16h30 à 17h30, en visio — pratique où que vous soyez. Demandez-nous le lien via la page contact.</div>
-        </details>
-        <details>
           <summary>Y a-t-il un rendez-vous en semaine ?</summary>
-          <div class="rep">Oui : la réunion de prière, deux mardis par mois de 20h30 à 21h30, à Is-sur-Tille ou Gemeaux. Et une soirée louange un samedi par mois <span class="or-txt">(19h30 — 21h30)</span> avec adoration et repas partagé.</div>
+          <div class="rep">En plus du dimanche, nous nous retrouvons en cours de mois les mardis soirs (de 20h30 à 21h30) pour des moments de partage et de prière, ainsi qu'un samedi soir par mois (de 19h30 à 21h30) pour une soirée louange, adoration et repas partagé.</div>
         </details>
       </div>
     </div>
@@ -839,6 +837,68 @@ document.querySelectorAll('.reveal').forEach(el=>obs.observe(el));
 
 /* ligne + sous-liens sous le titre : apparition simple au chargement */
 requestAnimationFrame(()=>requestAnimationFrame(()=>document.querySelector('.hero-page')?.classList.add('vu')));
+
+/* mobile : le gros titre occupe la moitié de la largeur, et chaque mot est justifié
+   à la même largeur en jouant sur l'espacement des lettres. */
+(function(){
+  const h1 = document.querySelector('.hero-venir h1');
+  if(!h1) return;
+  const mots = [...h1.querySelectorAll('span')];
+  if(!mots.length) return;
+  const mobile = () => window.matchMedia('(max-width:900px)').matches;
+  let largeurPrec = 0;
+
+  function mesurer(mot){
+    /* largeur naturelle, sans espacement ajouté */
+    mot.style.letterSpacing = '0px';
+    mot.style.marginRight = '0px';
+    return mot.getBoundingClientRect().width;
+  }
+
+  function caler(){
+    if(!mobile()){
+      h1.style.fontSize = '';
+      mots.forEach(m=>{ m.style.letterSpacing = ''; m.style.marginRight = ''; });
+      return;
+    }
+    const cs = getComputedStyle(h1);
+    const cible = h1.clientWidth - parseFloat(cs.paddingLeft) - parseFloat(cs.paddingRight);
+    if(cible <= 0) return;
+
+    /* dichotomie : plus grande taille où le mot le plus large tient dans la cible */
+    let bas = 10, haut = 200;
+    for(let i = 0; i < 22; i++){
+      const test = (bas + haut) / 2;
+      h1.style.fontSize = test + 'px';
+      const large = Math.max(...mots.map(mesurer));
+      if(large <= cible) bas = test; else haut = test;
+    }
+    h1.style.fontSize = bas + 'px';
+
+    /* justification : on répartit le manque de largeur entre les lettres,
+       puis on annule le surplus ajouté après la dernière lettre */
+    mots.forEach(m=>{
+      const naturelle = mesurer(m);
+      const lettres = [...m.textContent.trim()].length;
+      if(lettres < 2) return;
+      const ecart = (cible - naturelle) / lettres;
+      m.style.letterSpacing = ecart + 'px';
+      m.style.marginRight = (-ecart) + 'px';
+    });
+  }
+
+  function surRedimension(){
+    /* on ignore les changements de hauteur seuls (barre d'adresse mobile) */
+    if(window.innerWidth === largeurPrec) return;
+    largeurPrec = window.innerWidth;
+    caler();
+  }
+
+  largeurPrec = window.innerWidth;
+  if(document.fonts && document.fonts.ready) document.fonts.ready.then(caler);
+  addEventListener('resize', surRedimension);
+  caler();
+})();
 
 /* formulaire "votre venue" : ouvre la messagerie avec un message pré-rempli */
 (function(){
