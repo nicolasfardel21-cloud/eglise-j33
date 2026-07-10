@@ -356,22 +356,22 @@ section{padding:110px 28px;max-width:1500px;margin:0 auto}
 .split-media img.actif{opacity:1}
 .split-contenu{min-width:0;padding:0 56px}
 
-.hero-venir{min-height:100svh;display:flex;flex-direction:column;justify-content:flex-start;padding:104px 0 56px;margin:0;position:relative}
+.hero-venir{min-height:0;display:flex;flex-direction:column;justify-content:flex-start;padding:104px 0 30px;margin:0;position:relative}
 .hero-venir h1{font-family:'Anton',sans-serif;font-weight:400;text-transform:uppercase;letter-spacing:.04em;
   line-height:.94;font-size:clamp(2.4rem,min(6.6vw,13svh),8.4rem);margin:0;align-self:stretch;text-align:left}
 .hero-venir h1 > span{display:block;white-space:nowrap;text-align:left;opacity:0;animation:monter .9s ease forwards}
 .hero-venir h1 > .ligne1{animation-delay:0s}
 .hero-venir h1 > .ligne2{animation-delay:.15s}
 .hero-venir h1 > .ligne3{color:var(--or);animation-delay:.3s}
-.vs-espace{flex:1;min-height:26px}
-.hero-venir .page-intro{margin:0 0 30px;max-width:46ch;text-align:left}
+.vs-espace{flex:0 0 auto;min-height:34px}
+.hero-venir .page-intro{margin:0;max-width:46ch;text-align:left}
 .hero-venir .page-suite{margin:0;padding:0}
 .hero-venir .page-inner{max-width:none;text-align:left}
 .hero-venir .page-sous{justify-content:flex-start;margin-top:26px}
 
 /* la section des fiches vit dans la colonne de droite : une seule colonne, sans marge propre */
-.split-contenu .visite{padding:40px 0 90px;max-width:none;margin:0}
-.split-contenu .fiche{grid-template-columns:1fr;gap:22px;padding:56px 0}
+.split-contenu .visite{padding:0 0 90px;max-width:none;margin:0}
+.split-contenu .fiche{grid-template-columns:1fr;gap:22px;padding:44px 0}
 .split-contenu .rdv{grid-template-columns:1fr 1fr}
 .split-contenu .rdv .lieu{text-align:left}
 .split-contenu .details-grille{grid-template-columns:1fr;gap:34px}
@@ -380,12 +380,12 @@ section{padding:110px 28px;max-width:1500px;margin:0 auto}
   .split{grid-template-columns:1fr}
   .split-media{position:relative;top:auto;height:46svh}
   .split-contenu{padding:0 28px}
-  .hero-venir{min-height:0;padding:34px 0 40px}
+  .hero-venir{min-height:0;padding:34px 0 26px}
   .hero-venir h1{font-size:clamp(2.2rem,10.5vw,4.2rem)}
-  .hero-venir .page-intro{margin-bottom:20px;font-size:.98rem}
+  .hero-venir .page-intro{margin-bottom:0;font-size:.98rem}
   .hero-venir .page-sous{margin-top:20px;justify-content:center;grid-template-columns:1fr 1fr}
-  .vs-espace{min-height:22px}
-  .split-contenu .visite{padding:10px 0 70px}
+  .vs-espace{min-height:24px}
+  .split-contenu .visite{padding:0 0 70px}
 }
 @media(prefers-reduced-motion: reduce){
   .split-media{position:relative;height:52svh}
@@ -590,7 +590,7 @@ footer{padding:90px 28px 40px;max-width:1500px;margin:0 auto;border-top:1px soli
         <span class="ligne3">voir</span>
       </h1>
       <div class="vs-espace"></div>
-      <p class="page-intro">Une église de quartier, une famille où l'on prie, où l'on chante et où l'on grandit ensemble. <strong>Poussez la porte : il y a une place pour vous.</strong></p>
+      <p class="page-intro">Une église vivante, une famille où l'on prie, où l'on célèbre et où l'on grandit ensemble. <strong>Poussez la porte : il y a une place pour vous.</strong></p>
     </header>
 
 <section class="visite">
