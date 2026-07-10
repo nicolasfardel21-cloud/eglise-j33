@@ -104,7 +104,7 @@ body.menu-ouvert .menu-groupe:nth-child(4){transition-delay:.36s}
 .hero .infos{display:flex;justify-content:space-between;align-items:baseline;flex-wrap:wrap;gap:8px;text-transform:uppercase;letter-spacing:.14em;font-size:.78rem;font-weight:500;border-top:1px solid var(--ligne);padding-top:16px;max-width:1500px;margin:0 auto;width:100%}
 .hero .infos .h{color:var(--or)}
 @media(max-width:560px){
-  .hero .infos{padding-left:12px;padding-right:12px;font-size:.66rem}
+  .hero .infos{margin-left:-28px;margin-right:-28px;width:auto;max-width:none;padding-left:12px;padding-right:12px;font-size:.66rem}
 }
 .hero h1{font-size:clamp(2rem,min(11.5vw,16svh),12rem);line-height:.98;text-transform:uppercase;letter-spacing:.04em;margin:20px 0 0;align-self:center;display:block}
 .hero h1 > span{display:block;white-space:nowrap}
@@ -146,10 +146,34 @@ body.menu-ouvert .menu-groupe:nth-child(4){transition-delay:.36s}
   .cs-skips,.cs-progres{display:none}
 }
 .hero .cta{display:flex;gap:14px;flex-wrap:wrap;margin:48px auto 0;max-width:1500px;width:100%}
-.hero .sous-liens{max-width:1500px;margin:40px auto 0;width:100%;display:flex;flex-wrap:wrap;gap:4px 28px}
-.hero .sous-liens a{text-decoration:none;font-size:1rem;color:var(--gris);transition:color .25s}
-.hero .sous-liens a:hover{color:var(--or)}
-.hero .sous-liens a::before{content:"\2193\00a0";color:var(--or)}
+/* ligne + sous-liens pleine largeur sous le grand titre (même disposition que a-propos,
+   mais ligne fixe pleine largeur au lieu d'être calée en JS sur l'empan des liens,
+   et sans l'effet de scroll "avale" — juste une apparition simple au chargement) */
+.page-suite{position:relative;margin:40px 0 0;padding:0 28px}
+.page-inner{max-width:1500px;margin:0 auto;width:100%;text-align:center}
+.page-ligne{height:2px;width:100%;background:var(--encre);
+  transform:scaleX(0);transform-origin:center;
+  transition:transform 1s cubic-bezier(.76,0,.24,1)}
+.hero-page.vu .page-ligne{transform:scaleX(1)}
+.page-sous{display:flex;justify-content:center;gap:14px 30px;line-height:1;
+  margin:32px 0 0;opacity:0;transform:translateY(14px);
+  transition:opacity .7s ease .3s,transform .7s ease .3s}
+.hero-page.vu .page-sous{opacity:1;transform:none}
+.page-sous a{text-decoration:none;text-transform:uppercase;letter-spacing:.04em;
+  font-size:clamp(.9rem,1.4vw,1.12rem);font-weight:700;color:var(--encre);
+  transition:color .25s;white-space:nowrap}
+.page-sous a:hover{color:var(--or)}
+@media(max-width:980px){
+  .page-sous{display:grid;grid-template-columns:repeat(3,auto);justify-content:center;justify-items:center;gap:18px 44px}
+}
+@media(max-width:560px){
+  .page-sous{grid-template-columns:1fr 1fr;gap:16px 14px;width:100%;justify-items:center}
+  .page-sous a{font-size:.82rem;letter-spacing:.02em;white-space:nowrap;text-align:center}
+}
+@media(prefers-reduced-motion: reduce){
+  .page-ligne{transform:none}
+  .page-sous{opacity:1;transform:none}
+}
 
 /* ---------- scènes parallaxe (accueil) ---------- */
 .hero-scene{position:relative;height:185svh}
@@ -438,10 +462,15 @@ footer{padding:90px 28px 40px;max-width:1500px;margin:0 auto;border-top:1px soli
     <span class="ligne2">nous</span>
     <span class="ligne3">voir</span>
   </h1>
-  <div class="sous-liens">
-    <a href="#horaires">Horaires &amp; lieux</a>
-    <a href="#premiere">Première visite</a>
-    <a href="#faq">FAQ</a>
+  <div class="page-suite">
+    <div class="page-inner">
+      <div class="page-ligne"></div>
+      <nav class="page-sous" aria-label="Sommaire de la page">
+        <a href="#horaires">Horaires &amp; lieux</a>
+        <a href="#premiere">Première visite</a>
+        <a href="#faq">FAQ</a>
+      </nav>
+    </div>
   </div>
 </header>
 
@@ -647,6 +676,9 @@ document.querySelectorAll('.mot-rotatif').forEach(motRotatif=>{
 /* apparitions */
 const obs = new IntersectionObserver(es=>{es.forEach(e=>{if(e.isIntersecting){e.target.classList.add('visible');obs.unobserve(e.target);}})},{threshold:0});
 document.querySelectorAll('.reveal').forEach(el=>obs.observe(el));
+
+/* ligne + sous-liens sous le titre : apparition simple au chargement */
+requestAnimationFrame(()=>requestAnimationFrame(()=>document.querySelector('.hero-page')?.classList.add('vu')));
 
 /* interactions au scroll */
 const reduit = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
