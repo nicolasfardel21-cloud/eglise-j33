@@ -399,12 +399,11 @@ section{padding:110px 28px;max-width:1500px;margin:0 auto}
 .visite{padding-top:70px}
 .fiche{display:grid;grid-template-columns:260px 1fr;gap:34px;padding:64px 0;border-top:1px solid var(--ligne);scroll-margin-top:80px}
 .fiche:last-of-type{border-bottom:1px solid var(--ligne)}
-.fiche-label{text-transform:uppercase;letter-spacing:.2em;font-size:.75rem;font-weight:600;color:var(--or)}
-.fiche-label::before{content:"( "} .fiche-label::after{content:" )"}
+.fiche-label{font-family:'Anton',sans-serif;font-weight:400;text-transform:uppercase;letter-spacing:.04em;
+  line-height:1.1;font-size:clamp(1.25rem,2.6vw,1.8rem);color:var(--or)}
 /* horaires : nom à gauche, créneaux à droite séparés par des // dorés */
 .horaires-liste{display:flex;flex-direction:column;gap:18px}
 .hl{display:flex;justify-content:space-between;align-items:baseline;gap:12px 24px;flex-wrap:wrap}
-.hl + .hl{padding-left:38px}
 .hl-nom{font-family:'Anton',sans-serif;font-weight:400;text-transform:uppercase;letter-spacing:.03em;
   line-height:1.05;font-size:clamp(1.1rem,1.9vw,1.7rem)}
 .hl-creneaux{font-family:'Anton',sans-serif;font-weight:400;text-transform:uppercase;letter-spacing:.03em;
@@ -412,8 +411,7 @@ section{padding:110px 28px;max-width:1500px;margin:0 auto}
 .hl-creneaux .sep{color:var(--or);padding:0 8px}
 .hl-detail{flex:1 0 100%;font-size:.74rem;text-transform:uppercase;letter-spacing:.12em;color:var(--gris);margin-top:-2px}
 @media(max-width:760px){
-  .hl + .hl{padding-left:0}
-  .hl-creneaux{margin-left:0}
+  .hl-creneaux{margin-left:auto}
 }
 @media(max-width:430px){
   .hl-nom,.hl-creneaux{font-size:.98rem}
@@ -424,7 +422,7 @@ section{padding:110px 28px;max-width:1500px;margin:0 auto}
 .fiche .table-rdv{border-top:none}
 .fiche .rdv:first-child{padding-top:0}
 .fiche .rdv:last-child{border-bottom:none;padding-bottom:0}
-.lieux-grands{font-family:'Anton',sans-serif;font-weight:400;text-transform:uppercase;letter-spacing:.04em;line-height:1.1;font-size:clamp(1.9rem,5vw,4rem)}
+.lieux-grands{font-family:'Anton',sans-serif;font-weight:400;text-transform:uppercase;letter-spacing:.04em;line-height:1.1;font-size:clamp(1.25rem,2.6vw,1.8rem)}
 .lieux-grands .sep{color:var(--or)}
 .fiche .note-table{margin-top:18px}
 .carte-lieu{margin-top:34px;border:1px solid var(--ligne);position:relative}
@@ -439,6 +437,31 @@ section{padding:110px 28px;max-width:1500px;margin:0 auto}
 .venue-titre .or{color:var(--or)}
 .venue-texte{margin:22px 0 30px;color:var(--gris);font-size:1.02rem;max-width:54ch}
 .venue-texte strong{color:var(--encre);font-weight:600}
+
+/* formulaire "dites-nous que vous venez" */
+.form-venue{border:1px solid var(--encre);padding:38px 34px;margin-top:34px;background:var(--fond)}
+@media(max-width:560px){.form-venue{padding:26px 20px}}
+.champ{margin-bottom:28px}
+.champ:last-of-type{margin-bottom:26px}
+.champ label{display:block;font-family:'Anton',sans-serif;font-weight:400;text-transform:uppercase;
+  letter-spacing:.06em;font-size:clamp(.95rem,1.5vw,1.15rem);margin-bottom:10px}
+.champ input,.champ select{width:100%;font-family:'Archivo',sans-serif;font-size:1rem;color:var(--encre);
+  background:#F4F4F2;border:0;border-bottom:2px solid var(--encre);border-radius:0;
+  padding:16px 12px;appearance:none;transition:background .25s,border-color .25s}
+.champ input:focus,.champ select:focus{outline:none;background:#EDEDEA;border-bottom-color:var(--or)}
+.champ select{border:1px solid var(--or);background:var(--fond);
+  background-image:linear-gradient(45deg,transparent 50%,var(--or) 50%),linear-gradient(135deg,var(--or) 50%,transparent 50%);
+  background-position:calc(100% - 20px) calc(50% + 2px),calc(100% - 14px) calc(50% + 2px);
+  background-size:6px 6px,6px 6px;background-repeat:no-repeat;padding-right:44px;color:var(--gris)}
+.champ select.rempli{color:var(--encre)}
+.champ input::placeholder{color:var(--gris)}
+.champ.erreur input,.champ.erreur select{border-color:#B4332F}
+.form-venue button{width:100%;border:0;cursor:pointer;background:var(--encre);color:var(--fond);
+  font-family:'Anton',sans-serif;font-weight:400;text-transform:uppercase;letter-spacing:.1em;
+  font-size:clamp(1rem,1.8vw,1.3rem);padding:20px 24px;border-radius:0;transition:background .25s}
+.form-venue button:hover{background:var(--or)}
+.form-note{margin-top:16px;font-size:.78rem;color:var(--gris);text-align:center}
+.form-note b{color:var(--encre);font-weight:600}
 
 /* ---------- duo colonnes ---------- */
 .duo{display:grid;grid-template-columns:1fr 1fr;gap:60px}
@@ -569,17 +592,7 @@ footer{padding:90px 28px 40px;max-width:1500px;margin:0 auto;border-top:1px soli
         <span class="ligne3">voir</span>
       </h1>
       <div class="vs-espace"></div>
-      <p class="page-intro">Si vous avez soif de vérité biblique et d'une église vivante, proche de chez vous : <strong>venez vivre J33 par vous-même.</strong></p>
-      <div class="page-suite">
-        <div class="page-inner">
-          <div class="page-ligne"></div>
-          <div class="page-sous" role="navigation" aria-label="Sommaire de la page">
-            <a href="#horaires">Horaires &amp; lieux</a>
-            <a href="#premiere">Première visite</a>
-            <a href="#faq">FAQ</a>
-          </div>
-        </div>
-      </div>
+      <p class="page-intro">Une église de quartier, une famille où l'on prie, où l'on chante et où l'on grandit ensemble. <strong>Poussez la porte : il y a une place pour vous.</strong></p>
     </header>
 
 <section class="visite">
@@ -595,7 +608,7 @@ footer{padding:90px 28px 40px;max-width:1500px;margin:0 auto;border-top:1px soli
         <div class="hl">
           <span class="hl-nom">Soirée louange</span>
           <span class="hl-creneaux">19h30 <span class="sep">//</span> 21h30</span>
-          <span class="hl-detail">1 samedi / mois · apéritif dînatoire · adoration</span>
+          <span class="hl-detail">1 samedi / mois · adoration · repas partagé</span>
         </div>
       </div>
     </div>
@@ -638,7 +651,7 @@ footer{padding:90px 28px 40px;max-width:1500px;margin:0 auto;border-top:1px soli
         </details>
         <details>
           <summary>Où et quand vous réunissez-vous ?</summary>
-          <div class="rep">Nous célébrons 3 dimanches par mois, de 10h00 à 12h00, à Is-sur-Tille ou à Gemeaux. Écrivez-nous pour connaître le lieu du prochain rassemblement — nous vous répondrons rapidement.</div>
+          <div class="rep">Nous nous réunissons les dimanches, de 10h00 à 12h00, ainsi qu'un samedi par mois, à Is-sur-Tille et à Gemeaux.<br><br>Comme nous nous réunissons actuellement dans nos maisons, en attendant d'avoir un local, nous n'affichons pas notre adresse en ligne. Écrivez-nous pour connaître le lieu du prochain rassemblement — nous vous répondrons rapidement.</div>
         </details>
         <details>
           <summary>Comment dois-je m'habiller ?</summary>
@@ -658,7 +671,7 @@ footer{padding:90px 28px 40px;max-width:1500px;margin:0 auto;border-top:1px soli
         </details>
         <details>
           <summary>Y a-t-il un rendez-vous en semaine ?</summary>
-          <div class="rep">Oui : la réunion de prière, deux mardis par mois de 20h30 à 21h30, à Is-sur-Tille ou Gemeaux. Et une soirée louange un samedi par mois <span class="or-txt">(19h30 — 21h30)</span> avec apéritif dînatoire.</div>
+          <div class="rep">Oui : la réunion de prière, deux mardis par mois de 20h30 à 21h30, à Is-sur-Tille ou Gemeaux. Et une soirée louange un samedi par mois <span class="or-txt">(19h30 — 21h30)</span> avec adoration et repas partagé.</div>
         </details>
       </div>
     </div>
@@ -669,7 +682,34 @@ footer{padding:90px 28px 40px;max-width:1500px;margin:0 auto;border-top:1px soli
     <div class="fiche-contenu">
       <h2 class="venue-titre">Dites-nous que<br><span class="or">vous venez</span></h2>
       <p class="venue-texte">Nous serions heureux de vous accueillir. <strong>Partagez-nous votre venue</strong> pour que notre équipe puisse vous recevoir comme il se doit — et vous communiquer l'adresse exacte du prochain rendez-vous.</p>
-      <a class="lien-paren plein or" href="contact.html">nous écrire</a>
+
+      <div class="form-venue">
+        <div class="champ">
+          <label for="fPrenom">Prénom</label>
+          <input type="text" id="fPrenom" name="prenom" autocomplete="given-name">
+        </div>
+        <div class="champ">
+          <label for="fNom">Nom</label>
+          <input type="text" id="fNom" name="nom" autocomplete="family-name">
+        </div>
+        <div class="champ">
+          <label for="fEmail">E-mail</label>
+          <input type="email" id="fEmail" name="email" autocomplete="email">
+        </div>
+        <div class="champ">
+          <label for="fProfil">Ce qui vous décrit le mieux</label>
+          <select id="fProfil" name="profil">
+            <option value="" selected disabled>Choisir…</option>
+            <option>Je viens pour la première fois</option>
+            <option>Je suis de passage dans la région</option>
+            <option>Je cherche une église</option>
+            <option>Je viens en famille, avec des enfants</option>
+            <option>Je souhaite simplement échanger</option>
+          </select>
+        </div>
+        <button type="button" id="btnVenue">Envoyer</button>
+        <p class="form-note" id="noteVenue">Votre messagerie s'ouvrira avec le message pré-rempli, à destination de <b>nicolas.fardel@eglise-j33.org</b></p>
+      </div>
     </div>
   </div>
 </section>
@@ -801,17 +841,58 @@ document.querySelectorAll('.reveal').forEach(el=>obs.observe(el));
 /* ligne + sous-liens sous le titre : apparition simple au chargement */
 requestAnimationFrame(()=>requestAnimationFrame(()=>document.querySelector('.hero-page')?.classList.add('vu')));
 
-/* venir : les 3 visuels de la colonne fixe se succèdent par tiers du défilement de la zone */
+/* formulaire "votre venue" : ouvre la messagerie avec un message pré-rempli */
+(function(){
+  const btn = document.getElementById('btnVenue');
+  if(!btn) return;
+  const dest = 'nicolas.fardel@eglise-j33.org';
+  const note = document.getElementById('noteVenue');
+  const sel = document.getElementById('fProfil');
+  const champs = ['fPrenom','fNom','fEmail','fProfil'].map(id=>document.getElementById(id));
+
+  sel.addEventListener('change', ()=>sel.classList.add('rempli'));
+  champs.forEach(c=>c.addEventListener('input', ()=>c.closest('.champ').classList.remove('erreur')));
+
+  btn.addEventListener('click', ()=>{
+    let ok = true;
+    champs.forEach(c=>{
+      const vide = !c.value.trim();
+      const mailInvalide = c.type === 'email' && c.value && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(c.value);
+      if(vide || mailInvalide){ c.closest('.champ').classList.add('erreur'); ok = false; }
+    });
+    if(!ok){
+      note.innerHTML = 'Merci de compléter tous les champs avec une adresse e-mail valide.';
+      return;
+    }
+    const [p, n, e, pr] = champs.map(c=>c.value.trim());
+    const sujet = `Je viens à J33 — ${p} ${n}`;
+    const corps =
+      `Bonjour,\n\nJe souhaite vous prévenir de ma venue à l'église J33.\n\n` +
+      `Prénom : ${p}\nNom : ${n}\nE-mail : ${e}\nCe qui me décrit le mieux : ${pr}\n\n` +
+      `À bientôt,\n${p} ${n}`;
+    window.location.href = `mailto:${dest}?subject=${encodeURIComponent(sujet)}&body=${encodeURIComponent(corps)}`;
+    note.innerHTML = 'Votre messagerie devrait s\'ouvrir. Si rien ne se passe, écrivez-nous à <b>' + dest + '</b>';
+  });
+})();
+
+/* venir : les 3 visuels de la colonne fixe se succèdent par tiers du défilement de la zone.
+   Les images introuvables sont retirées de la rotation (sinon un tiers du scroll resterait vide). */
 (function(){
   const zone = document.getElementById('splitVenir');
   const media = document.getElementById('vsMedia');
   if(!zone || !media) return;
-  const imgs = [...media.querySelectorAll('img')];
-  if(imgs.length < 2) return;
-  let actif = 0, tick = false;
+  let imgs = [], actif = 0, tick = false;
 
+  function recenser(){
+    imgs = [...media.querySelectorAll('img')].filter(i => i.complete && i.naturalWidth > 0);
+    if(!imgs.length) return;
+    imgs.forEach((i,n)=>i.classList.toggle('actif', n === 0));
+    actif = 0;
+    maj();
+  }
   function maj(){
     tick = false;
+    if(imgs.length < 2) return;
     const r = zone.getBoundingClientRect();
     const course = zone.offsetHeight - window.innerHeight;
     if(course <= 0) return;
@@ -825,7 +906,8 @@ requestAnimationFrame(()=>requestAnimationFrame(()=>document.querySelector('.her
   }
   addEventListener('scroll', ()=>{ if(!tick){ tick = true; requestAnimationFrame(maj); } }, {passive:true});
   addEventListener('resize', maj);
-  maj();
+  addEventListener('load', recenser);
+  recenser();
 })();
 
 /* interactions au scroll */
