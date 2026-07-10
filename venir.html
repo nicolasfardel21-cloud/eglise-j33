@@ -50,15 +50,18 @@ body.menu-ouvert nav .marque{color:var(--creme)}
 .menu-overlay{position:fixed;inset:0;z-index:95;background:var(--noir);color:var(--creme);display:flex;flex-direction:column;transform:translateY(-102%);transition:transform .65s cubic-bezier(.76,0,.24,1);padding:80px 28px 30px;overflow-y:auto}
 body.menu-ouvert .menu-overlay{transform:translateY(0)}
 body.menu-ouvert{overflow:hidden}
-.menu-corps{flex:1;display:flex;flex-direction:column;justify-content:space-between;gap:36px;max-width:1500px;width:100%;margin:0 auto}
-.menu-groupes{display:flex;flex-direction:column}
-.menu-groupe{display:grid;grid-template-columns:1fr auto;gap:8px 30px;align-items:center;padding:16px 0;border-bottom:1px solid var(--creme-15);opacity:0;transform:translateY(26px)}
-body.menu-ouvert .menu-groupe{opacity:1;transform:none;transition:opacity .5s ease,transform .5s ease}
-body.menu-ouvert .menu-groupe:nth-child(1){transition-delay:.12s}
-body.menu-ouvert .menu-groupe:nth-child(2){transition-delay:.20s}
-body.menu-ouvert .menu-groupe:nth-child(3){transition-delay:.28s}
-body.menu-ouvert .menu-groupe:nth-child(4){transition-delay:.36s}
-.menu-groupe .gros{font-family:'Anton',sans-serif;font-size:clamp(2.1rem,5vw,4.2rem);line-height:1.12;white-space:nowrap;text-transform:uppercase;text-decoration:none;display:flex;align-items:baseline;gap:20px;transition:color .25s,padding-left .3s}
+.menu-corps{flex:1;display:flex;flex-direction:column;max-width:1500px;width:100%;margin:0 auto}
+.menu-groupes{display:flex;flex-direction:column;flex:1}
+.menu-groupe{display:grid;grid-template-columns:1fr auto;gap:8px 30px;align-items:center;padding:16px 0;border-bottom:1px solid var(--creme-15)}
+.menu-groupe .gros{clip-path:inset(0 0 100% 0)}
+.menu-groupe .menu-fleche{opacity:0;transition:opacity .4s ease}
+body.menu-ouvert .menu-groupe .gros{clip-path:inset(0 0 0% 0)}
+body.menu-ouvert .menu-groupe .menu-fleche{opacity:1}
+.menu-groupe .gros{font-family:'Anton',sans-serif;font-size:clamp(2.1rem,5vw,4.2rem);line-height:1.12;white-space:nowrap;text-transform:uppercase;text-decoration:none;display:flex;align-items:baseline;gap:20px;transition:color .25s,padding-left .3s,clip-path .6s cubic-bezier(.65,0,.35,1)}
+body.menu-ouvert .menu-groupe:nth-child(1) .gros,body.menu-ouvert .menu-groupe:nth-child(1) .menu-fleche{transition-delay:.12s}
+body.menu-ouvert .menu-groupe:nth-child(2) .gros,body.menu-ouvert .menu-groupe:nth-child(2) .menu-fleche{transition-delay:.20s}
+body.menu-ouvert .menu-groupe:nth-child(3) .gros,body.menu-ouvert .menu-groupe:nth-child(3) .menu-fleche{transition-delay:.28s}
+body.menu-ouvert .menu-groupe:nth-child(4) .gros,body.menu-ouvert .menu-groupe:nth-child(4) .menu-fleche{transition-delay:.36s}
 .menu-groupe .gros:hover{color:var(--or);padding-left:14px}
 .menu-groupe .gros small{font-family:'Archivo',sans-serif;font-size:.74rem;letter-spacing:.2em;color:var(--or)}
 .menu-sous{display:flex;flex-wrap:wrap;gap:6px 18px;justify-content:flex-end;opacity:0;transform:translateY(16px);pointer-events:none;transition:opacity .35s ease,transform .35s ease}
@@ -76,10 +79,19 @@ body.menu-ouvert .menu-groupe:nth-child(4){transition-delay:.36s}
   .menu-pied{font-size:.66rem;gap:10px 16px}
   .menu-pied span:not(.verset-pied){white-space:nowrap}
 }
+.menu-reseaux{display:flex;gap:10px;align-items:center;justify-content:flex-end;margin-bottom:10px}
+.menu-reseaux a{width:40px;height:40px;border-radius:50%;border:1px solid var(--creme-15);display:flex;align-items:center;justify-content:center;color:var(--creme);opacity:0;transform:translateY(28px);transition:opacity .4s ease,transform .4s ease,color .25s,border-color .25s}
+.menu-reseaux svg{width:18px;height:18px}
+body.menu-ouvert .menu-reseaux a{opacity:1;transform:none}
+body.menu-ouvert .menu-reseaux a:nth-child(1){transition-delay:.95s}
+body.menu-ouvert .menu-reseaux a:nth-child(2){transition-delay:1.05s}
+body.menu-ouvert .menu-reseaux a:nth-child(3){transition-delay:1.15s}
+.menu-reseaux a:hover{color:var(--or);border-color:var(--or)}
+@media(max-width:560px){.menu-reseaux{gap:8px}.menu-reseaux a{width:36px;height:36px}.menu-reseaux svg{width:16px;height:16px}}
 .menu-fleche{display:none}
 @media(max-width:760px){
   .menu-groupe{grid-template-columns:1fr auto;gap:0;padding:6px 0;align-items:center}
-  .menu-groupe .gros{white-space:normal;width:auto;grid-column:1;transition:color .25s}
+  .menu-groupe .gros{white-space:normal;width:auto;grid-column:1;transition:color .25s,clip-path .6s cubic-bezier(.65,0,.35,1)}
   .menu-groupe.ouvert .gros{color:var(--or)}
   .menu-fleche{display:inline-flex;align-items:center;justify-content:center;grid-column:2;
     width:46px;height:46px;flex:0 0 auto;background:none;border:none;cursor:pointer;
@@ -569,6 +581,12 @@ footer{padding:90px 28px 40px;max-width:1500px;margin:0 auto;border-top:1px soli
         </div>
       </div>
     </div>
+    <div class="menu-reseaux">
+        <a href="#" target="_blank" rel="noopener" aria-label="YouTube"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="5.5" width="20" height="13" rx="4"/><polygon points="10,9.3 16,12 10,14.7" fill="currentColor" stroke="none"/></svg></a>
+        <a href="#" target="_blank" rel="noopener" aria-label="Instagram"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2.5" y="2.5" width="19" height="19" rx="5"/><circle cx="12" cy="12" r="4.2"/><circle cx="17.4" cy="6.6" r="1.1" fill="currentColor" stroke="none"/></svg></a>
+        <a href="#" target="_blank" rel="noopener" aria-label="Facebook"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15.5 3h-2.2A4.3 4.3 0 0 0 9 7.3V10H6.5v3.5H9V21h3.6v-7.5h2.7l.5-3.5h-3.2V7.6c0-1 .3-1.7 1.7-1.7h1.9z"/></svg></a>
+    </div>
+
     <div class="menu-pied">
       <span>Église protestante évangélique</span>
       <span>Is-sur-Tille</span>
