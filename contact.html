@@ -397,6 +397,59 @@ footer{padding:90px 28px 40px;max-width:1500px;margin:0 auto;border-top:1px soli
 .curseur{display:inline-block;width:2px;height:1.05em;background:var(--or);vertical-align:-.18em;margin:0 1px;animation:clignote .75s steps(1) infinite}
 @keyframes clignote{50%{opacity:0}}
 
+/* ---------- contact : split-screen (image sticky à droite) ---------- */
+.split{display:grid;grid-template-columns:1fr 1fr;align-items:start;position:relative}
+.split-media{position:sticky;top:0;height:100svh;overflow:hidden;
+  background:radial-gradient(circle at 30% 20%, var(--bleu-pale), transparent 65%),radial-gradient(circle at 75% 80%, rgba(181,151,60,.18), transparent 55%),#EDEAE2}
+.split-media img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:50% 30%;
+  transform:scale(1.12);will-change:transform;transition:opacity .9s ease}
+.split-contenu{min-width:0;padding:104px 56px 60px}
+
+.contact-tete{margin:0 0 6px}
+.contact-tete h1{font-family:'Anton',sans-serif;font-weight:400;text-transform:uppercase;letter-spacing:.02em;
+  line-height:.9;font-size:clamp(3rem,min(9vw,15svh),9rem);margin:0;color:var(--or)}
+.contact-tete .intro{margin:28px 0 0;max-width:44ch;font-size:1.05rem;color:var(--gris);line-height:1.5}
+
+/* formulaire (cadre bordé façon 2819) */
+.form-cadre{margin-top:46px;border:1px solid var(--encre);padding:40px 36px}
+.form-champ{margin-bottom:30px}
+.form-champ:last-of-type{margin-bottom:0}
+.form-champ label{display:block;font-size:.74rem;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--encre);margin-bottom:12px}
+.form-champ input,.form-champ select,.form-champ textarea{
+  width:100%;background:#F1F1EF;border:0;border-bottom:1px solid var(--encre);
+  padding:14px 12px;font-family:'Archivo',sans-serif;font-size:1rem;color:var(--encre);
+  transition:background .25s,border-color .25s}
+.form-champ input:focus,.form-champ select:focus,.form-champ textarea:focus{
+  outline:none;background:#EAEAE6;border-color:var(--or)}
+.form-champ select{appearance:none;-webkit-appearance:none;cursor:pointer;
+  background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%23101622' stroke-width='2.5'><path d='M6 9l6 6 6-6'/></svg>");
+  background-repeat:no-repeat;background-position:right 12px center}
+.form-champ textarea{resize:vertical;min-height:130px;line-height:1.5}
+.form-envoi{width:100%;margin-top:34px;border:0;cursor:pointer;
+  background:var(--or);color:#fff;font-family:'Anton',sans-serif;font-weight:400;
+  font-size:1.15rem;letter-spacing:.12em;text-transform:uppercase;padding:20px;
+  transition:background .25s,transform .2s}
+.form-envoi:hover{background:#9c8232}
+.form-envoi:active{transform:scale(.99)}
+.form-note{font-size:.78rem;color:var(--gris);font-style:italic;margin-top:18px;text-align:center}
+
+@media(max-width:900px){
+  .split{grid-template-columns:1fr}
+  .split-media{position:relative;top:auto;height:44svh;order:-1}
+  .split-contenu{padding:40px 28px 50px}
+  .contact-tete h1{font-size:clamp(2.6rem,14vw,4.4rem)}
+  .form-cadre{padding:30px 22px}
+}
+@media(prefers-reduced-motion: reduce){
+  .split-media{position:relative;height:52svh}
+}
+
+/* ---------- bandeau « nous suivre » + verset (fond clair) ---------- */
+.suivre{padding:120px 28px;text-align:center;max-width:1500px;margin:0 auto;border-top:1px solid var(--ligne)}
+.suivre p{font-family:'Anton',sans-serif;font-size:clamp(2.2rem,7vw,5.6rem);line-height:1.14;max-width:16ch;margin:0 auto;text-transform:uppercase}
+.suivre p i{font-style:normal;color:var(--or)}
+.suivre cite{display:block;margin-top:28px;font-style:normal;font-size:.8rem;letter-spacing:.24em;text-transform:uppercase;color:var(--gris)}
+
 /* ---------- reveal ---------- */
 .reveal{opacity:0;transform:translateY(30px);transition:opacity .8s ease,transform .8s ease}
 .reveal.visible{opacity:1;transform:none}
@@ -470,51 +523,54 @@ footer{padding:90px 28px 40px;max-width:1500px;margin:0 auto;border-top:1px soli
 </div>
 
 
-<header class="hero hero-page">
-  <div class="infos">
-    <span>contact</span>
-    <span class="h">on vous répond vite</span>
-  </div>
-  <h1 class="display">
-    <span class="ligne1">Parlons</span>
-    <span class="ligne2">de vive</span>
-    <span class="ligne3">voix</span>
-  </h1>
-  <div class="page-suite">
-    <div class="page-inner">
-      <div class="page-ligne"></div>
-      <nav class="page-sous" aria-label="Sommaire de la page">
-        <a href="#ecrire">Nous écrire</a>
-        <a href="#reseaux">Réseaux</a>
-      </nav>
+<div class="split">
+  <div class="split-contenu">
+    <div class="contact-tete">
+      <h1>Contact</h1>
+      <p class="intro">Que vous prépariez une visite, cherchiez un soutien ou souhaitiez partager ce que Dieu fait dans votre vie, notre équipe sera heureuse d'échanger avec vous.</p>
     </div>
-  </div>
-</header>
 
-<section class="duo">
-  <div class="reveal" id="ecrire">
-    <h2>nous<br><span>Écrire</span></h2>
-    <ul>
-      <li>e-mail <span>contact@eglise-j33.fr</span></li>
-      <li>téléphone <span>06 00 00 00 00</span></li>
-    </ul>
-    <p class="note-rempl">— coordonnées d'exemple, à remplacer par les vôtres —</p>
-    <a class="lien-paren plein or" href="mailto:contact@eglise-j33.fr">envoyer un e-mail</a>
+    <form class="form-cadre" id="formContact" novalidate>
+      <div class="form-champ">
+        <label for="prenom">Prénom</label>
+        <input type="text" id="prenom" name="prenom" autocomplete="given-name" required>
+      </div>
+      <div class="form-champ">
+        <label for="nom">Nom</label>
+        <input type="text" id="nom" name="nom" autocomplete="family-name" required>
+      </div>
+      <div class="form-champ">
+        <label for="email">E-mail</label>
+        <input type="email" id="email" name="email" autocomplete="email" required>
+      </div>
+      <div class="form-champ">
+        <label for="raison">Raison de votre message</label>
+        <select id="raison" name="raison" required>
+          <option value="" selected disabled>Sélectionnez…</option>
+          <option>Planifier une visite</option>
+          <option>Demande de prière</option>
+          <option>Accompagnement pastoral</option>
+          <option>Baptême ou mariage</option>
+          <option>Autre</option>
+        </select>
+      </div>
+      <div class="form-champ">
+        <label for="message">Message</label>
+        <textarea id="message" name="message" required></textarea>
+      </div>
+      <button type="submit" class="form-envoi">Envoyer</button>
+      <p class="form-note">— votre logiciel de messagerie s'ouvrira avec le message pré-rempli —</p>
+    </form>
   </div>
-  <div class="reveal" id="reseaux">
-    <h2>nous<br><span>Suivre</span></h2>
-    <ul>
-      <li>instagram <span>@eglisej33</span></li>
-      <li>facebook <span>Église J33</span></li>
-      <li>youtube <span>Église J33</span></li>
-    </ul>
-    <p class="note-rempl">— liens des réseaux à compléter —</p>
-  </div>
-</section>
 
-<div class="verset-geant">
-  <p>« Fais appel à moi et <i>je te répondrai</i> »</p>
-  <cite>Jérémie 33 : 3</cite>
+  <div class="split-media" aria-hidden="true">
+    <img src="images_contact/Illustration_1.jpg" alt="Église J33 — rassemblement" onerror="this.style.display='none'">
+  </div>
+</div>
+
+<div class="suivre" id="reseaux">
+  <p>« Venez et <i>voyez</i> »</p>
+  <cite>Jean 1 : 39</cite>
 </div>
 
 
@@ -588,421 +644,30 @@ document.addEventListener('keydown', e => {
   if(e.key === 'Escape' && document.body.classList.contains('menu-ouvert')) basculerMenu();
 });
 
-/* mots rotatifs des héros (à propos, connexion…) : défilent dès le chargement */
-document.querySelectorAll('.mot-rotatif').forEach(motRotatif=>{
-  if(window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
-  const mots = (motRotatif.dataset.mots || '').split('|').filter(Boolean);
-  if(mots.length < 2) return;
-  const depart = motRotatif.textContent;
-  const h1Rot = motRotatif.closest('h1');
-  function figerLargeur(){
-    const courant = motRotatif.textContent;
-    h1Rot.style.width = '';
-    h1Rot.style.fontSize = '';
-    let max = 0;
-    mots.forEach(m => { motRotatif.textContent = m; max = Math.max(max, h1Rot.offsetWidth); });
-    const dispo = (h1Rot.parentElement.clientWidth || window.innerWidth) - 8;
-    if(max > dispo){ /* réduire la police pour que le mot le plus large tienne */
-      const fs = parseFloat(getComputedStyle(h1Rot).fontSize);
-      h1Rot.style.fontSize = (fs * dispo / max) + 'px';
-      max = 0;
-      mots.forEach(m => { motRotatif.textContent = m; max = Math.max(max, h1Rot.offsetWidth); });
-    }
-    motRotatif.textContent = courant;
-    h1Rot.style.width = max + 'px';
-  }
-  figerLargeur();
-  if(document.fonts && document.fonts.ready){ document.fonts.ready.then(figerLargeur); }
-  window.addEventListener('resize', figerLargeur);
-  let i = Math.max(0, mots.indexOf(depart)); /* commence sur le mot déjà affiché */
-  motRotatif.style.transition = 'opacity .4s ease, transform .4s ease';
-  function changer(){
-    motRotatif.style.opacity = 0;
-    motRotatif.style.transform = 'translateY(.35em)';
-    setTimeout(()=>{
-      i = (i + 1) % mots.length;
-      motRotatif.innerHTML = mots[i];
-      motRotatif.style.transition = 'none';
-      motRotatif.style.transform = 'translateY(-.35em)';
-      requestAnimationFrame(()=>requestAnimationFrame(()=>{
-        motRotatif.style.transition = 'opacity .4s ease, transform .4s ease';
-        motRotatif.style.opacity = 1;
-        motRotatif.style.transform = 'none';
-        setTimeout(changer, 1800);
-      }));
-    }, 420);
-  }
-  setTimeout(changer, 1900); /* première bascule juste après l'entrée */
-});
-
-/* apparitions */
+/* apparitions au scroll */
 const obs = new IntersectionObserver(es=>{es.forEach(e=>{if(e.isIntersecting){e.target.classList.add('visible');obs.unobserve(e.target);}})},{threshold:0});
-
-/* ligne + sous-liens sous le titre : apparition simple au chargement */
-requestAnimationFrame(()=>requestAnimationFrame(()=>document.querySelector('.hero-page')?.classList.add('vu')));
 document.querySelectorAll('.reveal').forEach(el=>obs.observe(el));
 
-/* interactions au scroll */
-const reduit = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-if(!reduit){
-  const lignesHero = document.querySelectorAll('.hero-anime h1 span');
-  const infosHero  = document.querySelector('.hero-anime .infos');
-  const heroScene = document.getElementById('heroScene');
-  const heroVerset = document.getElementById('heroVerset');
-  const heroCta = document.getElementById('heroCta');
-  const missionScene = document.getElementById('missionScene');
-  const missionTitre = document.getElementById('missionTitre');
-  const missionTexte = document.getElementById('missionTexte');
-  const sectionDesert = document.getElementById('desert');
-  const lignesEau  = document.querySelectorAll('.desert .ligne-eau');
-  const versetGeant = document.querySelector('.verset-geant p');
-  const heroImages = document.getElementById('heroImages');
-  const hph1 = document.getElementById('hph1');
-  const hph2 = document.getElementById('hph2');
-  const hph3 = document.getElementById('hph3');
-  const csScroll = document.getElementById('croyancesScroll');
-  const csPiste  = document.getElementById('csPiste');
-  const csBarre  = document.getElementById('csBarre');
-  function dimensionnerCs(){
-    if(!csScroll || !csPiste) return;
-    if(window.innerWidth <= 820){ csScroll.style.height = ''; return; }
-    csScroll.style.height = (csPiste.scrollWidth - window.innerWidth + vh() * 1.12) + 'px';
-  }
-  window.addEventListener('resize', dimensionnerCs);
-  window.addEventListener('load', dimensionnerCs);
-  const vh = () => window.innerHeight;
-  dimensionnerCs();
-  function progression(el){
-    const r = el.getBoundingClientRect();
-    return Math.min(1, Math.max(0, (vh() - r.top) / (vh() + r.height)));
-  }
-  setTimeout(()=>{ lignesHero.forEach(l=>l.style.animation='none'); surScroll(); }, 1350);
-  let ticking=false;
-  function surScroll(){
-    const y = window.scrollY;
-    if(heroScene){
-      const totalH = heroScene.offsetHeight - vh();
-      const ph = Math.min(1, Math.max(0, y - heroScene.offsetTop) / Math.max(1, totalH));
-      /* le verset arrive sur les 40 premiers % de la scène, puis PALIER : tout reste
-         affiché immobile jusqu'à 100 % (l'ensemble repart ensuite avec le scroll global) */
-      const arrivee = Math.min(1, ph / 0.40);
-      lignesHero.forEach(l=>{ l.style.opacity = 1; });
-      if(heroVerset){
-        heroVerset.style.translate = `0 ${(1 - arrivee) * vh() * .55}px`;
-        heroVerset.style.opacity = Math.min(1, arrivee * 1.5);
-      }
-      if(heroCta){
-        const liens = heroCta.querySelectorAll('.lien-paren');
-        /* fondu de sortie quand le titre mission approche (fin de la scène héros) */
-        const sortie = Math.max(0, Math.min(1, (ph - 0.78) / 0.18));
-        liens.forEach((a, i)=>{
-          /* pas de translate ici : il créerait un contexte d'empilement et casserait
-             le mix-blend-mode (texte invisible). On anime seulement l'opacité. */
-          const retard = i * 0.08; /* léger décalage d'apparition entre les liens */
-          const ar = Math.min(1, Math.max(0, (arrivee - retard) / (1 - retard)));
-          a.style.opacity = Math.min(1, ar * 1.5) * (1 - sortie);
-        });
-      }
-      if(infosHero) infosHero.style.opacity = 1 - arrivee * .25;
-    }
-    if(missionScene){
-      const rM = missionScene.getBoundingClientRect();
-      const totalM = missionScene.offsetHeight - vh();
-      const pm = Math.min(1, Math.max(0, -rM.top / Math.max(1, totalM)));
-      if(missionTexte){
-        missionTexte.style.transform = `translateY(${(1 - pm) * vh() * .6}px)`;
-        missionTexte.style.opacity = Math.min(1, pm * 1.6);
-      }
-    }
-    if(sectionDesert){
-      const p = progression(sectionDesert), d=(p-.5)*2;
-      lignesEau.forEach(l=>{
-        const s = parseFloat(l.dataset.glisse);
-        if(s!==0) l.style.transform = `translateX(${s*d*-9}vw)`;
-        else l.style.transform = `scale(${1+Math.max(0,(1-Math.abs(d)))*.06})`;
-      });
-    }
-    if(versetGeant){
-      const p = progression(versetGeant.parentElement);
-      versetGeant.style.transform = `scale(${.92+Math.min(p*1.6,1)*.08})`;
-      versetGeant.style.opacity = Math.min(1,p*2.4);
-    }
-    /* photos latérales : entrent par le bas, montent en continu, sortent par le haut.
-    /* images du héro : léger parallaxe au scroll (montent à des vitesses différentes) */
-    if(heroImages && heroScene){
-      const totalH = heroScene.offsetHeight - vh();
-      const ph = Math.min(1, Math.max(0, y - heroScene.offsetTop) / Math.max(1, totalH));
-      if(hph1) hph1.style.transform = `translateY(${-ph * vh() * .55}px)`;
-      if(hph2) hph2.style.transform = `translateY(${-ph * vh() * .38}px)`;
-      if(hph3) hph3.style.transform = `translateY(${-ph * vh() * .70}px)`;
-    }
-    if(csScroll && csPiste && window.innerWidth > 820){
-      const total = csScroll.offsetHeight - vh();
-      const r = csScroll.getBoundingClientRect();
-      const brut = Math.min(1, Math.max(0, -r.top / Math.max(1, total)));
-      const pc = Math.min(1, brut / .96); /* palier final : la dernière tuile reste visible */
-      const colle = csScroll.querySelector('.cs-colle');
-      const maxX = csPiste.scrollWidth - (colle ? colle.clientWidth : window.innerWidth) + 84;
-      csPiste.style.transform = `translateX(${-pc * maxX}px)`;
-      if(csBarre) csBarre.style.width = (pc * 100) + '%';
-    }
-    ticking=false;
-  }
-  window.addEventListener('scroll',()=>{if(!ticking){requestAnimationFrame(surScroll);ticking=true;}},{passive:true});
-  surScroll();
-}
-
-/* ---------- tuiles « Pourquoi J33 » ----------
-   Au clic : le J33 apparaît et absorbe toutes les lettres du texte existant,
-   reste seul un instant, puis la frappe au clavier reconstruit le contenu
-   (¤x = lettre absorbée depuis la graine, ‡ = lettre de la graine qui s'évapore). */
-const cartesAnim = document.querySelectorAll('#pourquoi .carte');
-if(cartesAnim.length === 6){
-  const VIT_TITRE = 70, VIT_CORPS = 30;
-  const CFG = [
-    { seed:"J33", phase:"titre",
-      titre:"¤Jérémie ¤3¤3, notre promesse",
-      corps:"Dans une saison où il n'y avait plus d'église dans la région, nous avons prié et jeûné pour chercher la direction de Dieu. Il nous a mis à cœur ce passage : promesse de guérison, de restauration, de joie et de louange retrouvées." },
-    { seed:"J33", phase:"corps",
-      titre:"Jésus au centre de tout",
-      corps:"¤J nous rappelle Jésus-Christ, Dieu fait homme, qui a donné Sa vie pour nous sur la croix. Le chiffre évoque son ministère terrestre : commencé à ¤30 ans, exercé pleinement pendant ¤3 ans." },
-    { seed:"J33", phase:"corps",
-      titre:"Maturité & plénitude",
-      corps:"‡¤30, l'âge biblique de la maturité et de l'entrée au service «(Joseph, David, les Lévites, Jésus)» ; ¤3, la plénitude du Dieu trois fois saint. Notre désir : des disciples matures vivant la plénitude de Dieu." },
-    { seed:"J33", phase:"corps",
-      titre:"Dieu trinitaire, homme tout entier",
-      corps:"Le premier ‡¤3 pour le Père, le Fils et le Saint-Esprit ; le second ¤3 pour l'être humain dans sa totalité — corps, âme et esprit — créé pour vivre pleinement." },
-    { seed:"J33", phase:"titre",
-      titre:"Le pays des ‡¤3 rivières",
-      corps:"Comme les rivières de notre territoire : ‡«accueillir et bénir» toutes les personnes, «façonner et former» des disciples enracinés, «étendre l'Évangile» pour irriguer toute la région." },
-    { croix:true,
-      titre:"Un outil de témoignage",
-      corps:"Un nom qui interpelle, attire l'attention et suscite la curiosité : une occasion naturelle de donner l'Évangile et d'expliquer notre foi aux personnes autour de nous." },
-  ];
-  const originaux = new Map();
-  cartesAnim.forEach((carte, idx)=>{
-    carte.classList.add('carte-anim');
-    carte.style.position = 'relative';
-    const indice = document.createElement('span');
-    indice.className = 'indice';
-    indice.textContent = '( Cliquer )';
-    carte.appendChild(indice);
-    originaux.set(carte, carte.innerHTML);
-    let etat = 'statique';
-    let ctrl = null;
-    carte.addEventListener('click', ()=>{
-      if(etat === 'statique'){
-        etat = 'joue';
-        ctrl = { rapide: reduit };
-        absorberPuisJouer(carte, CFG[idx], ctrl, ()=>{ etat = 'fini'; });
-      } else if(etat === 'joue'){
-        ctrl.rapide = true;
-      } else {
-        carte.innerHTML = originaux.get(carte);
-        carte.style.minHeight = '';
-        etat = 'statique';
-      }
-    });
-  });
-
-  /* enrobe chaque lettre d'un élément texte dans un span .absorbe */
-  function enrober(el, liste){
-    const marche = document.createTreeWalker(el, NodeFilter.SHOW_TEXT);
-    const noeuds = [];
-    while(marche.nextNode()) noeuds.push(marche.currentNode);
-    noeuds.forEach(n=>{
-      const frag = document.createDocumentFragment();
-      n.textContent.split(/(\s+)/).forEach(part=>{
-        if(part === '') return;
-        if(/^\s+$/.test(part)){
-          frag.appendChild(document.createTextNode(part)); /* espace : nœud texte normal */
-        } else {
-          part.split('').forEach(ch=>{
-            const s = document.createElement('span');
-            s.className = 'absorbe';
-            s.textContent = ch;
-            frag.appendChild(s);
-            liste.push(s);
-          });
-        }
-      });
-      n.parentNode.replaceChild(frag, n);
-    });
-  }
-
-  function absorberPuisJouer(carte, cfg, ctrl, fini){
-    carte.style.minHeight = carte.offsetHeight + 'px';
-    const num = carte.querySelector('.num');
-    const h3 = carte.querySelector('h3');
-    const p  = carte.querySelector('p');
-    const indice = carte.querySelector('.indice');
-    if(indice) indice.style.display = 'none';
-    const rc = carte.getBoundingClientRect();
-
-    /* cible de l'absorption : début du titre (le J33 y apparaît) ou la croix */
-    let cible, pose = null;
-    if(cfg.seed){
-      const rt = h3.getBoundingClientRect();
-      cible = { x: rt.left - rc.left, y: rt.top - rc.top };
-      pose = document.createElement('span');
-      pose.className = 'graine graine-pose a-titre';
-      pose.style.margin = 0;
-      pose.textContent = cfg.seed;
-      pose.style.left = cible.x + 'px';
-      pose.style.top = cible.y + 'px';
-      pose.style.opacity = 0;
-      carte.appendChild(pose);
-    } else {
-      /* la croix : on enveloppe le caractère pour viser sa position réelle (haut-gauche) */
-      if(num && !num.querySelector('.cx-glyphe')){
-        num.innerHTML = '<span class="cx-glyphe">' + num.textContent + '</span>';
-      }
-      const glyphe = num.querySelector('.cx-glyphe') || num;
-      const rn = glyphe.getBoundingClientRect();
-      cible = { x: rn.left - rc.left + rn.width/2, y: rn.top - rc.top + rn.height/2 };
-    }
-
-    const lettres = [];
-    [h3, p].forEach(el=>{ if(el) enrober(el, lettres); });
-
-    /* figer chaque lettre à sa position exacte dans le flux, pour que rien ne bouge
-       au moment de passer en absolu (sinon les inline-block re-cassent les lignes) */
-    const boites = lettres.map(s=>s.getBoundingClientRect());
-    lettres.forEach((s, i)=>{
-      const r = boites[i];
-      s.style.position = 'absolute';
-      s.style.left = (r.left - rc.left) + 'px';
-      s.style.top  = (r.top  - rc.top)  + 'px';
-      s.style.width = r.width + 'px';
-      s.style.height = r.height + 'px';
-      s.style.margin = '0';
-    });
-
-    if(!ctrl.rapide){
-      requestAnimationFrame(()=>requestAnimationFrame(()=>{
-        if(pose) pose.style.opacity = 1;
-        lettres.forEach((s, i)=>{
-          const r = boites[i];
-          const dx = cible.x - (r.left - rc.left);
-          const dy = cible.y - (r.top  - rc.top);
-          s.style.transitionDelay = (i * 4) + 'ms';
-          s.style.transform = 'translate(' + dx + 'px,' + dy + 'px) scale(.15)';
-          s.style.opacity = 0;
-        });
-      }));
-    }
-    const dureeAbsorption = ctrl.rapide ? 0 : (lettres.length * 4 + 620);
-    const delaiSeul = ctrl.rapide ? 0 : 650; /* le J33 reste seul un instant */
-
-    setTimeout(()=>{
-      carte.innerHTML = '';
-      if(num) carte.appendChild(num);
-      if(pose) carte.appendChild(pose); /* le J33 posé reste visible pendant la transition */
-      demarrerFrappe(carte, cfg, ctrl, num, pose, fini);
-    }, dureeAbsorption + delaiSeul);
-  }
-
-  function demarrerFrappe(carte, cfg, ctrl, num, pose, fini){
-    const zTitre = document.createElement('div'); zTitre.className = 'a-titre';
-    const zCorps = document.createElement('div'); zCorps.className = 'a-corps';
-    carte.append(zTitre, zCorps);
-
-    const curseur = document.createElement('span'); curseur.className = 'curseur';
-    const graine  = document.createElement('span'); graine.className = 'graine';
-    if(cfg.seed){
-      cfg.seed.split('').forEach(ch=>{
-        const s = document.createElement('span'); s.textContent = ch; graine.appendChild(s);
-      });
-    }
-    const prendreGraine = () => graine.querySelector('span:not(.part)');
-
-    function frapper(zone, texte, apres){
-      const tape = document.createElement('span');
-      zone.append(tape, curseur);
-      if(cfg.seed){
-        zone.appendChild(graine);
-        if(pose){ pose.remove(); pose = null; } /* la graine inline prend le relais, même position */
-      }
-      let i = 0, dore = false;
-      function pas(){
-        if(i >= texte.length){ apres(); return; }
-        const c = texte[i];
-        if(c === '¤'){
-          i++;
-          const b = document.createElement('b');
-          b.className = 'g';
-          b.textContent = texte[i];
-          tape.appendChild(b);
-          const g = prendreGraine();
-          if(g) g.remove();
-        } else if(c === '‡'){
-          const g = prendreGraine();
-          if(g){ g.classList.add('part'); setTimeout(()=>g.remove(), 380); }
-        } else if(c === '«'){
-          dore = true;
-        } else if(c === '»'){
-          dore = false;
-        } else if(dore){
-          const b = document.createElement('b');
-          b.className = 'g';
-          b.textContent = c;
-          tape.appendChild(b);
-        } else {
-          tape.appendChild(document.createTextNode(c));
-        }
-        i++;
-        setTimeout(pas, ctrl.rapide ? 0 : (zone === zTitre ? VIT_TITRE : VIT_CORPS));
-      }
-      pas();
-    }
-
-    function lancerFrappe(){
-      frapper(zTitre, cfg.titre, ()=>{
-        setTimeout(()=>{
-          frapper(zCorps, cfg.corps, ()=>{
-            setTimeout(()=>{
-              if(prendreGraine()) graine.classList.add('fondu');
-              curseur.remove();
-              fini();
-            }, ctrl.rapide ? 0 : 900);
-          });
-        }, ctrl.rapide ? 0 : 420);
-      });
-    }
-
-    lancerFrappe();
-  }
-
-}
-
-/* ---------- accueil : le titre occupe la même largeur que le verset ---------- */
+/* formulaire de contact : compose un e-mail pré-rempli (mailto) */
 (function(){
-  const h1 = document.querySelector('.hero-anime h1');
-  const vtxt = document.querySelector('.hero-verset .vtxt');
-  const eaux = document.querySelectorAll('.desert .ligne-eau');
-  if(!h1 || !vtxt) return;
-  function ajusterLargeurTitre(){
-    h1.style.width = '';
-    const cible = vtxt.offsetWidth; /* largeur de référence = « Et je te répondrai » */
-    h1.style.width = cible + 'px';  /* zone centrée : FAIS à gauche, APPEL centré, A MOI à droite */
-    /* poser la couche dorée « A MOI » exactement sur la ligne3 cachée du titre */
-    const or = document.getElementById('ligne3Or');
-    const l3 = h1.querySelector('.ligne3');
-    if(or && l3){
-      const rl = l3.getBoundingClientRect();
-      const rp = h1.offsetParent.getBoundingClientRect();
-      const cs = getComputedStyle(l3);
-      or.style.fontSize = cs.fontSize;
-      or.style.letterSpacing = cs.letterSpacing;
-      or.style.left = (rl.left - rp.left) + 'px';
-      or.style.top = (rl.top - rp.top + window.scrollY - (h1.offsetParent.offsetTop)) + 'px';
-      or.style.width = rl.width + 'px';
-      or.style.textAlign = 'right';
-    }
-  }
-  ajusterLargeurTitre();
-  if(document.fonts && document.fonts.ready) document.fonts.ready.then(ajusterLargeurTitre);
-  window.addEventListener('resize', ajusterLargeurTitre);
+  const form = document.getElementById('formContact');
+  if(!form) return;
+  const DEST = 'contact@eglise-j33.fr'; /* ← adresse de destination à confirmer */
+  form.addEventListener('submit', e=>{
+    e.preventDefault();
+    if(!form.reportValidity()) return;
+    const v = id => (form.querySelector('#'+id)?.value || '').trim();
+    const prenom = v('prenom'), nom = v('nom'), email = v('email'),
+          raison = v('raison'), message = v('message');
+    const sujet = `[Contact J33] ${raison} — ${prenom} ${nom}`;
+    const corps =
+      `Prénom : ${prenom}\n`+
+      `Nom : ${nom}\n`+
+      `E-mail : ${email}\n`+
+      `Raison : ${raison}\n\n`+
+      `${message}\n`;
+    window.location.href = `mailto:${DEST}?subject=${encodeURIComponent(sujet)}&body=${encodeURIComponent(corps)}`;
+  });
 })();
 </script>
 </body>
