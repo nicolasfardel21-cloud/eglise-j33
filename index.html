@@ -63,7 +63,8 @@ body.menu-ouvert .menu-groupe:nth-child(1) .gros,body.menu-ouvert .menu-groupe:n
 body.menu-ouvert .menu-groupe:nth-child(2) .gros,body.menu-ouvert .menu-groupe:nth-child(2) .menu-fleche{transition-delay:.20s}
 body.menu-ouvert .menu-groupe:nth-child(3) .gros,body.menu-ouvert .menu-groupe:nth-child(3) .menu-fleche{transition-delay:.28s}
 body.menu-ouvert .menu-groupe:nth-child(4) .gros,body.menu-ouvert .menu-groupe:nth-child(4) .menu-fleche{transition-delay:.36s}
-.menu-groupe .gros:hover{color:var(--or);padding-left:14px}
+.menu-groupe .gros:hover{color:var(--or);padding-left:14px;transition-delay:0s}
+.menu-groupe--simple{grid-template-columns:1fr}
 .menu-groupe .gros small{font-family:'Archivo',sans-serif;font-size:.74rem;letter-spacing:.2em;color:var(--or)}
 .menu-sous{display:flex;flex-wrap:wrap;gap:6px 18px;justify-content:flex-end;opacity:0;transform:translateY(16px);pointer-events:none;transition:opacity .35s ease,transform .35s ease}
 .menu-groupe:hover .menu-sous,.menu-groupe:focus-within .menu-sous{opacity:1;transform:none;pointer-events:auto}
@@ -300,7 +301,7 @@ body.menu-ouvert .menu-reseaux a:nth-child(3){transition-delay:1.15s}
 .gp-texte .texte-bloc{margin-top:30px;margin-left:auto;margin-right:auto;
   mix-blend-mode:exclusion;color:#fff}
 .gp-texte .texte-bloc strong{color:#fff}
-.gp-texte .lien-savoir{margin-top:34px;color:var(--encre);font-weight:700;letter-spacing:.01em;text-transform:none}
+.gp-texte .lien-savoir{margin-top:34px;color:var(--encre);font-weight:700;font-size:clamp(.95rem,1.4vw,1.15rem);letter-spacing:.01em;text-transform:none}
 .gp-texte .lien-savoir::before,.gp-texte .lien-savoir::after{color:var(--or)}
 @media(max-width:760px){
   .gp-scene{min-height:135svh}
@@ -461,6 +462,12 @@ section{padding:110px 28px;max-width:1500px;margin:0 auto}
 .verset-geant p{font-family:'Anton',sans-serif;font-size:clamp(2.2rem,7vw,5.6rem);line-height:1.14;max-width:18ch;margin:0 auto}
 .verset-geant p i{font-style:normal;color:var(--or)}
 .verset-geant.verset-long p{font-size:var(--tt,.9375rem);line-height:1.4;max-width:58ch;letter-spacing:.04em;text-transform:none}
+/* desktop : agrandir uniquement les 3 grands paragraphes narratifs (mission, désert, verset long) */
+@media(min-width:900px){
+  .texte-bloc{font-size:1.2rem;line-height:1.6}
+  .desert .recit{font-size:1.2rem;line-height:1.6}
+  .verset-geant.verset-long p{font-size:clamp(1.25rem,1.9vw,1.7rem);line-height:1.5}
+}
 .verset-geant cite{display:block;margin-top:30px;font-style:normal;font-size:.8rem;letter-spacing:.24em;text-transform:uppercase;color:var(--creme-50)}
 
 /* ---------- FAQ ---------- */
@@ -547,7 +554,7 @@ footer{padding:90px 28px 40px;max-width:1500px;margin:0 auto;border-top:1px soli
         <div class="menu-sous">
           <a href="a-propos.html#mission">Notre mission</a>
           <a href="a-propos.html#vision">Notre vision</a>
-          <a href="a-propos.html#pourquoi">Pourquoi J33</a>
+          <a href="a-propos.html#pourquoi">Pourquoi J33 ?</a>
           <a href="a-propos.html#valeurs">Nos valeurs</a>
           <a href="a-propos.html#croyances">Nos fondements</a>
           <a href="a-propos.html#responsables">Nos responsables</a>
@@ -569,12 +576,8 @@ footer{padding:90px 28px 40px;max-width:1500px;margin:0 auto;border-top:1px soli
           <a href="connexion.html#etapes">Baptême &amp; mariage</a>
         </div>
       </div>
-      <div class="menu-groupe">
-        <a class="gros" href="contact.html">Contact</a><button class="menu-fleche" aria-label="Déplier" onclick="basculerSousMenu(this)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M6 9l6 6 6-6"/></svg></button>
-        <div class="menu-sous">
-          <a href="contact.html">Nous écrire</a>
-          <a href="contact.html#reseaux">Réseaux</a>
-        </div>
+      <div class="menu-groupe menu-groupe--simple">
+        <a class="gros" href="contact.html">Contact</a>
       </div>
     </div>
     <div class="menu-reseaux">
@@ -647,7 +650,7 @@ footer{padding:90px 28px 40px;max-width:1500px;margin:0 auto;border-top:1px soli
       <div class="texte-bloc" id="missionTexte">
         <p><strong>J33 existe pour annoncer l'Évangile et faire des disciples.</strong> Une église qui forme des disciples matures et passionnés, vivant la plénitude de Dieu, qui restaure les cœurs brisés et rallume la flamme spirituelle d'Is-sur-Tille et ses environs.</p>
       </div>
-      <a class="lien-paren lien-savoir" href="a-propos.html">Qui nous sommes</a>
+      <a class="lien-paren lien-savoir" href="a-propos.html">Qui sommes-nous ?</a>
     </div>
 </div>
 
@@ -686,7 +689,7 @@ footer{padding:90px 28px 40px;max-width:1500px;margin:0 auto;border-top:1px soli
     <cite>Ésaïe 35 : 6</cite>
   </div>
   <div class="recit reveal">
-    <p>Pendant des années, notre région a été un <strong>désert spirituel</strong> : plus d'église, plus de voix qui s'élève. Mais Jérémie 33 promet que dans ce lieu dont on dit « c'est un désert », <strong>on entendra encore la voix de l'allégresse et la voix de la joie</strong>.</p>
+    <p>Pendant des années, notre région a été un <strong>désert spirituel</strong> pour la foi protestante évangélique : plus d'église, plus de voix qui s'élève. Mais Jérémie 33 promet que dans ce lieu dont on dit « c'est un désert », <strong>on entendra encore la voix de l'allégresse et la voix de la joie</strong>.</p>
     <p>J33 veut être cette source : une église qui vient <span class="accent">arroser le désert</span>, au pays des trois rivières — pour que l'eau vive de l'Évangile irrigue Is-sur-Tille et tous ses environs.</p>
   </div>
 </section>
