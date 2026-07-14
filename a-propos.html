@@ -63,7 +63,8 @@ body.menu-ouvert .menu-groupe:nth-child(1) .gros,body.menu-ouvert .menu-groupe:n
 body.menu-ouvert .menu-groupe:nth-child(2) .gros,body.menu-ouvert .menu-groupe:nth-child(2) .menu-fleche{transition-delay:.20s}
 body.menu-ouvert .menu-groupe:nth-child(3) .gros,body.menu-ouvert .menu-groupe:nth-child(3) .menu-fleche{transition-delay:.28s}
 body.menu-ouvert .menu-groupe:nth-child(4) .gros,body.menu-ouvert .menu-groupe:nth-child(4) .menu-fleche{transition-delay:.36s}
-.menu-groupe .gros:hover{color:var(--or);padding-left:14px}
+.menu-groupe .gros:hover{color:var(--or);padding-left:14px;transition-delay:0s}
+.menu-groupe--simple{grid-template-columns:1fr}
 .menu-groupe .gros small{font-family:'Archivo',sans-serif;font-size:.74rem;letter-spacing:.2em;color:var(--or)}
 .menu-sous{display:flex;flex-wrap:wrap;gap:6px 18px;justify-content:flex-end;opacity:0;transform:translateY(16px);pointer-events:none;transition:opacity .35s ease,transform .35s ease}
 .menu-groupe:hover .menu-sous,.menu-groupe:focus-within .menu-sous{opacity:1;transform:none;pointer-events:auto}
@@ -563,7 +564,7 @@ h1.ap-titre{position:relative;z-index:1;margin:17px auto 0;width:fit-content;max
         <div class="menu-sous">
           <a href="a-propos.html#mission">Notre mission</a>
           <a href="a-propos.html#vision">Notre vision</a>
-          <a href="a-propos.html#pourquoi">Pourquoi J33</a>
+          <a href="a-propos.html#pourquoi">Pourquoi J33 ?</a>
           <a href="a-propos.html#valeurs">Nos valeurs</a>
           <a href="a-propos.html#croyances">Nos fondements</a>
           <a href="a-propos.html#responsables">Nos responsables</a>
@@ -585,12 +586,8 @@ h1.ap-titre{position:relative;z-index:1;margin:17px auto 0;width:fit-content;max
           <a href="connexion.html#etapes">Baptême &amp; mariage</a>
         </div>
       </div>
-      <div class="menu-groupe">
-        <a class="gros" href="contact.html">Contact</a><button class="menu-fleche" aria-label="Déplier" onclick="basculerSousMenu(this)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M6 9l6 6 6-6"/></svg></button>
-        <div class="menu-sous">
-          <a href="contact.html">Nous écrire</a>
-          <a href="contact.html#reseaux">Réseaux</a>
-        </div>
+      <div class="menu-groupe menu-groupe--simple">
+        <a class="gros" href="contact.html">Contact</a>
       </div>
     </div>
     <div class="menu-reseaux">
