@@ -754,6 +754,43 @@ let lenis = null;
   });
 })();
 
+/* fermeture du menu au clic sur un lien du menu overlay.
+   Couvre aussi le cas d'un lien "page.html#ancre" cliqué alors qu'on est
+   DÉJÀ sur cette page : le navigateur ne recharge pas, donc on ferme le menu
+   et on scrolle nous-mêmes vers l'ancre. */
+(function(){
+  const overlay = document.getElementById('menuOverlay');
+  if(!overlay) return;
+  overlay.addEventListener('click', e=>{
+    const lien = e.target.closest('a[href]');
+    if(!lien) return;
+    const href = lien.getAttribute('href');
+    if(!href || href === '#') return;
+
+    /* sépare "fichier" et "#ancre" */
+    const [chemin, ancre] = href.split('#');
+    const pageCourante = location.pathname.split('/').pop() || 'index.html';
+    const memePage = !chemin || chemin === pageCourante || chemin === './' + pageCourante;
+
+    /* ancre sur la page courante (soit "#x", soit "page-courante.html#x") */
+    if(ancre && memePage){
+      const cible = document.getElementById(ancre) || document.querySelector('#'+CSS.escape(ancre));
+      e.preventDefault();
+      if(document.body.classList.contains('menu-ouvert')) basculerMenu();
+      /* on scrolle après la fermeture pour éviter tout conflit avec Lenis.stop() */
+      setTimeout(()=>{
+        if(!cible) return;
+        if(typeof lenis !== 'undefined' && lenis){ lenis.scrollTo(cible, { offset: 0 }); }
+        else { cible.scrollIntoView({behavior:'smooth'}); }
+      }, 60);
+      return;
+    }
+
+    /* lien vers une AUTRE page : on ferme le menu, la navigation suit son cours */
+    if(document.body.classList.contains('menu-ouvert')) basculerMenu();
+  });
+})();
+
 /* menu */
 let _minuterieMenuPret = null;
 function basculerMenu(){
