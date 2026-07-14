@@ -352,6 +352,31 @@ section{padding:110px 28px;max-width:1500px;margin:0 auto}
 .faq details[open] summary::after{transform:rotate(45deg)}
 .faq .rep{padding:0 0 26px;max-width:65ch;color:var(--gris);font-size:.95rem}
 
+/* ---------- hero connexion : split façon 2819 (titre gauche + image droite) ---------- */
+.hero-connect{min-height:auto;display:block;padding:0}
+.hc-grille{display:grid;grid-template-columns:1.35fr .65fr;gap:60px;align-items:center;
+  max-width:1500px;margin:0 auto;padding:40px 28px 70px}
+.hc-gauche{min-width:0}
+.hc-eyebrow{display:block;font-size:.78rem;font-weight:700;letter-spacing:.2em;text-transform:uppercase;color:var(--or);margin-bottom:22px}
+.hc-titre{font-family:'Anton',sans-serif;font-weight:400;text-transform:uppercase;
+  letter-spacing:.01em;line-height:.92;margin:0;
+  font-size:clamp(3rem,min(8.5vw,15svh),8.5rem)}
+.hc-titre span{display:block;text-align:left;white-space:nowrap}
+.hc-titre .l3{color:var(--or)}
+.hc-titre .mot-rotatif{display:inline-block;white-space:nowrap}
+.hc-intro{margin:32px 0 0;max-width:46ch;font-size:1.08rem;line-height:1.55;color:var(--gris)}
+.hc-intro strong{color:var(--encre);font-weight:600}
+.hc-media{position:relative;aspect-ratio:1/1;max-width:420px;width:100%;overflow:hidden;
+  background:radial-gradient(circle at 30% 20%,var(--bleu-pale),transparent 60%),#EDEAE2}
+.hc-media img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+@media(max-width:900px){
+  .hc-grille{grid-template-columns:1fr;gap:34px;padding-top:24px}
+  .hc-media{aspect-ratio:1/1;max-width:340px;order:2}
+  .hc-gauche{order:1}
+  .hc-titre{font-size:clamp(2.6rem,13vw,5rem)}
+  .hc-titre span{white-space:normal}
+}
+
 /* ---------- duo colonnes ---------- */
 .duo{display:grid;grid-template-columns:1fr 1fr;gap:60px}
 .duo h2{font-family:'Anton',sans-serif;font-weight:400;font-size:clamp(2.4rem,5.6vw,4.4rem);line-height:1.12}
@@ -467,26 +492,21 @@ footer{padding:90px 28px 40px;max-width:1500px;margin:0 auto;border-top:1px soli
 </div>
 
 
-<header class="hero hero-page">
-  <div class="infos">
-    <span>connexion</span>
-    <span class="h">grandir ensemble</span>
-  </div>
-  <h1 class="display">
-    <span class="ligne1">Rester</span>
-    <span class="ligne2">connecté à</span>
-    <span class="ligne3"><span class="mot-rotatif" data-mots="J33|l&#39;Église|la maison">J33</span></span>
-  </h1>
-  <div class="page-suite">
-    <div class="page-inner">
-      <div class="page-ligne"></div>
-      <nav class="page-sous" aria-label="Sommaire de la page">
-        <a href="#visio">Études bibliques en visio</a>
-        <a href="#suivi">Suivi pastoral</a>
-        <a href="#etapes">Baptême &amp; mariage</a>
-      </nav>
+<header class="hero-connect">
+  <section class="hc-grille">
+    <div class="hc-gauche">
+      <span class="hc-eyebrow">Connexion — grandir ensemble</span>
+      <h1 class="hc-titre">
+        <span class="l1">Rester</span>
+        <span class="l2">connecté à</span>
+        <span class="l3"><span class="mot-rotatif" data-mots="J33|l&#39;Église|la maison">J33</span></span>
+      </h1>
+      <p class="hc-intro">Où que vous soyez, la vie d'église continue. <strong>Restez enraciné, nourri et accompagné</strong> — par la Parole, la prière et le lien fraternel — pour grandir dans la foi tout au long de la semaine.</p>
     </div>
-  </div>
+    <div class="hc-media" aria-hidden="true">
+      <img src="images_connexion/Illustration_1.jpg" alt="Communauté J33 rassemblée" onerror="this.style.display='none'">
+    </div>
+  </section>
 </header>
 
 <section id="visio" class="reveal">
@@ -527,6 +547,32 @@ footer{padding:90px 28px 40px;max-width:1500px;margin:0 auto;border-top:1px soli
       <p>D'autres parcours et services sont en préparation. Suivez-nous ou écrivez-nous pour rester informé de ce que Dieu fait grandir à J33.</p>
     </div>
   </div>
+</section>
+
+
+<section class="faq reveal" id="faq">
+  <span class="eyebrow">questions fréquentes</span>
+  <h2 class="titre-bloc" style="margin-bottom:40px">Vos<br><span class="or">questions</span></h2>
+  <details>
+    <summary>Comment rejoindre les études bibliques en visio ?</summary>
+    <div class="rep">Elles ont lieu un dimanche par mois, de 16h30 à 17h30, en ligne. Écrivez-nous depuis la page contact pour recevoir le lien de connexion : aucune inscription compliquée, il suffit de nous prévenir.</div>
+  </details>
+  <details>
+    <summary>Faut-il déjà connaître la Bible pour participer ?</summary>
+    <div class="rep">Pas du tout. Nos temps d'étude sont pensés pour tous les niveaux : que vous ouvriez la Bible pour la première fois ou depuis des années, vous êtes le bienvenu pour poser vos questions et avancer à votre rythme.</div>
+  </details>
+  <details>
+    <summary>Comment demander un suivi pastoral ?</summary>
+    <div class="rep">Un besoin d'écoute, de prière ou de conseil ? Contactez-nous et l'un de nos responsables vous proposera un rendez-vous. Les échanges se font avec bienveillance et en toute confidentialité.</div>
+  </details>
+  <details>
+    <summary>Je souhaite être baptisé, par où commencer ?</summary>
+    <div class="rep">Nous vous accompagnons pas à pas pour comprendre le sens du baptême et préparer cette étape. Faites-nous signe : nous prendrons le temps d'en parler ensemble avant de fixer une date.</div>
+  </details>
+  <details>
+    <summary>Peut-on rester connecté même sans venir chaque semaine ?</summary>
+    <div class="rep">Bien sûr. Études en ligne, ressources, prière et lien fraternel : plusieurs manières existent de garder le contact avec l'église, où que vous soyez et quel que soit votre emploi du temps.</div>
+  </details>
 </section>
 
 
