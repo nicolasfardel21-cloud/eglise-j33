@@ -58,11 +58,11 @@ body.menu-ouvert{overflow:hidden}
 body.menu-ouvert .menu-groupe .gros{clip-path:inset(0 0 0% 0)}
 body.menu-ouvert .menu-groupe .menu-fleche{opacity:1}
 .menu-groupe .gros{font-family:'Anton',sans-serif;font-size:clamp(2.1rem,5vw,4.2rem);line-height:1.12;white-space:nowrap;text-transform:uppercase;text-decoration:none;display:flex;align-items:baseline;gap:20px;transition:color .25s,padding-left .3s,clip-path .6s cubic-bezier(.65,0,.35,1)}
-body.menu-ouvert .menu-groupe:nth-child(1) .gros,body.menu-ouvert .menu-groupe:nth-child(1) .menu-fleche{transition-delay:.12s}
-body.menu-ouvert .menu-groupe:nth-child(2) .gros,body.menu-ouvert .menu-groupe:nth-child(2) .menu-fleche{transition-delay:.20s}
-body.menu-ouvert .menu-groupe:nth-child(3) .gros,body.menu-ouvert .menu-groupe:nth-child(3) .menu-fleche{transition-delay:.28s}
-body.menu-ouvert .menu-groupe:nth-child(4) .gros,body.menu-ouvert .menu-groupe:nth-child(4) .menu-fleche{transition-delay:.36s}
-.menu-groupe .gros:hover{color:var(--or);padding-left:14px;transition-delay:0s}
+body.menu-ouvert:not(.menu-pret) .menu-groupe:nth-child(1) .gros,body.menu-ouvert:not(.menu-pret) .menu-groupe:nth-child(1) .menu-fleche{transition-delay:.12s}
+body.menu-ouvert:not(.menu-pret) .menu-groupe:nth-child(2) .gros,body.menu-ouvert:not(.menu-pret) .menu-groupe:nth-child(2) .menu-fleche{transition-delay:.20s}
+body.menu-ouvert:not(.menu-pret) .menu-groupe:nth-child(3) .gros,body.menu-ouvert:not(.menu-pret) .menu-groupe:nth-child(3) .menu-fleche{transition-delay:.28s}
+body.menu-ouvert:not(.menu-pret) .menu-groupe:nth-child(4) .gros,body.menu-ouvert:not(.menu-pret) .menu-groupe:nth-child(4) .menu-fleche{transition-delay:.36s}
+.menu-groupe .gros:hover{color:var(--or);padding-left:14px;transition:color .18s ease,padding-left .22s ease}
 .menu-groupe--simple{grid-template-columns:1fr}
 .menu-groupe .gros small{font-family:'Archivo',sans-serif;font-size:.74rem;letter-spacing:.2em;color:var(--or)}
 .menu-sous{display:flex;flex-wrap:wrap;gap:6px 18px;justify-content:flex-end;opacity:0;transform:translateY(16px);pointer-events:none;transition:opacity .35s ease,transform .35s ease}
@@ -623,11 +623,17 @@ let lenis = null;
 })();
 
 /* menu */
+let _minuterieMenuPret = null;
 function basculerMenu(){
   const ouvert = document.body.classList.toggle('menu-ouvert');
   document.getElementById('btnBurger').setAttribute('aria-expanded', ouvert);
   document.getElementById('menuOverlay').setAttribute('aria-hidden', !ouvert);
   if(lenis){ ouvert ? lenis.stop() : lenis.start(); }
+  clearTimeout(_minuterieMenuPret);
+  document.body.classList.remove('menu-pret');
+  if(ouvert){
+    _minuterieMenuPret = setTimeout(()=>document.body.classList.add('menu-pret'), 1000);
+  }
 }
 /* menu mobile : la flèche déplie/replie le sous-menu du groupe */
 function basculerSousMenu(btn){
