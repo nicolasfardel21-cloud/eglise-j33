@@ -354,8 +354,8 @@ section{padding:110px 28px;max-width:1500px;margin:0 auto}
 
 /* ---------- hero connexion : split façon 2819 (titre gauche + image droite) ---------- */
 .hero-connect{min-height:auto;display:block;padding:0}
-.hc-grille{display:grid;grid-template-columns:1.35fr .65fr;gap:60px;align-items:center;
-  max-width:1500px;margin:0 auto;padding:40px 28px 70px}
+.hc-grille{display:grid;grid-template-columns:1.3fr .7fr;gap:40px;align-items:center;
+  max-width:1500px;margin:0 auto;padding:86px 28px 70px}
 .hc-gauche{min-width:0}
 .hc-eyebrow{display:block;font-size:.78rem;font-weight:700;letter-spacing:.2em;text-transform:uppercase;color:var(--or);margin-bottom:22px}
 .hc-titre{font-family:'Anton',sans-serif;font-weight:400;text-transform:uppercase;
@@ -369,8 +369,11 @@ section{padding:110px 28px;max-width:1500px;margin:0 auto}
 .hc-media{position:relative;aspect-ratio:1/1;max-width:420px;width:100%;overflow:hidden;
   background:radial-gradient(circle at 30% 20%,var(--bleu-pale),transparent 60%),#EDEAE2}
 .hc-media img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+@media(min-width:901px){
+  .hc-media{max-width:540px;margin-left:-70px;transform:translateY(70px)}
+}
 @media(max-width:900px){
-  .hc-grille{grid-template-columns:1fr;gap:34px;padding-top:24px}
+  .hc-grille{grid-template-columns:1fr;gap:34px;padding-top:82px}
   .hc-media{aspect-ratio:1/1;max-width:340px;order:2}
   .hc-gauche{order:1}
   .hc-titre{font-size:clamp(2.6rem,13vw,5rem)}
@@ -495,7 +498,6 @@ footer{padding:90px 28px 40px;max-width:1500px;margin:0 auto;border-top:1px soli
 <header class="hero-connect">
   <section class="hc-grille">
     <div class="hc-gauche">
-      <span class="hc-eyebrow">Connexion — grandir ensemble</span>
       <h1 class="hc-titre">
         <span class="l1">Rester</span>
         <span class="l2">connecté à</span>
@@ -624,6 +626,34 @@ let lenis = null;
       const cible = document.querySelector(a.getAttribute('href'));
       if(cible){ e.preventDefault(); lenis.scrollTo(cible, { offset: 0 }); }
     });
+  });
+})();
+
+/* fermeture du menu au clic sur un lien du menu overlay (couvre aussi
+   "page.html#ancre" cliqué alors qu'on est déjà sur cette page) */
+(function(){
+  const overlay = document.getElementById('menuOverlay');
+  if(!overlay) return;
+  overlay.addEventListener('click', e=>{
+    const lien = e.target.closest('a[href]');
+    if(!lien) return;
+    const href = lien.getAttribute('href');
+    if(!href || href === '#') return;
+    const [chemin, ancre] = href.split('#');
+    const pageCourante = location.pathname.split('/').pop() || 'index.html';
+    const memePage = !chemin || chemin === pageCourante || chemin === './' + pageCourante;
+    if(ancre && memePage){
+      const cible = document.getElementById(ancre) || document.querySelector('#'+CSS.escape(ancre));
+      e.preventDefault();
+      if(document.body.classList.contains('menu-ouvert')) basculerMenu();
+      setTimeout(()=>{
+        if(!cible) return;
+        if(typeof lenis !== 'undefined' && lenis){ lenis.scrollTo(cible, { offset: 0 }); }
+        else { cible.scrollIntoView({behavior:'smooth'}); }
+      }, 60);
+      return;
+    }
+    if(document.body.classList.contains('menu-ouvert')) basculerMenu();
   });
 })();
 
