@@ -842,7 +842,7 @@ h1.ap-titre{position:relative;z-index:1;margin:17px auto 0;width:fit-content;max
       <article class="cs-tuile">
         <div class="cs-num">11</div>
         <h3>Mission</h3>
-        <p>Nous croyons que notre mission est de répandre l'Évangile et de multiplier les disciples, selon l'ordre donné par Jésus-Christ. Inspirés par sa Grande Mission, notre but est de faire de son dernier commandement notre priorité absolue, en transformant des vies par le salut des âmes et une formation spirituelle continue. Nous sommes une Église engagée socialement et consciente de la fin des temps, engagée dans la propagation de l'Évangile — <strong>jusqu'à ce que tous entendent</strong>.</p>
+        <p>Nous croyons que notre mission est de répandre l'Évangile et de multiplier les disciples, selon l'ordre donné par Jésus-Christ. Inspirés par sa Grande Mission, notre but est de faire de son dernier commandement notre priorité absolue, en transformant des vies par le salut des âmes et une formation spirituelle continue. Nous sommes une Église consciente de la fin des temps et engagée dans la propagation de l'Évangile <strong>pour que tous puisse l'entendre</strong>.</p>
         <div class="versets">Matthieu 28.19-20 · Marc 16.15 · Romains 1.16 · 2 Timothée 2.2 · Colossiens 1.28 · Actes 2.42-47 · Luc 19.10 · Matthieu 24.14 · Actes 1.8</div>
       </article>
       </div>
@@ -912,6 +912,34 @@ let lenis = null;
       const cible = document.querySelector(a.getAttribute('href'));
       if(cible){ e.preventDefault(); lenis.scrollTo(cible, { offset: 0 }); }
     });
+  });
+})();
+
+/* fermeture du menu au clic sur un lien du menu overlay (couvre aussi
+   "page.html#ancre" cliqué alors qu'on est déjà sur cette page) */
+(function(){
+  const overlay = document.getElementById('menuOverlay');
+  if(!overlay) return;
+  overlay.addEventListener('click', e=>{
+    const lien = e.target.closest('a[href]');
+    if(!lien) return;
+    const href = lien.getAttribute('href');
+    if(!href || href === '#') return;
+    const [chemin, ancre] = href.split('#');
+    const pageCourante = location.pathname.split('/').pop() || 'index.html';
+    const memePage = !chemin || chemin === pageCourante || chemin === './' + pageCourante;
+    if(ancre && memePage){
+      const cible = document.getElementById(ancre) || document.querySelector('#'+CSS.escape(ancre));
+      e.preventDefault();
+      if(document.body.classList.contains('menu-ouvert')) basculerMenu();
+      setTimeout(()=>{
+        if(!cible) return;
+        if(typeof lenis !== 'undefined' && lenis){ lenis.scrollTo(cible, { offset: 0 }); }
+        else { cible.scrollIntoView({behavior:'smooth'}); }
+      }, 60);
+      return;
+    }
+    if(document.body.classList.contains('menu-ouvert')) basculerMenu();
   });
 })();
 
