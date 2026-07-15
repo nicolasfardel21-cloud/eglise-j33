@@ -699,7 +699,7 @@ footer{padding:90px 28px 40px;max-width:1500px;margin:0 auto;border-top:1px soli
 
 <!-- version MOBILE de la scène évangile : flux vertical ordonné, images pleine largeur alternées -->
 <div class="gp-mobile" aria-hidden="false">
-  <div class="gpm-titre-wrap" data-vit="0.14">
+  <div class="gpm-titre-wrap" data-vit="0.08">
     <h2 class="titre-bloc">L'Évangile<br><span class="or invisible">Rien de moins</span></h2>
     <span class="gpm-or" aria-hidden="true">Rien de moins</span>
   </div>
@@ -1597,31 +1597,39 @@ if(cartesAnim.length === 6){
   function maj(){
     enCours = false;
     if(!estMobile()) return;
-    const vh = window.innerHeight, centre = vh/2;
+    const vh = window.innerHeight;
 
-    /* parallaxe différentiel des blocs */
+    /* parallaxe différentiel : le déplacement démarre à 0 quand l'élément entre par le bas
+       du viewport, puis croît/décroît selon la vitesse à mesure qu'il traverse l'écran.
+       Ancrage sur "à quel point l'élément a traversé l'écran depuis son entrée". */
     paral.forEach(el=>{
       const r = el.getBoundingClientRect();
-      if(r.bottom < -200 || r.top > vh + 200){ return; }
+      if(r.bottom < -200 || r.top > vh + 200) return;
       const vit = parseFloat(el.dataset.vit) || 0;
-      /* distance du centre de l'élément au centre de l'écran → déplacement proportionnel */
-      const d = (r.top + r.height/2) - centre;
-      el.style.setProperty('--ty', (-d * vit).toFixed(1) + 'px');
+      /* trajet : 0 lorsque le HAUT de l'élément est en bas de l'écran (il vient d'entrer),
+         1 lorsque le BAS de l'élément atteint le haut de l'écran (il va sortir) */
+      const trajet = (vh - r.top) / (vh + r.height);
+      const t = Math.max(0, Math.min(1, trajet));
+      /* déplacement 0 à l'entrée (t=0), amplitude maxi à la sortie (t=1) */
+      let ty = t * vit * vh * 0.6;
+      ty = Math.max(-80, Math.min(80, ty));
+      el.style.setProperty('--ty', ty.toFixed(1) + 'px');
     });
 
-    /* parallaxe interne des images (glissement dans le cadre) */
+    /* parallaxe interne des images */
     imgs.forEach(img=>{
       const cadre = img.parentElement;
       const r = cadre.getBoundingClientRect();
       if(r.bottom < -50 || r.top > vh + 50) return;
       const prog = Math.max(0, Math.min(1, (vh - r.top) / (vh + r.height)));
-      const dep = (prog - 0.5) * 9;  /* -4.5% à +4.5% */
+      const dep = (prog - 0.5) * 9;
       img.style.transform = 'translateY(' + dep.toFixed(2) + '%)';
     });
   }
   function surScroll(){ if(!enCours){ enCours = true; requestAnimationFrame(maj); } }
   window.addEventListener('scroll', surScroll, { passive:true });
   window.addEventListener('resize', surScroll, { passive:true });
+  if(document.fonts && document.fonts.ready) document.fonts.ready.then(maj);
   maj();
 })();
 </script>
