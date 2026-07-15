@@ -671,11 +671,11 @@ footer{padding:90px 28px 40px;max-width:1500px;margin:0 auto;border-top:1px soli
       <figure class="gpi" data-vit="0.22" style="--t:-4%; --l:1%;  --w:clamp(150px,18vw,300px); --ar:3/4"><img src="images_index/Illustration_4.jpg" alt="" loading="lazy" onerror="this.style.display='none'"></figure>
       <figure class="gpi" data-vit="0.50" style="--t:-6%; --l:66%; --w:clamp(190px,24vw,400px); --ar:4/3"><img src="images_index/Illustration_5.jpg" alt="" loading="lazy" onerror="this.style.display='none'"></figure>
       <figure class="gpi" data-vit="0.34" style="--t:16%; --l:80%; --w:clamp(120px,13vw,200px); --ar:3/4"><img src="images_index/Illustration_6.jpg" alt="" loading="lazy" onerror="this.style.display='none'"></figure>
-      <figure class="gpi" data-vit="0.60" style="--t:30%; --l:8%;  --w:clamp(130px,15vw,230px); --ar:1/1"><img src="images_index/Illustration_7.jpg" alt="" loading="lazy" onerror="this.style.display='none'"></figure>
+      <figure class="gpi" data-vit="0.60" style="--t:30%; --l:8%;  --w:clamp(130px,15vw,230px); --ar:4/3"><img src="images_index/Illustration_7.jpg" alt="" loading="lazy" onerror="this.style.display='none'"></figure>
       <figure class="gpi" data-vit="0.18" style="--t:48%; --l:82%; --w:clamp(120px,13vw,210px); --ar:4/5"><img src="images_index/Illustration_8.jpg" alt="" loading="lazy" onerror="this.style.display='none'"></figure>
-      <figure class="gpi" data-vit="0.44" style="--t:60%; --l:2%;  --w:clamp(150px,18vw,300px); --ar:4/3"><img src="images_index/Illustration_9.jpg" alt="" loading="lazy" onerror="this.style.display='none'"></figure>
+      <figure class="gpi" data-vit="0.44" style="--t:60%; --l:2%;  --w:clamp(150px,18vw,300px); --ar:3/4"><img src="images_index/Illustration_9.jpg" alt="" loading="lazy" onerror="this.style.display='none'"></figure>
       <figure class="gpi" data-vit="0.30" style="--t:72%; --l:68%; --w:clamp(140px,16vw,260px); --ar:3/4"><img src="images_index/Illustration_10.jpg" alt="" loading="lazy" onerror="this.style.display='none'"></figure>
-      <figure class="gpi" data-vit="0.56" style="--t:88%; --l:30%; --w:clamp(130px,15vw,240px); --ar:1/1"><img src="images_index/Illustration_11.jpg" alt="" loading="lazy" onerror="this.style.display='none'"></figure>
+      <figure class="gpi" data-vit="0.56" style="--t:88%; --l:30%; --w:clamp(130px,15vw,240px); --ar:3/4"><img src="images_index/Illustration_11.jpg" alt="" loading="lazy" onerror="this.style.display='none'"></figure>
       <figure class="gpi" data-vit="0.40" style="--t:96%; --l:82%; --w:clamp(120px,14vw,220px); --ar:3/4"><img src="images_index/Illustration_12.jpg" alt="" loading="lazy" onerror="this.style.display='none'"></figure>
     </div>
     <div class="gp-texte" id="gpTexte">
@@ -1459,13 +1459,17 @@ if(cartesAnim.length === 6){
     /* 4) suite du verset (au survol) : 3 lignes max, justifiée, calée dans le trou — à droite
           de l'illustration 2 et à gauche du verset — son bas aligné sur le bas de « Et je te répondrai » */
     if(suite){
-      const hr = (document.querySelector('.hero-anime') || suite.offsetParent).getBoundingClientRect();
+      /* le positionnement absolu de la suite est relatif à SON offsetParent réel :
+         on exprime donc left/bottom dans ce référentiel-là (sinon décalage/chevauchement) */
+      const parent = suite.offsetParent || document.querySelector('.hero-anime') || suite.parentElement;
+      const pr = parent.getBoundingClientRect();
+      const hr = (document.querySelector('.hero-anime') || parent).getBoundingClientRect();
       const vr = verset.getBoundingClientRect();
       const hp2 = document.getElementById('hph2');
       let gaucheX = hr.left + hr.width * 0.06;
       if(hp2){ const r2 = hp2.getBoundingClientRect(); gaucheX = Math.max(gaucheX, r2.right + 24); }
       const dispoW = Math.max(150, (vr.left - 24) - gaucheX);  /* largeur disponible dans le trou */
-      suite.style.left = (gaucheX - hr.left) + 'px';
+      suite.style.left = (gaucheX - pr.left) + 'px';
       suite.style.right = 'auto';
       suite.style.maxWidth = 'none';
       suite.style.whiteSpace = 'nowrap';
@@ -1480,7 +1484,7 @@ if(cartesAnim.length === 6){
         w = Math.min(dispoW, w * 1.05);
         suite.style.width = Math.ceil(w) + 'px';
       }
-      suite.style.bottom = (hr.bottom - vr.bottom) + 'px';     /* bas de la suite = bas du verset */
+      suite.style.bottom = (pr.bottom - vr.bottom) + 'px';     /* bas de la suite = bas du verset */
       suite.style.top = 'auto';
       /* 5) boutons : centrés dans le même trou (entre l'illustration 2 et le verset/la référence),
             sous la suite. On peut aller jusqu'au texte de la référence (les boutons sont sous la ligne du verset). */
@@ -1492,7 +1496,8 @@ if(cartesAnim.length === 6){
           const rr = document.createRange(); rr.selectNodeContents(refEl);
           droiteX = Math.max(droiteX, rr.getBoundingClientRect().left - 16);
         }
-        cta.style.left  = (gaucheX - hr.left) + 'px';
+        const cpr = (cta.offsetParent || parent).getBoundingClientRect();
+        cta.style.left  = (gaucheX - cpr.left) + 'px';
         cta.style.width = Math.max(240, droiteX - gaucheX) + 'px';
         cta.style.right = 'auto';
       }
