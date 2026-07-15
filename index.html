@@ -318,13 +318,14 @@ body.menu-ouvert .menu-reseaux a:nth-child(3){transition-delay:1.15s}
   .gp-scene{display:none}                 /* on masque la version parallaxe (desktop) */
   .gp-mobile{display:block;position:relative;padding:30px 22px 50px}
   .gpm-titre-wrap{position:relative;display:inline-block;margin-bottom:6px}
-  .gp-mobile .titre-bloc{mix-blend-mode:exclusion;color:#fff;font-size:clamp(1.9rem,10vw,3rem);line-height:1.06}
+  /* titre en couleurs solides (pas de fusion : elle casse avec la transform parallaxe) */
+  .gp-mobile .titre-bloc{color:var(--encre);font-size:clamp(1.9rem,10vw,3rem);line-height:1.06}
   .gp-mobile .titre-bloc .or.invisible{visibility:hidden}
   .gpm-or{position:absolute;left:0;right:0;bottom:0;color:var(--or);pointer-events:none;
     font-family:'Anton',sans-serif;font-weight:400;line-height:1.06;text-transform:uppercase;
     letter-spacing:.04em;font-size:clamp(1.9rem,10vw,3rem)}
-  .gp-mobile .texte-bloc{mix-blend-mode:exclusion;color:#fff;margin:26px 0 0;max-width:none}
-  .gp-mobile .texte-bloc strong{color:#fff}
+  .gp-mobile .texte-bloc{color:var(--encre);margin:26px 0 0;max-width:none}
+  .gp-mobile .texte-bloc strong{color:var(--encre)}
   .gp-mobile .lien-savoir{display:inline-block;margin-top:22px;color:var(--encre);
     font-weight:700;font-size:1.05rem;letter-spacing:.01em;text-transform:none;text-decoration:none}
   .gp-mobile .lien-savoir::before{content:"(\00a0";color:var(--or)}
@@ -335,20 +336,26 @@ body.menu-ouvert .menu-reseaux a:nth-child(3){transition-delay:1.15s}
   .gpm-img.droite{margin-left:auto;margin-right:0}
   /* format paysage pour certaines images (5, 7) */
   .gpm-img.paysage .gpm-cadre{aspect-ratio:3/2}
-  /* cadre à débordement masqué : l'image est plus haute et glisse à l'intérieur (parallaxe interne) */
+  /* cadre à débordement masqué : l'image glisse à l'intérieur (parallaxe interne) */
   .gpm-cadre{display:block;position:relative;width:100%;aspect-ratio:4/5;overflow:hidden;
     border-radius:4px;box-shadow:0 24px 54px -28px rgba(16,22,34,.5)}
   .gpm-cadre img{position:absolute;left:0;top:-12%;width:100%;height:124%;object-fit:cover;
     will-change:transform}
-  /* parallaxe différentiel + apparition : tout le déplacement vertical est piloté en JS
-     via la variable --ty ; l'opacité du fondu reste en CSS (classe .visible) */
+  /* parallaxe différentiel (déplacement vertical piloté en JS via --ty) sur le FIGURE */
   .gpm-img,.gpm-titre-wrap,.gp-mobile .texte-bloc,.gp-mobile .lien-savoir{
     transform:translate3d(0, var(--ty, 0px), 0);will-change:transform}
-  .gpm-img,.gp-mobile .texte-bloc{opacity:0;transition:opacity .8s cubic-bezier(.22,.61,.36,1)}
-  .gpm-img.visible,.gp-mobile .texte-bloc.visible{opacity:1}
+  /* apparition du texte : simple fondu */
+  .gp-mobile .texte-bloc{opacity:0;transition:opacity .8s cubic-bezier(.22,.61,.36,1)}
+  .gp-mobile .texte-bloc.visible{opacity:1}
+  /* apparition des images : fondu + AGRANDISSEMENT (le cadre part réduit et grandit) —
+     appliqué au CADRE pour ne pas entrer en conflit avec la parallaxe --ty du figure */
+  .gpm-cadre{opacity:0;transform:scale(.9);transform-origin:center;
+    transition:opacity .9s cubic-bezier(.22,.61,.36,1),transform 1s cubic-bezier(.22,.61,.36,1)}
+  .gpm-img.visible .gpm-cadre{opacity:1;transform:scale(1)}
 }
 @media(max-width:760px) and (prefers-reduced-motion:reduce){
-  .gpm-img,.gp-mobile .texte-bloc{opacity:1;transition:none}
+  .gp-mobile .texte-bloc{opacity:1;transition:none}
+  .gpm-cadre{opacity:1;transform:none;transition:none}
   .gpm-img,.gpm-titre-wrap,.gp-mobile .texte-bloc,.gp-mobile .lien-savoir{transform:none}
   .gpm-cadre img{top:0;height:100%}
 }
