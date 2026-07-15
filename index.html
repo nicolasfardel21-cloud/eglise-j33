@@ -311,6 +311,42 @@ body.menu-ouvert .menu-reseaux a:nth-child(3){transition-delay:1.15s}
   .gp-or{font-size:clamp(1.8rem,9vw,3rem)}
   .gp-texte .titre-bloc{font-size:clamp(1.8rem,9vw,3rem)}
 }
+
+/* ===== version MOBILE de la scène évangile : flux vertical ordonné (texte + images alternées) ===== */
+.gp-mobile{display:none}
+@media(max-width:760px){
+  .gp-scene{display:none}                 /* on masque la version parallaxe (desktop) */
+  .gp-mobile{display:block;position:relative;padding:30px 22px 50px}
+  .gpm-titre-wrap{position:relative;display:inline-block;margin-bottom:6px}
+  .gp-mobile .titre-bloc{mix-blend-mode:exclusion;color:#fff;font-size:clamp(1.9rem,10vw,3rem);line-height:1.06}
+  .gp-mobile .titre-bloc .or.invisible{visibility:hidden}
+  .gpm-or{position:absolute;left:0;right:0;bottom:0;color:var(--or);pointer-events:none;
+    font-family:'Anton',sans-serif;font-weight:400;line-height:1.06;text-transform:uppercase;
+    letter-spacing:.04em;font-size:clamp(1.9rem,10vw,3rem)}
+  .gp-mobile .texte-bloc{mix-blend-mode:exclusion;color:#fff;margin:26px 0 0;max-width:none}
+  .gp-mobile .texte-bloc strong{color:#fff}
+  .gp-mobile .lien-savoir{display:inline-block;margin-top:22px;color:var(--encre);
+    font-weight:700;font-size:1.05rem;letter-spacing:.01em;text-transform:none;text-decoration:none}
+  .gp-mobile .lien-savoir::before{content:"(\00a0";color:var(--or)}
+  .gp-mobile .lien-savoir::after{content:"\00a0)";color:var(--or)}
+  /* images : une à la fois, quasi pleine largeur, alignement alterné */
+  .gpm-img{margin:36px 0 0;width:86%;padding:0}
+  .gpm-img.gauche{margin-right:auto;margin-left:0}
+  .gpm-img.droite{margin-left:auto;margin-right:0}
+  /* cadre à débordement masqué : l'image est plus haute et glisse à l'intérieur (parallaxe) */
+  .gpm-cadre{display:block;position:relative;width:100%;aspect-ratio:4/5;overflow:hidden;
+    border-radius:4px;box-shadow:0 24px 54px -28px rgba(16,22,34,.5)}
+  .gpm-cadre img{position:absolute;left:0;top:-12%;width:100%;height:124%;object-fit:cover;
+    will-change:transform}
+  /* apparition : fondu + glissement vers le haut */
+  .gpm-img{opacity:0;transform:translateY(46px);
+    transition:opacity .8s cubic-bezier(.22,.61,.36,1),transform .8s cubic-bezier(.22,.61,.36,1)}
+  .gpm-img.visible{opacity:1;transform:none}
+}
+@media(max-width:760px) and (prefers-reduced-motion:reduce){
+  .gpm-img{opacity:1;transform:none;transition:none}
+  .gpm-cadre img{top:0;height:100%}
+}
 @media(prefers-reduced-motion: reduce){
   .gp-scene{min-height:auto;flex-direction:column;padding:70px 0}
   .gp-images{position:relative;height:80svh;order:2;margin-top:30px}
@@ -654,6 +690,46 @@ footer{padding:90px 28px 40px;max-width:1500px;margin:0 auto;border-top:1px soli
       </div>
       <a class="lien-paren lien-savoir" href="a-propos.html">Qui sommes-nous ?</a>
     </div>
+</div>
+
+<!-- version MOBILE de la scène évangile : flux vertical ordonné, images pleine largeur alternées -->
+<div class="gp-mobile" aria-hidden="false">
+  <div class="gpm-titre-wrap">
+    <h2 class="titre-bloc">L'Évangile<br><span class="or invisible">Rien de moins</span></h2>
+    <span class="gpm-or" aria-hidden="true">Rien de moins</span>
+  </div>
+
+  <figure class="gpm-img gauche"><span class="gpm-cadre"><img src="images_index/Illustration_4.jpg" alt="" loading="lazy" onerror="this.closest('figure').style.display='none'"></span></figure>
+
+  <div class="texte-bloc">
+    <p><strong>J33 existe pour annoncer l'Évangile et accompagner chacun sur le chemin de la foi.</strong></p>
+  </div>
+
+  <a class="lien-paren lien-savoir" href="a-propos.html">Qui sommes-nous ?</a>
+
+  <figure class="gpm-img droite"><span class="gpm-cadre"><img src="images_index/Illustration_5.jpg" alt="" loading="lazy" onerror="this.closest('figure').style.display='none'"></span></figure>
+  <figure class="gpm-img gauche"><span class="gpm-cadre"><img src="images_index/Illustration_6.jpg" alt="" loading="lazy" onerror="this.closest('figure').style.display='none'"></span></figure>
+
+  <div class="texte-bloc">
+    <p>Parce que Dieu a tant aimé le monde qu'il a donné son Fils unique afin que quiconque croit en lui ne périsse pas mais ait la vie éternelle, nous voulons proclamer son amour infini à travers le sacrifice de Jésus qui offre une vie nouvelle et transformée.</p>
+  </div>
+
+  <figure class="gpm-img droite"><span class="gpm-cadre"><img src="images_index/Illustration_7.jpg" alt="" loading="lazy" onerror="this.closest('figure').style.display='none'"></span></figure>
+  <figure class="gpm-img gauche"><span class="gpm-cadre"><img src="images_index/Illustration_8.jpg" alt="" loading="lazy" onerror="this.closest('figure').style.display='none'"></span></figure>
+
+  <div class="texte-bloc">
+    <p>Notre assemblée est ainsi un lieu ouvert à tous, prêt à accueillir et à accompagner quiconque souhaite découvrir et rencontrer ce Dieu d'amour, quel que soit son parcours.</p>
+  </div>
+
+  <figure class="gpm-img droite"><span class="gpm-cadre"><img src="images_index/Illustration_9.jpg" alt="" loading="lazy" onerror="this.closest('figure').style.display='none'"></span></figure>
+  <figure class="gpm-img gauche"><span class="gpm-cadre"><img src="images_index/Illustration_10.jpg" alt="" loading="lazy" onerror="this.closest('figure').style.display='none'"></span></figure>
+
+  <div class="texte-bloc">
+    <p>Notre vision est de voir les cœurs brisés restaurés et des chrétiens grandir dans une foi mature et passionnée en vivant la plénitude de Dieu, tout en contribuant au réveil de la flamme spirituelle à Is-sur-Tille et ses environs.</p>
+  </div>
+
+  <figure class="gpm-img droite"><span class="gpm-cadre"><img src="images_index/Illustration_11.jpg" alt="" loading="lazy" onerror="this.closest('figure').style.display='none'"></span></figure>
+  <figure class="gpm-img gauche"><span class="gpm-cadre"><img src="images_index/Illustration_12.jpg" alt="" loading="lazy" onerror="this.closest('figure').style.display='none'"></span></figure>
 </div>
 
 
@@ -1479,6 +1555,51 @@ if(cartesAnim.length === 6){
       verset.addEventListener('blur', cacher);
     }
   }
+})();
+
+/* ===== version mobile de la scène évangile : apparition (fondu+glissement) + parallaxe interne ===== */
+(function(){
+  const estMobile = () => window.matchMedia('(max-width:760px)').matches;
+  const reduit = window.matchMedia('(prefers-reduced-motion:reduce)').matches;
+  const figs = Array.from(document.querySelectorAll('.gp-mobile .gpm-img'));
+  if(!figs.length) return;
+
+  /* 1) apparition au scroll : fondu + glissement vers le haut */
+  if('IntersectionObserver' in window){
+    const io = new IntersectionObserver((entries)=>{
+      entries.forEach(e=>{ if(e.isIntersecting){ e.target.classList.add('visible'); io.unobserve(e.target); } });
+    }, { threshold:0.15, rootMargin:'0px 0px -8% 0px' });
+    figs.forEach(f=>io.observe(f));
+  } else {
+    figs.forEach(f=>f.classList.add('visible'));
+  }
+
+  /* 2) parallaxe interne : l'image glisse dans son cadre selon la position de défilement */
+  if(reduit) return;
+  const imgs = figs.map(f=>f.querySelector('img')).filter(Boolean);
+  let enCours = false;
+  function majParallaxe(){
+    enCours = false;
+    if(!estMobile()) return;
+    const vh = window.innerHeight;
+    imgs.forEach(img=>{
+      const cadre = img.parentElement;
+      const r = cadre.getBoundingClientRect();
+      if(r.bottom < -50 || r.top > vh + 50) return; /* hors écran : on ignore */
+      /* progression 0 (cadre en bas de l'écran) -> 1 (cadre en haut) */
+      const prog = (vh - r.top) / (vh + r.height);
+      const p = Math.max(0, Math.min(1, prog));
+      /* l'image est 124% de haut : on la translate de +/- ~9% pour un glissement doux */
+      const dep = (p - 0.5) * 9; /* de -4.5% à +4.5% */
+      img.style.transform = 'translateY(' + dep.toFixed(2) + '%)';
+    });
+  }
+  function surScroll(){
+    if(!enCours){ enCours = true; requestAnimationFrame(majParallaxe); }
+  }
+  window.addEventListener('scroll', surScroll, { passive:true });
+  window.addEventListener('resize', surScroll, { passive:true });
+  majParallaxe();
 })();
 </script>
 </body>
