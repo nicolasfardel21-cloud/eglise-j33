@@ -318,7 +318,7 @@ section{padding:110px 28px;max-width:1500px;margin:0 auto}
 .carte .num{font-family:'Anton',sans-serif;font-size:2.4rem;color:var(--or);line-height:1}
 .cx-glyphe{display:inline-block}
 .carte h3{font-weight:600;font-size:1rem;text-transform:uppercase;letter-spacing:.08em;margin:16px 0 10px}
-.carte p{font-size:.88rem;color:var(--gris)}
+.carte p{font-size:1.05rem;color:var(--gris)}
 .carte .versets{margin-top:14px;font-size:.78rem;color:var(--bleu);line-height:1.9}
 
 /* ---------- désert ---------- */
@@ -351,6 +351,30 @@ section{padding:110px 28px;max-width:1500px;margin:0 auto}
 .faq summary::after{content:"+";font-family:'Archivo',sans-serif;font-size:1.6rem;color:var(--or);transition:transform .3s;flex:none}
 .faq details[open] summary::after{transform:rotate(45deg)}
 .faq .rep{padding:0 0 26px;max-width:65ch;color:var(--gris);font-size:.95rem}
+
+/* ---------- formulaire de contact (page connexion) ---------- */
+.form-cadre{margin-top:50px;border:1px solid var(--encre);padding:40px 36px;max-width:720px}
+.form-champ{margin-bottom:30px}
+.form-champ:last-of-type{margin-bottom:0}
+.form-champ label{display:block;font-size:.74rem;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--encre);margin-bottom:12px}
+.form-champ label .opt{font-weight:400;letter-spacing:.04em;text-transform:none;color:var(--gris)}
+.form-champ input[type="text"],.form-champ input[type="email"],.form-champ input[type="tel"],.form-champ select,.form-champ textarea{
+  width:100%;background:#F1F1EF;border:0;border-bottom:1px solid var(--encre);
+  padding:14px 12px;font-family:'Archivo',sans-serif;font-size:1rem;color:var(--encre);
+  transition:background .25s,border-color .25s}
+.form-champ input:focus,.form-champ select:focus,.form-champ textarea:focus{outline:none;background:#EAEAE6;border-color:var(--or)}
+.form-champ select{appearance:none;-webkit-appearance:none;cursor:pointer;
+  background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%23101622' stroke-width='2.5'><path d='M6 9l6 6 6-6'/></svg>");
+  background-repeat:no-repeat;background-position:right 12px center}
+.form-champ textarea{resize:vertical;min-height:130px;line-height:1.5}
+.form-envoi{width:100%;margin-top:34px;border:0;cursor:pointer;
+  background:var(--or);color:#fff;font-family:'Anton',sans-serif;font-weight:400;
+  font-size:1.15rem;letter-spacing:.12em;text-transform:uppercase;padding:20px;
+  transition:background .25s,transform .2s}
+.form-envoi:hover{background:#9c8232}
+.form-envoi:active{transform:scale(.99)}
+.form-note{font-size:.78rem;color:var(--gris);font-style:italic;margin-top:18px;text-align:center}
+@media(max-width:760px){.form-cadre{padding:30px 22px}}
 
 /* ---------- hero connexion : split façon 2819 (titre gauche + image droite) ---------- */
 .hero-connect{min-height:auto;display:block;padding:0}
@@ -511,44 +535,88 @@ footer{padding:90px 28px 40px;max-width:1500px;margin:0 auto;border-top:1px soli
   </section>
 </header>
 
-<section id="visio" class="reveal">
-  <span class="eyebrow">la communauté à distance</span>
-  <h2 class="titre-bloc">Études bibliques<br><span class="or">en visio</span></h2>
+<section id="intro-vie" class="reveal">
+  <span class="eyebrow">la vie au-delà du dimanche</span>
+  <h2 class="titre-bloc">Une église<br><span class="or">à taille humaine</span></h2>
   <div class="texte-bloc">
-    <p>Un dimanche par mois, de 16h30 à 17h30, nous nous retrouvons en ligne pour <strong>creuser la Parole ensemble</strong> — où que vous soyez. Idéal pour s'enraciner, poser ses questions et grandir à son rythme.</p>
+    <p>Chez nous, l'église ne s'arrête pas à la fin du culte. Parce que nous sommes une <strong>communauté à taille humaine</strong>, nous aimons nous retrouver pour partager la vie, approfondir notre foi et nous soutenir mutuellement.</p>
+    <p>Ici, pas de sous-groupes : nous formons une seule et même grande famille où chacun a sa place et où il est facile de s'intégrer.</p>
   </div>
-  <a class="lien-paren plein" href="contact.html">demander le lien visio</a>
 </section>
 
-<section id="suivi" class="reveal" style="padding-top:0">
-  <span class="eyebrow">prendre soin de chacun</span>
-  <h2 class="titre-bloc">Suivi<br><span class="or">pastoral</span></h2>
-  <div class="texte-bloc">
-    <p>Vous traversez une période difficile, vous avez des questions, ou simplement besoin d'écoute et de prière ? Nos responsables sont disponibles pour <strong>vous accompagner personnellement</strong>, avec bienveillance et confidentialité.</p>
-  </div>
-  <a class="lien-paren plein" href="contact.html">demander un rendez-vous</a>
-</section>
-
-<section id="etapes" class="reveal" style="padding-top:0">
-  <span class="eyebrow">les grandes étapes</span>
-  <h2 class="titre-bloc">Avancer<br><span class="or">dans la foi</span></h2>
+<section id="ensemble" class="reveal" style="padding-top:0">
+  <span class="eyebrow">ce que nous vivons ensemble</span>
+  <h2 class="titre-bloc">Partager<br><span class="or">la vie d'église</span></h2>
   <div class="grille-cartes" style="margin-top:50px">
     <div class="carte">
       <div class="num">01</div>
-      <h3>Accompagnement baptême</h3>
-      <p>Vous désirez être baptisé ? Nous vous accompagnons pas à pas pour comprendre le sens du baptême et préparer cette étape décisive <span class="or-txt">(Matthieu 28:19, Actes 2:38)</span>.</p>
+      <h3>Le culte du dimanche</h3>
+      <p>C'est le cœur battant de notre communauté. Chaque dimanche matin, nous nous rassemblons pour célébrer Dieu à travers des temps de louange et de prière inspirants. Un moment d'enseignement, de partage de la Parole et d'édification mutuelle, pensé pour encourager chacun et l'aider à grandir dans sa foi.</p>
     </div>
     <div class="carte">
       <div class="num">02</div>
-      <h3>Accompagnement mariage</h3>
-      <p>Préparer son mariage, construire son couple sur le roc : un accompagnement pour les fiancés et les couples qui veulent fonder leur union en Dieu.</p>
+      <h3>Les soirées louange &amp; repas partagé</h3>
+      <p>Des rendez-vous réguliers, simples et particulièrement chaleureux, idéaux pour inviter des amis ou venir nous découvrir pour la première fois. Autour d'un bon repas et de chants de louange, nous vivons des moments d'échanges authentiques où chacun peut poser ses questions et découvrir la foi dans une ambiance décontractée.</p>
     </div>
     <div class="carte">
       <div class="num">03</div>
-      <h3>Et bien d'autres à venir</h3>
-      <p>D'autres parcours et services sont en préparation. Suivez-nous ou écrivez-nous pour rester informé de ce que Dieu fait grandir à J33.</p>
+      <h3>L'étude biblique &amp; l'échange</h3>
+      <p>Nous nous rassemblons en semaine pour ouvrir la Bible ensemble. Un moment interactif où nous discutons des enseignements du dimanche, posons nos questions librement et cherchons comment appliquer la Parole de Dieu dans notre quotidien.</p>
+    </div>
+    <div class="carte">
+      <div class="num">04</div>
+      <h3>La réunion de prière</h3>
+      <p>Parce que la prière est le moteur de notre vie chrétienne, nous prenons du temps pour intercéder les uns pour les autres, pour nos familles et pour notre région. Un espace de confiance et de paix où nous portons ensemble nos défis et nos reconnaissances.</p>
+    </div>
+    <div class="carte">
+      <div class="num">05</div>
+      <h3>Un accompagnement personnel</h3>
+      <p>Chaque parcours est unique, avec ses joies, ses doutes ou ses moments plus difficiles. Nos pasteurs sont à votre entière disposition pour vous offrir une écoute bienveillante, prier avec vous ou vous conseiller dans votre cheminement spirituel, <span class="or-txt">le tout dans une totale confidentialité</span>.</p>
     </div>
   </div>
+</section>
+
+<section id="pas-de-plus" class="reveal" style="padding-top:0">
+  <span class="eyebrow">faire un pas de plus</span>
+  <h2 class="titre-bloc">Venir<br><span class="or">nous découvrir</span></h2>
+  <div class="texte-bloc">
+    <p>Vous souhaitez nous découvrir ? Le meilleur moyen pour faire connaissance, c'est de <strong>nous rejoindre un dimanche matin</strong> lors de notre culte. C'est le point de départ idéal ! Nos réunions de prière et nos moments de convivialité sont également ouverts à tous ceux qui souhaitent voir et participer, même pour la première fois.</p>
+    <p>Vous aimeriez venir nous rendre visite, participer à un moment d'église, ou vous avez simplement besoin de parler ou de prier avec l'un de nos pasteurs ? Remplissez ce court formulaire : un membre de notre équipe pastorale vous recontactera avec joie et en toute simplicité.</p>
+  </div>
+
+  <form class="form-cadre" id="formConnexion" novalidate>
+    <div class="form-champ">
+      <label for="cx-prenom">Votre prénom</label>
+      <input type="text" id="cx-prenom" name="prenom" autocomplete="given-name" required>
+    </div>
+    <div class="form-champ">
+      <label for="cx-nom">Votre nom</label>
+      <input type="text" id="cx-nom" name="nom" autocomplete="family-name" required>
+    </div>
+    <div class="form-champ">
+      <label for="cx-email">Votre adresse e-mail</label>
+      <input type="email" id="cx-email" name="email" autocomplete="email" required>
+    </div>
+    <div class="form-champ">
+      <label for="cx-tel">Votre numéro de téléphone <span class="opt">(optionnel)</span></label>
+      <input type="tel" id="cx-tel" name="telephone" autocomplete="tel">
+    </div>
+    <div class="form-champ">
+      <label for="cx-aide">Comment pouvons-nous vous aider ?</label>
+      <select id="cx-aide" name="aide" required>
+        <option value="" selected disabled>Sélectionnez…</option>
+        <option>J'aimerais venir (au culte, à une prière ou à un repas)</option>
+        <option>J'aimerais échanger ou prendre un café avec un pasteur</option>
+        <option>J'ai une demande de prière</option>
+      </select>
+    </div>
+    <div class="form-champ">
+      <label for="cx-message">Votre message</label>
+      <textarea id="cx-message" name="message"></textarea>
+    </div>
+    <button type="submit" class="form-envoi">Envoyer ma demande</button>
+    <p class="form-note">— votre logiciel de messagerie s'ouvrira avec le message pré-rempli —</p>
+  </form>
 </section>
 
 
@@ -556,8 +624,16 @@ footer{padding:90px 28px 40px;max-width:1500px;margin:0 auto;border-top:1px soli
   <span class="eyebrow">questions fréquentes</span>
   <h2 class="titre-bloc" style="margin-bottom:40px">Vos<br><span class="or">questions</span></h2>
   <details>
+    <summary>Comment se passe une réunion de prière ? Dois-je prier à voix haute ?</summary>
+    <div class="rep">Pas du tout ! Nos réunions de prière sont des moments simples et paisibles. Nous prions ensemble pour les besoins de chacun, pour l'église et pour notre région. Vous êtes totalement libre de prier à haute voix si vous le souhaitez, ou de simplement vous associer en silence et écouter. Votre seule présence est déjà un encouragement.</div>
+  </details>
+  <details>
+    <summary>Comment se déroulent les soirées louange avec repas partagé ? Que dois-je apporter ?</summary>
+    <div class="rep">Ces soirées sont des moments de fête et de convivialité très simples. Nous passons un temps à chanter et célébrer Dieu ensemble (la louange), puis nous partageons un buffet avec ce que chacun a apporté (salade, plat, dessert ou simplement une boisson). C'est le moment idéal pour faire connaissance et discuter librement. Si vous venez pour la première fois et que vous n'avez rien pu apporter, pas d'inquiétude : venez les mains vides, il y a toujours largement assez pour tout le monde !</div>
+  </details>
+  <details>
     <summary>Comment rejoindre les études bibliques en visio ?</summary>
-    <div class="rep">Elles ont lieu un dimanche par mois, de 16h30 à 17h30, en ligne. Écrivez-nous depuis la page contact pour recevoir le lien de connexion : aucune inscription compliquée, il suffit de nous prévenir.</div>
+    <div class="rep">Elles ont lieu un dimanche par mois, de 16h30 à 17h30, en ligne. Pour préserver le cadre convivial et familial de ces échanges, nous aimons généralement faire d'abord connaissance lors d'un culte le dimanche matin. Venez nous rencontrer, et c'est avec joie que nous vous partagerons ensuite le lien de connexion !</div>
   </details>
   <details>
     <summary>Faut-il déjà connaître la Bible pour participer ?</summary>
@@ -565,15 +641,11 @@ footer{padding:90px 28px 40px;max-width:1500px;margin:0 auto;border-top:1px soli
   </details>
   <details>
     <summary>Comment demander un suivi pastoral ?</summary>
-    <div class="rep">Un besoin d'écoute, de prière ou de conseil ? Contactez-nous et l'un de nos responsables vous proposera un rendez-vous. Les échanges se font avec bienveillance et en toute confidentialité.</div>
+    <div class="rep">Un besoin d'écoute, de prière ou de conseil ? Contactez-nous et l'un de nos pasteurs vous proposera un rendez-vous. Les échanges se font avec bienveillance et en toute confidentialité.</div>
   </details>
   <details>
     <summary>Je souhaite être baptisé, par où commencer ?</summary>
-    <div class="rep">Nous vous accompagnons pas à pas pour comprendre le sens du baptême et préparer cette étape. Faites-nous signe : nous prendrons le temps d'en parler ensemble avant de fixer une date.</div>
-  </details>
-  <details>
-    <summary>Peut-on rester connecté même sans venir chaque semaine ?</summary>
-    <div class="rep">Bien sûr. Études en ligne, ressources, prière et lien fraternel : plusieurs manières existent de garder le contact avec l'église, où que vous soyez et quel que soit votre emploi du temps.</div>
+    <div class="rep">Le baptême est l'expression publique et le témoignage de votre décision personnelle d'accepter Jésus-Christ comme votre Sauveur et Seigneur. Parce qu'il s'agit aussi d'un engagement, nous proposons le baptême aux membres de notre église. Nous vous accompagnerons avec joie, pas à pas, pour vous aider à comprendre le sens de cette étape et la préparer ensemble. Contactez l'un de nos pasteurs pour en parler !</div>
   </details>
 </section>
 
@@ -1097,6 +1169,28 @@ if(cartesAnim.length === 6){
   ajusterLargeurTitre();
   if(document.fonts && document.fonts.ready) document.fonts.ready.then(ajusterLargeurTitre);
   window.addEventListener('resize', ajusterLargeurTitre);
+})();
+
+/* formulaire connexion : compose un e-mail pré-rempli (mailto) */
+(function(){
+  const form = document.getElementById('formConnexion');
+  if(!form) return;
+  const DEST = 'contact@eglise-j33.fr'; /* ← adresse de destination à confirmer */
+  form.addEventListener('submit', e=>{
+    e.preventDefault();
+    if(!form.reportValidity()) return;
+    const v = id => (form.querySelector('#'+id)?.value || '').trim();
+    const prenom = v('cx-prenom'), nom = v('cx-nom'), email = v('cx-email'), tel = v('cx-tel'), aide = v('cx-aide'), message = v('cx-message');
+    const sujet = `[Connexion J33] ${(prenom+' '+nom).trim() || 'Nouvelle demande'}`;
+    const corps =
+      `Prénom : ${prenom}\n`+
+      `Nom : ${nom}\n`+
+      `E-mail : ${email}\n`+
+      `Téléphone : ${tel || '—'}\n`+
+      `Demande : ${aide || '—'}\n\n`+
+      `${message}\n`;
+    window.location.href = `mailto:${DEST}?subject=${encodeURIComponent(sujet)}&body=${encodeURIComponent(corps)}`;
+  });
 })();
 </script>
 </body>
