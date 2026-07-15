@@ -508,18 +508,28 @@ section{padding:110px 28px;max-width:1500px;margin:0 auto}
 
 /* ===== mobile : le verset « Car des eaux… » se fige sous le bandeau, le récit défile derrière ===== */
 @media(max-width:760px){
-  .desert{padding:0 0 60px;overflow:visible}
-  /* le bloc verset (3 lignes + Ésaïe) reste collé sous le bandeau pendant le scroll du récit */
-  .desert .int{position:sticky;top:64px;z-index:3;padding:24px 22px 24px;margin:0;
-    background:linear-gradient(var(--fond) 88%, rgba(255,255,255,0));text-align:center}
+  .desert{padding:0 0 60px;overflow-x:clip;overflow-y:visible}
+  /* le bloc verset se fige tout en haut ; un padding-top le place sous le bandeau,
+     et son fond opaque monte jusqu'au bord haut pour masquer le récit qui défile derrière */
+  .desert .int{position:sticky;top:0;z-index:3;padding:70px 22px 26px;margin:0;
+    background:var(--fond);text-align:center}
+  /* léger fondu du fond en bas du bloc figé */
+  .desert .int::after{content:"";position:absolute;left:0;right:0;bottom:-24px;height:24px;
+    background:linear-gradient(var(--fond),rgba(255,255,255,0));pointer-events:none}
   .desert .ligne-eau{font-size:clamp(2.2rem,13vw,4.2rem);letter-spacing:.06em;white-space:normal;
-    line-height:1.02;text-align:center}
-  .desert .ligne-eau.l1{text-align:center}
+    line-height:1.02;will-change:transform}
+  /* on garde les alignements d'origine pour l'effet d'arrivée (gauche / centre / droite) */
+  .desert .ligne-eau.l1{text-align:left}
   .desert .ligne-eau.l2{text-align:center}
-  .desert .ligne-eau.l3{text-align:center}
+  .desert .ligne-eau.l3{text-align:right}
   .desert cite{margin-top:18px}
   /* le récit passe DERRIÈRE le verset figé */
-  .desert .recit{position:relative;z-index:1;margin-top:40px}
+  .desert .recit{position:relative;z-index:1;margin-top:40px;
+    /* on réserve de l'espace en bas pour que le verset reste figé jusqu'au recouvrement */
+    padding-bottom:60svh}
+  /* le passage Jérémie (fond foncé) remonte PAR-DESSUS la fin du désert :
+     il vient recouvrir le verset encore figé, puis tout monte ensemble */
+  .verset-geant{position:relative;z-index:5;margin-top:-60svh}
 }
 
 /* ---------- verset géant ---------- */
@@ -1064,6 +1074,22 @@ if(!reduit){
         const s = parseFloat(l.dataset.glisse);
         if(s!==0) l.style.transform = `translateX(${s*d*-9}vw)`;
         else l.style.transform = `scale(${1+Math.max(0,(1-Math.abs(d)))*.06})`;
+      });
+    }
+    if(sectionDesert && window.matchMedia('(max-width:760px)').matches){
+      /* mobile : effet d'arrivée — « Car des eaux » (l1) vient de la gauche,
+         « dans le désert » (l3) vient de la droite ; elles convergent vers le centre
+         à mesure que le bloc entre dans l'écran (avant de se figer). */
+      const intr = document.querySelector('.desert .int');
+      const r = (intr||sectionDesert).getBoundingClientRect();
+      /* entree : 0 quand le bloc arrive par le bas, 1 quand il est calé en haut */
+      let e = (vh() - r.top) / (vh() * 0.9);
+      e = Math.max(0, Math.min(1, e));
+      const dec = (1 - e) * 42;   /* décalage en vw, nul une fois arrivé */
+      lignesEau.forEach(l=>{
+        const s = parseFloat(l.dataset.glisse);
+        if(s !== 0) l.style.transform = `translateX(${s * dec}vw)`;
+        else l.style.transform = 'none';
       });
     }
     if(versetGeant){
