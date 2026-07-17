@@ -612,6 +612,26 @@ footer{padding:90px 28px 40px;max-width:1500px;margin:0 auto;border-top:1px soli
   .hero h1 > span{animation:none;opacity:1}
   .marquee .piste{animation:none}
 }
+
+/* ===== paysage sur écran bas (index) : le hero tient dans la hauteur de l'écran ===== */
+@media (orientation:landscape) and (max-height:500px){
+  /* le hero occupe toute la hauteur de l'écran et son contenu est compacté pour y tenir */
+  .hero-scene .hero{height:100svh!important;min-height:0!important;padding-top:52px;padding-bottom:12px;justify-content:center;gap:4px}
+  .hero-titrage{margin-top:2px!important}
+  .hero-anime h1.geant{font-size:clamp(1.9rem,min(11vw,20svh),4rem)!important;line-height:.92}
+  .hero .infos{font-size:.68rem}
+  .hero-verset{font-size:clamp(1.1rem,4.5vw,1.8rem)!important}
+  .hero-ref{font-size:.72rem!important}
+  .hero-anime .cta{margin-top:12px}
+  /* les illustrations flottantes réduites pour ne pas déborder */
+  .hero-images .hph{transform:scale(.82)}
+
+  /* le verset du désert n'est PLUS figé en paysage : défilement normal */
+  .desert .int{position:static!important;top:auto!important;padding:26px 22px 10px!important}
+  .desert .int::after{display:none}
+  .desert .recit{padding-bottom:0!important}
+  .verset-geant{margin-top:0!important}
+}
 </style>
 </head>
 <body>
