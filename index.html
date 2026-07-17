@@ -330,14 +330,12 @@ body.menu-ouvert .menu-reseaux a:nth-child(3){transition-delay:1.15s}
     font-weight:700;font-size:1.05rem;letter-spacing:.01em;text-transform:none;text-decoration:none}
   .gp-mobile .lien-savoir::before{content:"(\00a0";color:var(--or)}
   .gp-mobile .lien-savoir::after{content:"\00a0)";color:var(--or)}
-  /* images : une à la fois, quasi pleine largeur, alignement alterné */
-  .gpm-img{margin:36px 0 0;width:86%;padding:0}
+  /* images : une à la fois, hauteur = écran moins le bandeau du menu (visibles entièrement) */
+  .gpm-img{margin:28px 0 0;width:86%;padding:0}
   .gpm-img.gauche{margin-right:auto;margin-left:0}
   .gpm-img.droite{margin-left:auto;margin-right:0}
-  /* format paysage pour certaines images (5, 7) */
-  .gpm-img.paysage .gpm-cadre{aspect-ratio:3/2}
-  /* cadre à débordement masqué : l'image glisse à l'intérieur (parallaxe interne) */
-  .gpm-cadre{display:block;position:relative;width:100%;aspect-ratio:4/5;overflow:hidden;
+  /* cadre à débordement masqué : hauteur calée sur la hauteur d'écran utile */
+  .gpm-cadre{display:block;position:relative;width:100%;height:calc(100svh - 88px);overflow:hidden;
     border-radius:4px;box-shadow:0 24px 54px -28px rgba(16,22,34,.5)}
   .gpm-cadre img{position:absolute;left:0;top:-12%;width:100%;height:124%;object-fit:cover;
     will-change:transform}
@@ -613,18 +611,27 @@ footer{padding:90px 28px 40px;max-width:1500px;margin:0 auto;border-top:1px soli
   .marquee .piste{animation:none}
 }
 
-/* ===== paysage sur écran bas (index) : le hero tient dans la hauteur de l'écran ===== */
+/* ===== paysage sur écran bas (index) : hero empilé proprement, sans débordement ===== */
 @media (orientation:landscape) and (max-height:500px){
-  /* le hero occupe toute la hauteur de l'écran et son contenu est compacté pour y tenir */
-  .hero-scene .hero{height:100svh!important;min-height:0!important;padding-top:52px;padding-bottom:12px;justify-content:center;gap:4px}
-  .hero-titrage{margin-top:2px!important}
-  .hero-anime h1.geant{font-size:clamp(1.9rem,min(11vw,20svh),4rem)!important;line-height:.92}
-  .hero .infos{font-size:.68rem}
-  .hero-verset{font-size:clamp(1.1rem,4.5vw,1.8rem)!important}
-  .hero-ref{font-size:.72rem!important}
-  .hero-anime .cta{margin-top:12px}
-  /* les illustrations flottantes réduites pour ne pas déborder */
-  .hero-images .hph{transform:scale(.82)}
+  /* le hero prend une hauteur naturelle et son contenu s'empile au centre */
+  .hero-scene{height:auto!important}
+  .hero-scene .hero{height:auto!important;min-height:0!important;position:relative!important;
+    padding:80px 28px 40px;justify-content:flex-start;gap:8px}
+  .hero-titrage{margin-top:0!important;text-align:center}
+  /* le grand titre passe à la ligne et reste dans l'écran (plus de débordement à droite) */
+  .hero-anime h1.geant{font-size:clamp(2.2rem,9vw,4.6rem)!important;line-height:.96;
+    white-space:normal!important;text-align:center;margin:0 auto!important;width:auto!important}
+  .hero-anime h1.geant span{display:inline!important;transform:none!important}
+  .hero-verset{font-size:clamp(1.1rem,4vw,1.7rem)!important;text-align:center;white-space:normal!important;margin:.3em auto 0!important}
+  .hero-ref{font-size:.74rem!important;text-align:center;margin:.5em auto 0!important}
+  /* les illustrations en fond, atténuées, pour ne pas gêner la lecture */
+  .hero-images{opacity:.28}
+  .hero-images .hph{transform:scale(.7)}
+  /* boutons dans le flux, centrés, sous le titre */
+  #heroCta.cta{position:relative!important;left:auto!important;right:auto!important;bottom:auto!important;
+    top:auto!important;width:100%!important;margin-top:18px!important;justify-content:center!important}
+  /* la suite du verset (au survol) reste dans le flux */
+  .hero-suite{position:relative!important;left:auto!important;bottom:auto!important}
 
   /* le verset du désert n'est PLUS figé en paysage : défilement normal */
   .desert .int{position:static!important;top:auto!important;padding:26px 22px 10px!important}
