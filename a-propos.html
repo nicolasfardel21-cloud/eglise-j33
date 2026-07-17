@@ -552,6 +552,18 @@ h1.ap-titre{position:relative;z-index:1;margin:17px auto 0;width:fit-content;max
   .hero h1 > span{animation:none;opacity:1}
   .marquee .piste{animation:none}
 }
+
+/* ===== paysage sur écran bas : le hero prend une hauteur naturelle (pas de plein écran forcé) ===== */
+@media (orientation:landscape) and (max-height:500px){
+  .hero{min-height:0!important;padding-top:80px;padding-bottom:40px}
+  .hero-page{min-height:0!important}
+  .hero h1{font-size:clamp(2rem,9vw,4.2rem)!important}
+  .hero-anime h1.geant{font-size:clamp(2.4rem,10vw,5rem)!important}
+}
+
+@media (orientation:landscape) and (max-height:500px){
+  .hero-scene .hero{height:auto!important;min-height:0!important}
+}
 </style>
 </head>
 <body>
