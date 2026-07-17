@@ -330,13 +330,16 @@ body.menu-ouvert .menu-reseaux a:nth-child(3){transition-delay:1.15s}
     font-weight:700;font-size:1.05rem;letter-spacing:.01em;text-transform:none;text-decoration:none}
   .gp-mobile .lien-savoir::before{content:"(\00a0";color:var(--or)}
   .gp-mobile .lien-savoir::after{content:"\00a0)";color:var(--or)}
-  /* images : une à la fois, hauteur = écran moins le bandeau du menu (visibles entièrement) */
-  .gpm-img{margin:28px 0 0;width:86%;padding:0}
+  /* images : une à la fois, ratio conservé, hauteur plafonnée à l'écran moins le bandeau */
+  .gpm-img{margin:32px 0 0;width:auto;max-width:86%;padding:0}
   .gpm-img.gauche{margin-right:auto;margin-left:0}
   .gpm-img.droite{margin-left:auto;margin-right:0}
-  /* cadre à débordement masqué : hauteur calée sur la hauteur d'écran utile */
-  .gpm-cadre{display:block;position:relative;width:100%;height:calc(100svh - 88px);overflow:hidden;
+  /* cadre : ratio conservé (aspect-ratio) ; la largeur est calculée pour que la HAUTEUR
+     ne dépasse jamais l'écran utile => image entière, jamais déformée */
+  .gpm-cadre{display:block;position:relative;aspect-ratio:4/5;
+    width:min(86vw, (100svh - 96px) * 4 / 5);overflow:hidden;
     border-radius:4px;box-shadow:0 24px 54px -28px rgba(16,22,34,.5)}
+  .gpm-img.paysage .gpm-cadre{aspect-ratio:3/2;width:min(86vw, (100svh - 96px) * 3 / 2)}
   .gpm-cadre img{position:absolute;left:0;top:-12%;width:100%;height:124%;object-fit:cover;
     will-change:transform}
   /* parallaxe différentiel (déplacement vertical piloté en JS via --ty) sur le FIGURE */
@@ -611,27 +614,15 @@ footer{padding:90px 28px 40px;max-width:1500px;margin:0 auto;border-top:1px soli
   .marquee .piste{animation:none}
 }
 
-/* ===== paysage sur écran bas (index) : hero empilé proprement, sans débordement ===== */
+/* ===== paysage sur écran bas (index) : on hérite de la disposition portrait mobile ===== */
 @media (orientation:landscape) and (max-height:500px){
-  /* le hero prend une hauteur naturelle et son contenu s'empile au centre */
+  /* le hero prend une hauteur naturelle (pas de plein écran forcé qui écrase) */
   .hero-scene{height:auto!important}
   .hero-scene .hero{height:auto!important;min-height:0!important;position:relative!important;
-    padding:80px 28px 40px;justify-content:flex-start;gap:8px}
-  .hero-titrage{margin-top:0!important;text-align:center}
-  /* le grand titre passe à la ligne et reste dans l'écran (plus de débordement à droite) */
-  .hero-anime h1.geant{font-size:clamp(2.2rem,9vw,4.6rem)!important;line-height:.96;
-    white-space:normal!important;text-align:center;margin:0 auto!important;width:auto!important}
-  .hero-anime h1.geant span{display:inline!important;transform:none!important}
-  .hero-verset{font-size:clamp(1.1rem,4vw,1.7rem)!important;text-align:center;white-space:normal!important;margin:.3em auto 0!important}
-  .hero-ref{font-size:.74rem!important;text-align:center;margin:.5em auto 0!important}
-  /* les illustrations en fond, atténuées, pour ne pas gêner la lecture */
-  .hero-images{opacity:.28}
-  .hero-images .hph{transform:scale(.7)}
-  /* boutons dans le flux, centrés, sous le titre */
-  #heroCta.cta{position:relative!important;left:auto!important;right:auto!important;bottom:auto!important;
-    top:auto!important;width:100%!important;margin-top:18px!important;justify-content:center!important}
-  /* la suite du verset (au survol) reste dans le flux */
-  .hero-suite{position:relative!important;left:auto!important;bottom:auto!important}
+    padding-top:70px;padding-bottom:30px}
+  /* carrousel d'infos remonté près de « J33 » */
+  .hero .infos{margin-top:0!important}
+  .hero-titrage{margin-top:14px!important}
 
   /* le verset du désert n'est PLUS figé en paysage : défilement normal */
   .desert .int{position:static!important;top:auto!important;padding:26px 22px 10px!important}
