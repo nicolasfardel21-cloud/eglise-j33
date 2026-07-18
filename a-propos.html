@@ -556,11 +556,17 @@ h1.ap-titre{position:relative;z-index:1;margin:17px auto 0;width:fit-content;max
 /* ===== paysage sur écran bas (a-propos) : reprises hero + confession de foi ===== */
 @media (orientation:landscape) and (max-height:500px){
   /* hero : démarre plus haut, hauteur naturelle, contenu aligné en haut */
-  .hero{min-height:0!important;padding-top:74px!important;padding-bottom:26px!important;justify-content:flex-start!important}
+  .hero{min-height:0!important;padding-top:64px!important;padding-bottom:26px!important;justify-content:flex-start!important}
   .hero-page{min-height:0!important}
   .hero h1{font-size:clamp(2rem,9vw,4.2rem)!important}
+  /* écart réduit avec le bandeau du haut (le titre remonte, son bas reste visible) */
   .ap-hero .infos{margin-top:0!important}
-  #apTitre{margin-top:10px!important}
+  #apTitre{margin-top:2px!important}
+
+  /* textes des sections calés sur les proportions du portrait (paysage = petit écran,
+     pas un « desktop » : on ramène le corps et les titres de section à la taille portrait) */
+  :root{--tt:.9375rem!important}
+  .titre-bloc{font-size:clamp(2.2rem,6vw,2.4rem)!important}
 
   /* confession de foi : la zone tient dans l'écran, tuiles lisibles */
   .cs-colle{height:100svh!important;padding-top:44px!important}
@@ -573,9 +579,8 @@ h1.ap-titre{position:relative;z-index:1;margin:17px auto 0;width:fit-content;max
   .cs-titre-rang{align-items:center;gap:16px}
   .cs-sauts{font-size:.72rem}
   .cs-sauts a .fl{font-size:1.1rem}
-  /* tuiles : plus courtes, texte compact, défilement interne si besoin */
-  .cs-tuile{width:min(1160px,88vw)!important;padding:14px 20px!important;
-    max-height:calc(100svh - 120px)!important;overflow:auto!important}
+  /* tuiles : larges + texte compact → tout tient dans l'écran, AUCUN scroll interne */
+  .cs-tuile{width:min(1160px,88vw)!important;padding:14px 20px!important}
   .cs-tuile h3{font-size:clamp(1.2rem,4vw,1.7rem)!important;margin-bottom:6px!important;padding-right:0!important}
   .cs-tuile p,.cs-tuile .cs-vtxt{font-size:.8rem!important;line-height:1.4!important}
   .cs-tuile .versets{padding-top:8px!important;line-height:1.45!important;font-size:.7rem!important}
