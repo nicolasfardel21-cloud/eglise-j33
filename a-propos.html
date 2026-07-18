@@ -564,13 +564,19 @@ h1.ap-titre{position:relative;z-index:1;margin:17px auto 0;width:fit-content;max
   #apTitre{margin-top:2px!important}
 
   /* textes des sections calés sur les proportions du portrait (paysage = petit écran,
-     pas un « desktop » : on ramène le corps et les titres de section à la taille portrait) */
-  :root{--tt:.9375rem!important}
+     pas un « desktop »). Pas de !important sur --tt : en paysage ≤820 le calibrage
+     mobile des tuiles (JS) doit pouvoir primer, comme en portrait. */
+  :root{--tt:.9375rem}
   .titre-bloc{font-size:clamp(2.2rem,6vw,2.4rem)!important}
+}
 
-  /* confession de foi : la zone tient dans l'écran, tuiles lisibles */
+/* ── Confession de foi : mécanisme horizontal (titre figé) UNIQUEMENT en paysage LARGE.
+   En paysage ≤820px on conserve le mécanisme portrait (empilement + en-tête collant) :
+   forcer .cs-colle à 100svh y écraserait le conteneur et décrocherait le titre. ── */
+@media (orientation:landscape) and (max-height:500px) and (min-width:821px){
+  /* la zone tient dans l'écran, tuiles lisibles */
   .cs-colle{height:100svh!important;padding-top:44px!important}
-  /* l'intro (texte au-dessus des tuiles) est masquée en paysage pour libérer la hauteur */
+  /* l'intro (texte au-dessus des tuiles) est masquée pour libérer la hauteur */
   .cs-intro{display:none!important}
   /* titre « Notre confession de foi » ramené sur UNE seule ligne */
   .cs-entete h2.titre-bloc{font-size:clamp(1.3rem,4.5vw,2rem)!important;line-height:1.05;white-space:nowrap}
