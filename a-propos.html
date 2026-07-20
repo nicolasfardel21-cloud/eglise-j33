@@ -606,6 +606,10 @@ h1.ap-titre{position:relative;z-index:1;margin:17px auto 0;width:fit-content;max
   .cs-sauts{flex-direction:row;align-items:center;gap:16px;margin:0}
   .cs-sauts a{flex:0 0 auto;align-items:center}
   .cs-sauts a .fl{transform:none;font-size:1.5rem}
+
+  /* photo pasteur : c'est la HAUTEUR qui suit l'écran (la largeur se déduit de
+     l'aspect-ratio 3/4), au lieu de régler la largeur — sinon l'image déborde. */
+  .photo-pasteur{height:100svh;width:auto;max-width:100%;margin:12px auto}
 }
 </style>
 </head>
