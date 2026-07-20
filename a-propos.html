@@ -555,8 +555,11 @@ h1.ap-titre{position:relative;z-index:1;margin:17px auto 0;width:fit-content;max
 
 /* ===== paysage sur écran bas (a-propos) : reprises hero + confession de foi ===== */
 @media (orientation:landscape) and (max-height:500px){
-  /* hero : démarre plus haut, hauteur naturelle, contenu aligné en haut */
-  .hero{min-height:0!important;padding-top:64px!important;padding-bottom:26px!important;justify-content:flex-start!important}
+  /* hero : démarre plus haut, hauteur naturelle, contenu aligné en haut.
+     padding-bas = 0 : #mission (« notre vision ») est le dernier enfant du header et
+     fournit déjà 110px sous lui ; un padding-bas ici créerait un écart plus grand
+     avant « notre mission » que partout ailleurs. */
+  .hero{min-height:0!important;padding-top:64px!important;padding-bottom:0!important;justify-content:flex-start!important}
   .hero-page{min-height:0!important}
   .hero h1{font-size:clamp(2rem,9vw,4.2rem)!important}
   /* écart réduit avec le bandeau du haut (le titre remonte, son bas reste visible) */
