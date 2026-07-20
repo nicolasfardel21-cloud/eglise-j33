@@ -397,11 +397,13 @@ section{padding:110px 28px;max-width:1500px;margin:0 auto}
   .hc-media{max-width:540px;margin-left:-70px;transform:translateY(70px)}
 }
 @media(max-width:900px){
-  .hc-grille{grid-template-columns:1fr;gap:34px;padding-top:82px}
+  .hc-grille{grid-template-columns:1fr;gap:34px;padding-top:82px;padding-bottom:0}
   .hc-media{aspect-ratio:1/1;max-width:340px;order:2}
   .hc-gauche{order:1}
   .hc-titre{font-size:clamp(2.6rem,13vw,5rem)}
   .hc-titre span{white-space:normal}
+  /* la FAQ retrouve le rythme des autres sections (padding-haut:0) au lieu d'un double écart */
+  #faq{padding-top:0}
 }
 
 /* ---------- duo colonnes ---------- */
@@ -450,6 +452,53 @@ footer{padding:90px 28px 40px;max-width:1500px;margin:0 auto;border-top:1px soli
 .graine.fondu{opacity:0}
 .curseur{display:inline-block;width:2px;height:1.05em;background:var(--or);vertical-align:-.18em;margin:0 1px;animation:clignote .75s steps(1) infinite}
 @keyframes clignote{50%{opacity:0}}
+
+/* ---------- section « moments » : tuiles image + dépliage (façon maquette) ---------- */
+.moments-intro{text-align:center;max-width:900px;margin:0 auto}
+.moments-intro .eyebrow{margin-bottom:18px}
+.moments-titre{font-family:'Archivo',sans-serif;font-weight:700;letter-spacing:-.01em;
+  font-size:clamp(1.4rem,2.9vw,2.25rem);line-height:1.22;margin:0}
+.moments-titre .or-txt{color:var(--or)}
+
+.tuiles-rangee{display:grid;gap:24px}
+.tuiles-2{grid-template-columns:1fr 1fr;margin-top:46px}
+.tuiles-3{grid-template-columns:1fr 1fr 1fr;margin-top:24px}
+
+.tuile{display:flex;flex-direction:column;background:var(--fond);border:1px solid var(--ligne);
+  transition:border-color .3s,transform .3s,box-shadow .3s}
+.tuile:hover{border-color:var(--or);transform:translateY(-4px);box-shadow:0 20px 44px -26px rgba(16,22,34,.4)}
+.tuile-media{aspect-ratio:3/2;overflow:hidden;
+  background:radial-gradient(circle at 30% 20%,var(--bleu-pale),transparent 60%),#EDEAE2}
+.tuile-media img{width:100%;height:100%;object-fit:cover;display:block;transition:transform .6s cubic-bezier(.65,0,.35,1)}
+.tuile:hover .tuile-media img{transform:scale(1.045)}
+.tuile-media.sans-image img{display:none}
+.tuile-corps{display:flex;flex-direction:column;flex:1;padding:26px 26px 24px}
+.tuile-corps h3{font-family:'Anton',sans-serif;font-weight:400;text-transform:uppercase;
+  letter-spacing:.03em;line-height:1.05;margin:0 0 12px;font-size:1.28rem}
+.tuiles-2 .tuile-corps h3{font-size:1.55rem}
+.tuile-texte{position:relative;max-height:4.7em;overflow:hidden;color:var(--gris);
+  font-size:1rem;line-height:1.6;transition:max-height .55s cubic-bezier(.65,0,.35,1)}
+.tuile-texte p{margin:0}
+.tuile-texte::after{content:"";position:absolute;left:0;right:0;bottom:0;height:2em;
+  background:linear-gradient(rgba(255,255,255,0),var(--fond));transition:opacity .3s;pointer-events:none}
+.tuile.ouverte .tuile-texte::after{opacity:0}
+.tuile-plus{margin-top:16px;align-self:flex-start;background:none;border:0;cursor:pointer;padding:6px 0 0;
+  font-family:'Anton',sans-serif;font-weight:400;text-transform:uppercase;letter-spacing:.1em;font-size:.82rem;
+  color:var(--or);display:inline-flex;align-items:center;gap:10px;transition:gap .25s,color .25s}
+.tuile-plus:hover{gap:16px;color:#9c8232}
+.tuile-plus .tp-fl{transition:transform .35s cubic-bezier(.65,0,.35,1);line-height:1}
+.tuile.ouverte .tuile-plus .tp-fl{transform:rotate(90deg)}
+.tuile-plus:focus-visible{outline:2px solid var(--or);outline-offset:4px}
+@media(max-width:960px){
+  .tuiles-3{grid-template-columns:1fr 1fr}
+}
+@media(max-width:680px){
+  .tuiles-2,.tuiles-3{grid-template-columns:1fr;gap:20px}
+  .tuiles-2{margin-top:36px}
+}
+@media(prefers-reduced-motion: reduce){
+  .tuile,.tuile-media img,.tuile-texte,.tuile-plus,.tuile-plus .tp-fl{transition:none}
+}
 
 /* ---------- reveal ---------- */
 .reveal{opacity:0;transform:translateY(30px);transition:opacity .8s ease,transform .8s ease}
@@ -546,36 +595,58 @@ footer{padding:90px 28px 40px;max-width:1500px;margin:0 auto;border-top:1px soli
 </section>
 
 <section id="ensemble" class="reveal" style="padding-top:0">
-  <span class="eyebrow">ce que nous vivons ensemble</span>
-  <h2 class="titre-bloc">Partager<br><span class="or">la vie d'église</span></h2>
-  <div class="grille-cartes" style="margin-top:50px">
-    <div class="carte">
-      <div class="num">01</div>
-      <h3>Le culte du dimanche</h3>
-      <p>C'est le cœur battant de notre communauté. Chaque dimanche matin, nous nous rassemblons pour célébrer Dieu à travers des temps de louange et de prière inspirants. Un moment d'enseignement, de partage de la Parole et d'édification mutuelle, pensé pour encourager chacun et l'aider à grandir dans sa foi.</p>
-    </div>
-    <div class="carte">
-      <div class="num">02</div>
-      <h3>Les soirées louange &amp; repas partagé</h3>
-      <p>Des rendez-vous réguliers, simples et particulièrement chaleureux, idéaux pour inviter des amis ou venir nous découvrir pour la première fois. Autour d'un bon repas et de chants de louange, nous vivons des moments d'échanges authentiques où chacun peut poser ses questions et découvrir la foi dans une ambiance décontractée.</p>
-    </div>
-    <div class="carte">
-      <div class="num">03</div>
-      <h3>L'étude biblique &amp; l'échange</h3>
-      <p>Nous nous rassemblons en semaine pour ouvrir la Bible ensemble. Un moment interactif où nous discutons des enseignements du dimanche, posons nos questions librement et cherchons comment appliquer la Parole de Dieu dans notre quotidien.</p>
-    </div>
-    <div class="carte">
-      <div class="num">04</div>
-      <h3>La réunion de prière</h3>
-      <p>Parce que la prière est le moteur de notre vie chrétienne, nous prenons du temps pour intercéder les uns pour les autres, pour nos familles et pour notre région. Un espace de confiance et de paix où nous portons ensemble nos défis et nos reconnaissances.</p>
-    </div>
-    <div class="carte">
-      <div class="num">05</div>
-      <h3>Un accompagnement personnel</h3>
-      <p>Chaque parcours est unique, avec ses joies, ses doutes ou ses moments plus difficiles. Nos pasteurs sont à votre entière disposition pour vous offrir une écoute bienveillante, prier avec vous ou vous conseiller dans votre cheminement spirituel, <span class="or-txt">le tout dans une totale confidentialité</span>.</p>
-    </div>
+  <div class="moments-intro">
+    <span class="eyebrow">ce que nous vivons ensemble</span>
+    <h2 class="moments-titre">Concrètement, voici les moments qui <span class="or-txt">rythment notre semaine</span>.</h2>
+  </div>
+
+  <div class="tuiles-rangee tuiles-2">
+    <article class="tuile">
+      <div class="tuile-media"><img src="images_connexion/Illustration_2.jpg" alt="Le culte du dimanche à J33" loading="lazy" onerror="this.closest('.tuile-media').classList.add('sans-image')"></div>
+      <div class="tuile-corps">
+        <h3>Le culte du dimanche</h3>
+        <div class="tuile-texte"><p>C'est le cœur battant de notre communauté. Chaque dimanche matin, nous nous rassemblons pour célébrer Dieu à travers des temps de louange et de prière inspirants. Un moment d'enseignement, de partage de la Parole et d'édification mutuelle, pensé pour encourager chacun et l'aider à grandir dans sa foi.</p></div>
+        <button type="button" class="tuile-plus" aria-expanded="false" onclick="basculerTuile(this)"><span class="tp-label">En savoir plus</span><span class="tp-fl" aria-hidden="true">→</span></button>
+      </div>
+    </article>
+    <article class="tuile">
+      <div class="tuile-media"><img src="images_connexion/Illustration_3.jpg" alt="Soirée louange et repas partagé" loading="lazy" onerror="this.closest('.tuile-media').classList.add('sans-image')"></div>
+      <div class="tuile-corps">
+        <h3>Les soirées louange &amp; repas partagé</h3>
+        <div class="tuile-texte"><p>Des rendez-vous réguliers, simples et particulièrement chaleureux, idéaux pour inviter des amis ou venir nous découvrir pour la première fois. Autour d'un bon repas et de chants de louange, nous vivons des moments d'échanges authentiques où chacun peut poser ses questions et découvrir la foi dans une ambiance décontractée.</p></div>
+        <button type="button" class="tuile-plus" aria-expanded="false" onclick="basculerTuile(this)"><span class="tp-label">En savoir plus</span><span class="tp-fl" aria-hidden="true">→</span></button>
+      </div>
+    </article>
+  </div>
+
+  <div class="tuiles-rangee tuiles-3">
+    <article class="tuile">
+      <div class="tuile-media"><img src="images_connexion/Illustration_4.jpg" alt="Étude biblique et échange" loading="lazy" onerror="this.closest('.tuile-media').classList.add('sans-image')"></div>
+      <div class="tuile-corps">
+        <h3>L'étude biblique &amp; l'échange</h3>
+        <div class="tuile-texte"><p>Nous nous rassemblons en semaine pour ouvrir la Bible ensemble. Un moment interactif où nous discutons des enseignements du dimanche, posons nos questions librement et cherchons comment appliquer la Parole de Dieu dans notre quotidien.</p></div>
+        <button type="button" class="tuile-plus" aria-expanded="false" onclick="basculerTuile(this)"><span class="tp-label">En savoir plus</span><span class="tp-fl" aria-hidden="true">→</span></button>
+      </div>
+    </article>
+    <article class="tuile">
+      <div class="tuile-media"><img src="images_connexion/Illustration_5.jpg" alt="Réunion de prière" loading="lazy" onerror="this.closest('.tuile-media').classList.add('sans-image')"></div>
+      <div class="tuile-corps">
+        <h3>La réunion de prière</h3>
+        <div class="tuile-texte"><p>Parce que la prière est le moteur de notre vie chrétienne, nous prenons du temps pour intercéder les uns pour les autres, pour nos familles et pour notre région. Un espace de confiance et de paix où nous portons ensemble nos défis et nos reconnaissances.</p></div>
+        <button type="button" class="tuile-plus" aria-expanded="false" onclick="basculerTuile(this)"><span class="tp-label">En savoir plus</span><span class="tp-fl" aria-hidden="true">→</span></button>
+      </div>
+    </article>
+    <article class="tuile">
+      <div class="tuile-media"><img src="images_connexion/Illustration_6.jpg" alt="Accompagnement personnel" loading="lazy" onerror="this.closest('.tuile-media').classList.add('sans-image')"></div>
+      <div class="tuile-corps">
+        <h3>Un accompagnement personnel</h3>
+        <div class="tuile-texte"><p>Chaque parcours est unique, avec ses joies, ses doutes ou ses moments plus difficiles. Nos pasteurs sont à votre entière disposition pour vous offrir une écoute bienveillante, prier avec vous ou vous conseiller dans votre cheminement spirituel, <span class="or-txt">le tout dans une totale confidentialité</span>.</p></div>
+        <button type="button" class="tuile-plus" aria-expanded="false" onclick="basculerTuile(this)"><span class="tp-label">En savoir plus</span><span class="tp-fl" aria-hidden="true">→</span></button>
+      </div>
+    </article>
   </div>
 </section>
+
 
 <section id="pas-de-plus" class="reveal" style="padding-top:0">
   <span class="eyebrow">faire un pas de plus</span>
@@ -679,6 +750,22 @@ footer{padding:90px 28px 40px;max-width:1500px;margin:0 auto;border-top:1px soli
 </footer>
 
 <script>
+/* ---------- tuiles « moments » : dépliage du texte via « En savoir plus » ---------- */
+function basculerTuile(btn){
+  const tuile = btn.closest('.tuile');
+  const texte = tuile.querySelector('.tuile-texte');
+  const ouvert = tuile.classList.toggle('ouverte');
+  btn.setAttribute('aria-expanded', ouvert ? 'true' : 'false');
+  const label = btn.querySelector('.tp-label');
+  if(label) label.textContent = ouvert ? 'Réduire' : 'En savoir plus';
+  /* hauteur explicite pour une animation fluide, puis retour à la valeur CSS repliée */
+  texte.style.maxHeight = ouvert ? texte.scrollHeight + 'px' : '';
+}
+/* si une tuile ouverte change de largeur (rotation/redimension), on recale sa hauteur */
+window.addEventListener('resize', ()=>{
+  document.querySelectorAll('.tuile.ouverte .tuile-texte').forEach(t=>{ t.style.maxHeight = t.scrollHeight + 'px'; });
+});
+
 /* ---------- smooth scroll lissé (inertie façon 2819church.org, via Lenis inliné) ----------
    Lenis pilote son propre requestAnimationFrame et émet l'event 'scroll' standard :
    toutes les animations au scroll déjà en place restent valides. */
