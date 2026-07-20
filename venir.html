@@ -401,11 +401,20 @@ section{padding:110px 28px;max-width:1500px;margin:0 auto}
   .split-media img:nth-of-type(2),.split-media img:nth-of-type(3){display:none}
   .vs-espace{display:none}
   .hero-venir .page-intro{grid-column:1 / -1;grid-row:2;padding:74px 28px 0;margin:0;font-size:.98rem;max-width:none}
-  .split-contenu .visite,.visite{grid-column:1 / -1;grid-row:3;padding:0 28px 26px}
+  /* padding-haut : éloigne la 1re ligne (bord haut de « horaires ») du paragraphe d'intro */
+  .split-contenu .visite,.visite{grid-column:1 / -1;grid-row:3;padding:36px 28px 26px}
 }
 @media(prefers-reduced-motion: reduce){
   .split-media{position:relative;height:52svh}
   .split-media img:first-of-type{opacity:1}
+}
+
+/* ── Paysage mobile : la rangée titre + image tient sur UNE hauteur d'écran
+   (100svh = barre d'adresse comprise). Le titre est plafonné en hauteur par le JS
+   pour ne plus déborder ; l'image remplit l'écran moins le décalage du haut. ── */
+@media (orientation:landscape) and (max-height:500px) and (max-width:900px){
+  .split{padding-top:44px}
+  .split-media{min-height:calc(100svh - 44px)}
 }
 
 /* ---------- fiches éditoriales (disposition type 2819/visit : étiquette à gauche, contenu à droite) ---------- */
@@ -936,13 +945,19 @@ requestAnimationFrame(()=>requestAnimationFrame(()=>document.querySelector('.her
     let cible;
 
     if(petitEcran()){
-      /* mobile : on agrandit jusqu'à ce que le mot le plus large remplisse la demi-largeur */
+      /* mobile : on agrandit jusqu'à ce que le mot le plus large remplisse la demi-largeur.
+         En paysage court, on plafonne AUSSI la hauteur : le titre ne doit pas dépasser
+         l'espace vertical dispo (sinon la rangée titre+image déborde de l'écran).
+         La largeur reste remplie ensuite via l'espacement des lettres. */
+      const paysageCourt = window.matchMedia('(orientation:landscape) and (max-height:500px)').matches;
+      const hautDispo = paysageCourt ? (window.innerHeight - h1.getBoundingClientRect().top - 16) : Infinity;
       let bas = 10, haut = 320;
       for(let i = 0; i < 24; i++){
         const test = (bas + haut) / 2;
         h1.style.fontSize = test + 'px';
         const large = Math.max(...mots.map(mesurer));
-        if(large <= colonne) bas = test; else haut = test;
+        const haute = h1.getBoundingClientRect().height;
+        if(large <= colonne && haute <= hautDispo) bas = test; else haut = test;
       }
       h1.style.fontSize = bas + 'px';
       cible = colonne;
