@@ -950,7 +950,11 @@ requestAnimationFrame(()=>requestAnimationFrame(()=>document.querySelector('.her
          l'espace vertical dispo (sinon la rangée titre+image déborde de l'écran).
          La largeur reste remplie ensuite via l'espacement des lettres. */
       const paysageCourt = window.matchMedia('(orientation:landscape) and (max-height:500px)').matches;
-      const hautDispo = paysageCourt ? (window.innerHeight - h1.getBoundingClientRect().top - 16) : Infinity;
+      /* hauteur dispo = écran − décalage du haut du split (la rangée titre+image),
+         indépendante de la position du titre (qui est aligné en bas de la rangée). */
+      const split = h1.closest('.split');
+      const padHaut = split ? (parseFloat(getComputedStyle(split).paddingTop) || 0) : 0;
+      const hautDispo = paysageCourt ? (window.innerHeight - padHaut - 16) : Infinity;
       let bas = 10, haut = 320;
       for(let i = 0; i < 24; i++){
         const test = (bas + haut) / 2;
@@ -960,7 +964,11 @@ requestAnimationFrame(()=>requestAnimationFrame(()=>document.querySelector('.her
         if(large <= colonne && haute <= hautDispo) bas = test; else haut = test;
       }
       h1.style.fontSize = bas + 'px';
-      cible = colonne;
+      /* cible = largeur naturelle du mot le plus large à la taille retenue.
+         - taille bridée par la LARGEUR (portrait) : cette valeur ≈ la colonne → inchangé.
+         - taille bridée par la HAUTEUR (paysage) : on ne remplit plus toute la colonne,
+           donc plus d'espacement excessif entre les lettres. */
+      cible = Math.max(...mots.map(mesurer));
     } else {
       /* desktop : on garde la taille du CSS ; les mots s'alignent sur le plus large,
          sans occuper toute la colonne */
