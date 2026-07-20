@@ -592,6 +592,21 @@ h1.ap-titre{position:relative;z-index:1;margin:17px auto 0;width:fit-content;max
   .cs-tuile .versets{padding-top:8px!important;line-height:1.45!important;font-size:.7rem!important}
   .cs-num{font-size:1.5rem!important}
 }
+
+/* ── En-tête confession en paysage ÉTROIT (≤820, mécanisme portrait empilé) :
+   titre « Notre confession de foi » sur UNE seule ligne, et les 2 flèches
+   (avant/après) l'une à côté de l'autre, en rang, sur la même ligne que le titre. ── */
+@media (orientation:landscape) and (max-height:500px) and (max-width:820px){
+  .cs-entete h2.titre-bloc{font-size:clamp(1.4rem,4.5vw,2rem)!important;line-height:1.05;white-space:nowrap}
+  .cs-entete h2.titre-bloc br{display:none}
+  .cs-entete h2.titre-bloc .or{margin-left:.35em}
+  /* le rang aligne verticalement titre et flèches sur la même ligne */
+  .cs-titre-rang{align-items:center;gap:14px}
+  /* flèches : de la colonne empilée (portrait) vers un rang horizontal, collé à droite */
+  .cs-sauts{flex-direction:row;align-items:center;gap:16px;margin:0}
+  .cs-sauts a{flex:0 0 auto;align-items:center}
+  .cs-sauts a .fl{transform:none;font-size:1.5rem}
+}
 </style>
 </head>
 <body>
