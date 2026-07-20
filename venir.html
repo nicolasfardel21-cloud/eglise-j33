@@ -939,6 +939,12 @@ requestAnimationFrame(()=>requestAnimationFrame(()=>document.querySelector('.her
   const petitEcran = () => window.matchMedia('(max-width:900px)').matches;
 
   function caler(){
+    /* base neutre AVANT de mesurer : un font-size en ligne hérité (ex. paysage) gonfle
+       la colonne de grille (les mots sont en nowrap → min-content), ce qui fausserait
+       la mesure au retour en portrait et empêcherait le recalcul (bug de rotation). */
+    h1.style.fontSize = '';
+    mots.forEach(m=>{ m.style.letterSpacing = '0px'; m.style.marginRight = '0px'; });
+
     const cs = getComputedStyle(h1);
     const colonne = h1.clientWidth - parseFloat(cs.paddingLeft) - parseFloat(cs.paddingRight);
     if(colonne <= 0) return;
