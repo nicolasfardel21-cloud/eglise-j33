@@ -178,7 +178,7 @@ body.menu-ouvert .menu-reseaux a:nth-child(3){transition-delay:1.15s}
   .cs-tuile h3{font-size:clamp(1.4rem,3vw,2rem);margin-bottom:10px}
 }
 .cs-tuile:nth-child(odd){background:#F4F4F2}
-.cs-num{position:absolute;top:0;right:0;font-family:'Anton',sans-serif;font-size:clamp(4.5rem,8vw,8rem);line-height:.7;color:rgba(16,22,34,.16);transition:color .3s}
+.cs-num{position:absolute;top:0;right:0;font-family:'Anton',sans-serif;font-size:clamp(4.5rem,8vw,8rem);line-height:1;text-box:trim-both cap alphabetic;color:rgba(16,22,34,.16);transition:color .3s}
 .cs-tuile:hover .cs-num{color:var(--or)}
 .cs-tuile h3{font-family:'Anton',sans-serif;font-weight:400;font-size:clamp(1.9rem,4.4vw,3.2rem);line-height:1.04;margin-bottom:20px;padding-right:84px}
 .cs-tuile .cs-corps{flex:1 1 auto}
@@ -379,10 +379,10 @@ section{padding:110px 28px;max-width:1500px;margin:0 auto}
   cursor:pointer;text-align:left;padding:22px 8px 6px 6px;font-family:inherit;color:var(--encre)}
 .pil-titre{font-family:'Anton',sans-serif;font-weight:400;font-size:1.3rem;line-height:1.12;display:block}
 .pil-num{font-family:'Anton',sans-serif;font-weight:400;line-height:.8}
-.pil-num-tete{position:absolute;right:0;bottom:6px;font-size:3.4rem;
+.pil-num-tete{position:absolute;right:0;bottom:0;font-size:3.4rem;line-height:1;text-box:trim-both cap alphabetic;
   color:rgba(16,22,34,.30);transition:color .35s}          /* fermé : gris */
 .pil.active .pil-num-tete{color:var(--or)}                  /* ouvert : doré */
-.pil-chevron{position:absolute;left:50%;bottom:6px;width:24px;height:24px;color:var(--gris);
+.pil-chevron{position:absolute;left:50%;bottom:0;width:24px;height:24px;color:var(--gris);
   transform:translateX(-50%);transition:transform .4s cubic-bezier(.76,0,.24,1)}
 .pil.active .pil-chevron{transform:translateX(-50%) rotate(180deg)}
 .pil-num-corps{display:none}                                /* le numéro reste le num-tete (mobile) */
@@ -392,7 +392,7 @@ section{padding:110px 28px;max-width:1500px;margin:0 auto}
 .pil.active .pil-corps{max-height:640px;opacity:1}
 .pil-corps-in{position:relative;z-index:1;padding:0 6px 8px}
 .pil-desc{font-size:1.05rem;color:var(--gris);max-width:60ch}
-.pil-corps .versets{margin-top:18px;font-size:1.05rem;color:var(--gris);
+.pil-corps .versets{margin-top:1.7rem;font-size:1.05rem;color:var(--gris);
   line-height:1.8;display:flex;flex-wrap:wrap;gap:0 16px}
 .pil-corps .versets .ref{text-decoration:underline;text-underline-offset:3px}
 
@@ -409,10 +409,10 @@ section{padding:110px 28px;max-width:1500px;margin:0 auto}
   .pil-chevron,.pil-num-tete{display:none}
   .pil-corps{position:static;max-height:none;opacity:1;overflow:visible;
     flex:1;display:flex;flex-direction:column}
-  .pil-corps-in{flex:1;display:flex;flex-direction:column;padding:14px 26px 34px}
+  .pil-corps-in{flex:1;display:flex;flex-direction:column;padding:14px 26px 34px;gap:1.7rem}
   .pil-corps .versets{margin-top:auto}
-  .pil-num-corps{display:block;position:absolute;right:0;bottom:2px;z-index:0;pointer-events:none;
-    line-height:.7;font-size:clamp(4.5rem,8vw,8rem);
+  .pil-num-corps{display:block;position:absolute;right:0;bottom:0;z-index:0;pointer-events:none;
+    line-height:1;text-box:trim-both cap alphabetic;font-size:clamp(4.5rem,8vw,8rem);
     color:rgba(16,22,34,.12);transition:color .35s}          /* gris par défaut */
   .pil.active .pil-num-corps{color:rgba(181,151,60,.55)}      /* doré quand actif */
 }
