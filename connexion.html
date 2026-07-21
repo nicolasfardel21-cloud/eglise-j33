@@ -418,7 +418,7 @@ section{padding:110px 28px;max-width:1500px;margin:0 auto}
 @media(max-width:820px){.duo{grid-template-columns:1fr}}
 
 /* ---- dispositions 2 colonnes façon maquette (titre à gauche / contenu à droite) ---- */
-.duo-sec{display:grid;grid-template-columns:1fr 1fr;gap:56px;align-items:start}
+.duo-sec{display:grid;grid-template-columns:1fr 1fr;gap:56px;align-items:end}
 .duo-sec .texte-bloc{margin-top:0}
 @media(max-width:820px){.duo-sec{grid-template-columns:1fr;gap:24px}}
 
@@ -426,12 +426,19 @@ section{padding:110px 28px;max-width:1500px;margin:0 auto}
 .faq-grille{display:grid;grid-template-columns:minmax(0,.82fr) minmax(0,1.55fr);gap:56px;align-items:start}
 @media(max-width:820px){.faq-grille{grid-template-columns:1fr;gap:24px}}
 
-/* Section formulaire : pleine largeur, fond teinté, titre à gauche / formulaire à droite, placée après la FAQ */
-.section-form{max-width:none;width:100%;margin:0;background:var(--creme);padding:96px 28px}
+/* Section formulaire : pleine largeur, fond FONCÉ (même couleur que le verset « Jérémie 33:10-13 » de l'accueil), titre à gauche / formulaire à droite, placée après la FAQ */
+.section-form{max-width:none;width:100%;margin:0;background:var(--noir);padding:96px 28px}
 .section-form .form-inner{max-width:1500px;margin:0 auto;display:grid;grid-template-columns:1fr 1fr;gap:60px;align-items:start}
-.section-form .form-tete .texte-bloc{margin-top:26px}
+/* textes clairs sur le fond foncé */
+.section-form .titre-bloc{color:var(--creme)}
+.section-form .form-tete .texte-bloc{margin-top:26px;color:rgba(243,239,228,.74)}
+.section-form .form-tete .texte-bloc strong{color:var(--creme)}
+.section-form .form-champ label{color:var(--creme)}
+.section-form .form-champ label .opt{color:rgba(243,239,228,.6)}
+.section-form .form-note{color:rgba(243,239,228,.6)}
+/* le formulaire épuré + champs blancs qui ressortent sur le foncé */
 .section-form .form-cadre{margin-top:0;border:0;padding:0;max-width:none}
-.section-form .form-champ input,.section-form .form-champ select,.section-form .form-champ textarea{background:#fff}
+.section-form .form-champ input,.section-form .form-champ select,.section-form .form-champ textarea{background:#fff;border-bottom-color:transparent}
 .section-form .form-champ input:focus,.section-form .form-champ select:focus,.section-form .form-champ textarea:focus{background:#fff;border-color:var(--or)}
 @media(max-width:820px){
   .section-form{padding:64px 22px}
@@ -637,7 +644,7 @@ footer{padding:90px 28px 40px;max-width:1500px;margin:0 auto;border-top:1px soli
     <article class="tuile">
       <div class="tuile-media"><img src="images_connexion/Illustration_3.jpg" alt="Soirée louange et repas partagé" loading="lazy" onerror="this.closest('.tuile-media').classList.add('sans-image')"></div>
       <div class="tuile-corps">
-        <h3>Soirées louange &amp; repas partagé</h3>
+        <h3>Soirée louange &amp; repas partagé</h3>
         <div class="tuile-texte"><p>Des rendez-vous réguliers, simples et particulièrement chaleureux, idéaux pour inviter des amis ou venir nous découvrir pour la première fois. Autour d'un bon repas et de chants de louange, nous vivons des moments d'échanges authentiques où chacun peut poser ses questions et découvrir la foi dans une ambiance décontractée.</p></div>
         <button type="button" class="tuile-plus" aria-expanded="false" onclick="basculerTuile(this)"><span class="tp-label">En savoir plus</span><span class="tp-fl" aria-hidden="true">→</span></button>
       </div>
