@@ -378,7 +378,7 @@ section{padding:110px 28px;max-width:1500px;margin:0 auto}
 
 /* ---------- hero connexion : split façon 2819 (titre gauche + image droite) ---------- */
 .hero-connect{min-height:auto;display:block;padding:0}
-.hc-grille{display:grid;grid-template-columns:1.3fr .7fr;gap:40px;align-items:center;
+.hc-grille{display:grid;grid-template-columns:1.3fr .7fr;gap:40px;align-items:start;
   max-width:1500px;margin:0 auto;padding:86px 28px 70px}
 .hc-gauche{min-width:0}
 .hc-eyebrow{display:block;font-size:.78rem;font-weight:700;letter-spacing:.2em;text-transform:uppercase;color:var(--or);margin-bottom:22px}
@@ -394,7 +394,7 @@ section{padding:110px 28px;max-width:1500px;margin:0 auto}
   background:radial-gradient(circle at 30% 20%,var(--bleu-pale),transparent 60%),#EDEAE2}
 .hc-media img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
 @media(min-width:901px){
-  .hc-media{max-width:540px;margin-left:-70px;transform:translateY(70px)}
+  .hc-media{max-width:540px;margin-left:-70px}
 }
 @media(max-width:900px){
   .hc-grille{grid-template-columns:1fr;gap:34px;padding-top:82px;padding-bottom:0}
@@ -416,6 +416,27 @@ section{padding:110px 28px;max-width:1500px;margin:0 auto}
 .duo .lien-paren{margin-top:26px}
 .note-rempl{font-size:.78rem;color:var(--gris);font-style:italic;margin-top:16px}
 @media(max-width:820px){.duo{grid-template-columns:1fr}}
+
+/* ---- dispositions 2 colonnes façon maquette (titre à gauche / contenu à droite) ---- */
+.duo-sec{display:grid;grid-template-columns:1fr 1fr;gap:56px;align-items:start}
+.duo-sec .texte-bloc{margin-top:0}
+@media(max-width:820px){.duo-sec{grid-template-columns:1fr;gap:24px}}
+
+/* FAQ : titre à gauche, accordéon à droite */
+.faq-grille{display:grid;grid-template-columns:minmax(0,.82fr) minmax(0,1.55fr);gap:56px;align-items:start}
+@media(max-width:820px){.faq-grille{grid-template-columns:1fr;gap:24px}}
+
+/* Section formulaire : pleine largeur, fond teinté, titre à gauche / formulaire à droite, placée après la FAQ */
+.section-form{max-width:none;width:100%;margin:0;background:var(--creme);padding:96px 28px}
+.section-form .form-inner{max-width:1500px;margin:0 auto;display:grid;grid-template-columns:1fr 1fr;gap:60px;align-items:start}
+.section-form .form-tete .texte-bloc{margin-top:26px}
+.section-form .form-cadre{margin-top:0;border:0;padding:0;max-width:none}
+.section-form .form-champ input,.section-form .form-champ select,.section-form .form-champ textarea{background:#fff}
+.section-form .form-champ input:focus,.section-form .form-champ select:focus,.section-form .form-champ textarea:focus{background:#fff;border-color:var(--or)}
+@media(max-width:820px){
+  .section-form{padding:64px 22px}
+  .section-form .form-inner{grid-template-columns:1fr;gap:34px}
+}
 
 /* ---------- footer ---------- */
 footer{padding:90px 28px 40px;max-width:1500px;margin:0 auto;border-top:1px solid var(--ligne)}
@@ -586,11 +607,15 @@ footer{padding:90px 28px 40px;max-width:1500px;margin:0 auto;border-top:1px soli
 </header>
 
 <section id="intro-vie" class="reveal">
-  <span class="eyebrow">la vie au-delà du dimanche</span>
-  <h2 class="titre-bloc">Une église<br><span class="or">à taille humaine</span></h2>
-  <div class="texte-bloc">
-    <p>Chez nous, l'église ne s'arrête pas à la fin du culte. Parce que nous sommes une <strong>communauté à taille humaine</strong>, nous aimons nous retrouver pour partager la vie, approfondir notre foi et nous soutenir mutuellement.</p>
-    <p>Ici, pas de sous-groupes : nous formons une seule et même grande famille où chacun a sa place et où il est facile de s'intégrer.</p>
+  <div class="duo-sec">
+    <div class="duo-tete">
+      <span class="eyebrow">la vie au-delà du dimanche</span>
+      <h2 class="titre-bloc">Une église<br><span class="or">à taille humaine</span></h2>
+    </div>
+    <div class="texte-bloc">
+      <p>Chez nous, l'église ne s'arrête pas à la fin du culte. Parce que nous sommes une <strong>communauté à taille humaine</strong>, nous aimons nous retrouver pour partager la vie, approfondir notre foi et nous soutenir mutuellement.</p>
+      <p>Ici, pas de sous-groupes : nous formons une seule et même grande famille où chacun a sa place et où il est facile de s'intégrer.</p>
+    </div>
   </div>
 </section>
 
@@ -604,7 +629,7 @@ footer{padding:90px 28px 40px;max-width:1500px;margin:0 auto;border-top:1px soli
     <article class="tuile">
       <div class="tuile-media"><img src="images_connexion/Illustration_2.jpg" alt="Le culte du dimanche à J33" loading="lazy" onerror="this.closest('.tuile-media').classList.add('sans-image')"></div>
       <div class="tuile-corps">
-        <h3>Le culte du dimanche</h3>
+        <h3>Culte du dimanche</h3>
         <div class="tuile-texte"><p>C'est le cœur battant de notre communauté. Chaque dimanche matin, nous nous rassemblons pour célébrer Dieu à travers des temps de louange et de prière inspirants. Un moment d'enseignement, de partage de la Parole et d'édification mutuelle, pensé pour encourager chacun et l'aider à grandir dans sa foi.</p></div>
         <button type="button" class="tuile-plus" aria-expanded="false" onclick="basculerTuile(this)"><span class="tp-label">En savoir plus</span><span class="tp-fl" aria-hidden="true">→</span></button>
       </div>
@@ -612,7 +637,7 @@ footer{padding:90px 28px 40px;max-width:1500px;margin:0 auto;border-top:1px soli
     <article class="tuile">
       <div class="tuile-media"><img src="images_connexion/Illustration_3.jpg" alt="Soirée louange et repas partagé" loading="lazy" onerror="this.closest('.tuile-media').classList.add('sans-image')"></div>
       <div class="tuile-corps">
-        <h3>Les soirées louange &amp; repas partagé</h3>
+        <h3>Soirées louange &amp; repas partagé</h3>
         <div class="tuile-texte"><p>Des rendez-vous réguliers, simples et particulièrement chaleureux, idéaux pour inviter des amis ou venir nous découvrir pour la première fois. Autour d'un bon repas et de chants de louange, nous vivons des moments d'échanges authentiques où chacun peut poser ses questions et découvrir la foi dans une ambiance décontractée.</p></div>
         <button type="button" class="tuile-plus" aria-expanded="false" onclick="basculerTuile(this)"><span class="tp-label">En savoir plus</span><span class="tp-fl" aria-hidden="true">→</span></button>
       </div>
@@ -623,7 +648,7 @@ footer{padding:90px 28px 40px;max-width:1500px;margin:0 auto;border-top:1px soli
     <article class="tuile">
       <div class="tuile-media"><img src="images_connexion/Illustration_4.jpg" alt="Étude biblique et échange" loading="lazy" onerror="this.closest('.tuile-media').classList.add('sans-image')"></div>
       <div class="tuile-corps">
-        <h3>L'étude biblique &amp; l'échange</h3>
+        <h3>Études biblique &amp; échanges</h3>
         <div class="tuile-texte"><p>Nous nous rassemblons en semaine pour ouvrir la Bible ensemble. Un moment interactif où nous discutons des enseignements du dimanche, posons nos questions librement et cherchons comment appliquer la Parole de Dieu dans notre quotidien.</p></div>
         <button type="button" class="tuile-plus" aria-expanded="false" onclick="basculerTuile(this)"><span class="tp-label">En savoir plus</span><span class="tp-fl" aria-hidden="true">→</span></button>
       </div>
@@ -631,7 +656,7 @@ footer{padding:90px 28px 40px;max-width:1500px;margin:0 auto;border-top:1px soli
     <article class="tuile">
       <div class="tuile-media"><img src="images_connexion/Illustration_5.jpg" alt="Réunion de prière" loading="lazy" onerror="this.closest('.tuile-media').classList.add('sans-image')"></div>
       <div class="tuile-corps">
-        <h3>La réunion de prière</h3>
+        <h3>Réunion de prière</h3>
         <div class="tuile-texte"><p>Parce que la prière est le moteur de notre vie chrétienne, nous prenons du temps pour intercéder les uns pour les autres, pour nos familles et pour notre région. Un espace de confiance et de paix où nous portons ensemble nos défis et nos reconnaissances.</p></div>
         <button type="button" class="tuile-plus" aria-expanded="false" onclick="basculerTuile(this)"><span class="tp-label">En savoir plus</span><span class="tp-fl" aria-hidden="true">→</span></button>
       </div>
@@ -639,7 +664,7 @@ footer{padding:90px 28px 40px;max-width:1500px;margin:0 auto;border-top:1px soli
     <article class="tuile">
       <div class="tuile-media"><img src="images_connexion/Illustration_6.jpg" alt="Accompagnement personnel" loading="lazy" onerror="this.closest('.tuile-media').classList.add('sans-image')"></div>
       <div class="tuile-corps">
-        <h3>Un accompagnement personnel</h3>
+        <h3>Accompagnement personnel</h3>
         <div class="tuile-texte"><p>Chaque parcours est unique, avec ses joies, ses doutes ou ses moments plus difficiles. Nos pasteurs sont à votre entière disposition pour vous offrir une écoute bienveillante, prier avec vous ou vous conseiller dans votre cheminement spirituel, <span class="or-txt">le tout dans une totale confidentialité</span>.</p></div>
         <button type="button" class="tuile-plus" aria-expanded="false" onclick="basculerTuile(this)"><span class="tp-label">En savoir plus</span><span class="tp-fl" aria-hidden="true">→</span></button>
       </div>
@@ -648,15 +673,53 @@ footer{padding:90px 28px 40px;max-width:1500px;margin:0 auto;border-top:1px soli
 </section>
 
 
-<section id="pas-de-plus" class="reveal" style="padding-top:0">
-  <span class="eyebrow">faire un pas de plus</span>
-  <h2 class="titre-bloc">Venir<br><span class="or">nous découvrir</span></h2>
-  <div class="texte-bloc">
+<section class="faq reveal" id="faq" style="padding-top:0">
+  <div class="faq-grille">
+    <div class="faq-tete">
+      <span class="eyebrow">questions fréquentes</span>
+      <h2 class="titre-bloc">Vos<br><span class="or">questions</span></h2>
+    </div>
+    <div class="faq-liste">
+      <details>
+    <summary>Comment se passe une réunion de prière ? Dois-je prier à voix haute ?</summary>
+    <div class="rep">Pas du tout ! Nos réunions de prière sont des moments simples et paisibles. Nous prions ensemble pour les besoins de chacun, pour l'église et pour notre région. Vous êtes totalement libre de prier à haute voix si vous le souhaitez, ou de simplement vous associer en silence et écouter. Votre seule présence est déjà un encouragement.</div>
+  </details>
+  <details>
+    <summary>Comment se déroulent les soirées louange avec repas partagé ? Que dois-je apporter ?</summary>
+    <div class="rep">Ces soirées sont des moments de fête et de convivialité très simples. Nous passons un temps à chanter et célébrer Dieu ensemble (la louange), puis nous partageons un buffet avec ce que chacun a apporté (salade, plat, dessert ou simplement une boisson). C'est le moment idéal pour faire connaissance et discuter librement. Si vous venez pour la première fois et que vous n'avez rien pu apporter, pas d'inquiétude : venez les mains vides, il y a toujours largement assez pour tout le monde !</div>
+  </details>
+  <details>
+    <summary>Comment rejoindre les études bibliques en visio ?</summary>
+    <div class="rep">Elles ont lieu un dimanche par mois, de 16h30 à 17h30, en ligne. Pour préserver le cadre convivial et familial de ces échanges, nous aimons généralement faire d'abord connaissance lors d'un culte le dimanche matin. Venez nous rencontrer, et c'est avec joie que nous vous partagerons ensuite le lien de connexion !</div>
+  </details>
+  <details>
+    <summary>Faut-il déjà connaître la Bible pour participer ?</summary>
+    <div class="rep">Pas du tout. Nos temps d'étude sont pensés pour tous les niveaux : que vous ouvriez la Bible pour la première fois ou depuis des années, vous êtes le bienvenu pour poser vos questions et avancer à votre rythme.</div>
+  </details>
+  <details>
+    <summary>Comment demander un suivi pastoral ?</summary>
+    <div class="rep">Un besoin d'écoute, de prière ou de conseil ? Contactez-nous et l'un de nos pasteurs vous proposera un rendez-vous. Les échanges se font avec bienveillance et en toute confidentialité.</div>
+  </details>
+  <details>
+    <summary>Je souhaite être baptisé, par où commencer ?</summary>
+    <div class="rep">Le baptême est l'expression publique et le témoignage de votre décision personnelle d'accepter Jésus-Christ comme votre Sauveur et Seigneur. Parce qu'il s'agit aussi d'un engagement, nous proposons le baptême aux membres de notre église. Nous vous accompagnerons avec joie, pas à pas, pour vous aider à comprendre le sens de cette étape et la préparer ensemble. Contactez l'un de nos pasteurs pour en parler !</div>
+  </details>
+    </div>
+  </div>
+</section>
+
+
+<section id="pas-de-plus" class="reveal section-form">
+  <div class="form-inner">
+    <div class="form-tete">
+      <span class="eyebrow">faire un pas de plus</span>
+      <h2 class="titre-bloc">Venir<br><span class="or">nous découvrir</span></h2>
+      <div class="texte-bloc">
     <p>Vous souhaitez nous découvrir ? Le meilleur moyen pour faire connaissance, c'est de <strong>nous rejoindre un dimanche matin</strong> lors de notre culte. C'est le point de départ idéal ! Nos réunions de prière et nos moments de convivialité sont également ouverts à tous ceux qui souhaitent voir et participer, même pour la première fois.</p>
     <p>Vous aimeriez venir nous rendre visite, participer à un moment d'église, ou vous avez simplement besoin de parler ou de prier avec l'un de nos pasteurs ? Remplissez ce court formulaire : un membre de notre équipe pastorale vous recontactera avec joie et en toute simplicité.</p>
   </div>
-
-  <form class="form-cadre" id="formConnexion" novalidate>
+    </div>
+    <form class="form-cadre" id="formConnexion" novalidate>
     <div class="form-champ">
       <label for="cx-prenom">Votre prénom</label>
       <input type="text" id="cx-prenom" name="prenom" autocomplete="given-name" required>
@@ -689,36 +752,7 @@ footer{padding:90px 28px 40px;max-width:1500px;margin:0 auto;border-top:1px soli
     <button type="submit" class="form-envoi">Envoyer ma demande</button>
     <p class="form-note">— votre logiciel de messagerie s'ouvrira avec le message pré-rempli —</p>
   </form>
-</section>
-
-
-<section class="faq reveal" id="faq">
-  <span class="eyebrow">questions fréquentes</span>
-  <h2 class="titre-bloc" style="margin-bottom:40px">Vos<br><span class="or">questions</span></h2>
-  <details>
-    <summary>Comment se passe une réunion de prière ? Dois-je prier à voix haute ?</summary>
-    <div class="rep">Pas du tout ! Nos réunions de prière sont des moments simples et paisibles. Nous prions ensemble pour les besoins de chacun, pour l'église et pour notre région. Vous êtes totalement libre de prier à haute voix si vous le souhaitez, ou de simplement vous associer en silence et écouter. Votre seule présence est déjà un encouragement.</div>
-  </details>
-  <details>
-    <summary>Comment se déroulent les soirées louange avec repas partagé ? Que dois-je apporter ?</summary>
-    <div class="rep">Ces soirées sont des moments de fête et de convivialité très simples. Nous passons un temps à chanter et célébrer Dieu ensemble (la louange), puis nous partageons un buffet avec ce que chacun a apporté (salade, plat, dessert ou simplement une boisson). C'est le moment idéal pour faire connaissance et discuter librement. Si vous venez pour la première fois et que vous n'avez rien pu apporter, pas d'inquiétude : venez les mains vides, il y a toujours largement assez pour tout le monde !</div>
-  </details>
-  <details>
-    <summary>Comment rejoindre les études bibliques en visio ?</summary>
-    <div class="rep">Elles ont lieu un dimanche par mois, de 16h30 à 17h30, en ligne. Pour préserver le cadre convivial et familial de ces échanges, nous aimons généralement faire d'abord connaissance lors d'un culte le dimanche matin. Venez nous rencontrer, et c'est avec joie que nous vous partagerons ensuite le lien de connexion !</div>
-  </details>
-  <details>
-    <summary>Faut-il déjà connaître la Bible pour participer ?</summary>
-    <div class="rep">Pas du tout. Nos temps d'étude sont pensés pour tous les niveaux : que vous ouvriez la Bible pour la première fois ou depuis des années, vous êtes le bienvenu pour poser vos questions et avancer à votre rythme.</div>
-  </details>
-  <details>
-    <summary>Comment demander un suivi pastoral ?</summary>
-    <div class="rep">Un besoin d'écoute, de prière ou de conseil ? Contactez-nous et l'un de nos pasteurs vous proposera un rendez-vous. Les échanges se font avec bienveillance et en toute confidentialité.</div>
-  </details>
-  <details>
-    <summary>Je souhaite être baptisé, par où commencer ?</summary>
-    <div class="rep">Le baptême est l'expression publique et le témoignage de votre décision personnelle d'accepter Jésus-Christ comme votre Sauveur et Seigneur. Parce qu'il s'agit aussi d'un engagement, nous proposons le baptême aux membres de notre église. Nous vous accompagnerons avec joie, pas à pas, pour vous aider à comprendre le sens de cette étape et la préparer ensemble. Contactez l'un de nos pasteurs pour en parler !</div>
-  </details>
+  </div>
 </section>
 
 
