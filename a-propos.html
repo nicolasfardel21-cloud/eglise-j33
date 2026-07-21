@@ -370,15 +370,53 @@ section{padding:110px 28px;max-width:1500px;margin:0 auto}
 @media(max-width:760px){.bloc-visuel{grid-template-columns:1fr}.bloc-visuel .ph{aspect-ratio:16/10}.bloc-visuel .ph:nth-child(2){transform:none}}
 
 /* ---------- piliers / valeurs ---------- */
-.piliers{margin-top:70px;display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));border-top:1px solid var(--ligne);border-left:1px solid var(--ligne)}
-.pilier{border-right:1px solid var(--ligne);border-bottom:1px solid var(--ligne);padding:34px 26px;min-height:240px;display:flex;flex-direction:column;transition:background .3s;background:var(--fond)}
-.pilier:hover{background:var(--bleu-pale)}
-.pilier .tag{font-size:.72rem;text-transform:uppercase;letter-spacing:.18em;color:var(--or)}
-.pilier h3{font-family:'Anton',sans-serif;font-weight:400;font-size:1.5rem;line-height:1.1;margin:14px 0 12px}
-.pilier p{font-size:1.05rem;color:var(--gris)}
-.pilier .versets{margin-top:auto;padding-top:16px;font-size:.74rem;color:var(--bleu);line-height:1.8;display:flex;flex-wrap:wrap;gap:0 16px}
-.pilier .versets::before{content:none}
-.pilier .versets .ref{text-decoration:underline;text-underline-offset:3px}
+/* MOBILE : accordéon. Titre en haut ; numéro (bas-droite) + chevron (bas-centre)
+   ancrés au bas du PILIER entier → ils descendent quand le corps se déplie.
+   Numéro gris fermé → doré à l'ouverture. */
+.piliers-wrap{margin-top:70px;border-top:1px solid var(--ligne)}
+.pil{position:relative;border-bottom:1px solid var(--ligne);padding-bottom:58px}
+.pil-tete{width:100%;display:block;background:none;border:0;
+  cursor:pointer;text-align:left;padding:22px 8px 6px 6px;font-family:inherit;color:var(--encre)}
+.pil-titre{font-family:'Anton',sans-serif;font-weight:400;font-size:1.3rem;line-height:1.12;display:block}
+.pil-num{font-family:'Anton',sans-serif;font-weight:400;line-height:.8}
+.pil-num-tete{position:absolute;right:0;bottom:6px;font-size:3.4rem;
+  color:rgba(16,22,34,.30);transition:color .35s}          /* fermé : gris */
+.pil.active .pil-num-tete{color:var(--or)}                  /* ouvert : doré */
+.pil-chevron{position:absolute;left:50%;bottom:20px;width:24px;height:24px;color:var(--gris);
+  transform:translateX(-50%);transition:transform .4s cubic-bezier(.76,0,.24,1)}
+.pil.active .pil-chevron{transform:translateX(-50%) rotate(180deg)}
+.pil-num-corps{display:none}                                /* le numéro reste le num-tete (mobile) */
+/* corps */
+.pil-corps{position:relative;overflow:hidden;max-height:0;opacity:0;
+  transition:max-height .5s cubic-bezier(.22,.61,.36,1),opacity .4s ease}
+.pil.active .pil-corps{max-height:640px;opacity:1}
+.pil-corps-in{position:relative;z-index:1;padding:0 6px 8px}
+.pil-desc{font-size:1.05rem;color:var(--gris);max-width:60ch}
+.pil-corps .versets{margin-top:18px;font-size:.74rem;color:var(--bleu);
+  line-height:1.8;display:flex;flex-wrap:wrap;gap:0 16px}
+.pil-corps .versets .ref{text-decoration:underline;text-underline-offset:3px}
+
+/* ===== DESKTOP : tuiles ; numéro géant collé à droite (sans marge), gris → doré ===== */
+@media(min-width:761px){
+  .piliers-wrap{margin-top:70px;display:grid;
+    grid-template-columns:repeat(auto-fit,minmax(250px,1fr));
+    border-top:1px solid var(--ligne);border-left:1px solid var(--ligne)}
+  .pil{position:relative;overflow:hidden;border-right:1px solid var(--ligne);
+    border-bottom:1px solid var(--ligne);background:var(--fond);min-height:240px;
+    padding-bottom:0;display:flex;flex-direction:column}
+  .pil-tete{padding:34px 26px 0;cursor:default;display:block}
+  .pil-titre{font-size:1.5rem;line-height:1.1}
+  .pil-chevron,.pil-num-tete{display:none}
+  .pil-corps{position:static;max-height:none;opacity:1;overflow:visible;
+    flex:1;display:flex;flex-direction:column}
+  .pil-corps-in{flex:1;display:flex;flex-direction:column;padding:14px 26px 34px}
+  .pil-corps .versets{margin-top:auto}
+  .pil-num-corps{display:block;position:absolute;right:0;bottom:2px;z-index:0;pointer-events:none;
+    line-height:.7;font-size:clamp(4.5rem,8vw,8rem);
+    color:rgba(16,22,34,.12);transition:color .35s}          /* gris par défaut */
+  .pil.active .pil-num-corps{color:rgba(181,151,60,.55)}      /* doré quand actif */
+}
+
 
 /* ---------- valeurs (liste numérotée façon 2819) ---------- */
 .valeurs-liste{margin-top:60px;border-top:1px solid var(--ligne)}
@@ -645,14 +683,15 @@ h1.ap-titre{position:relative;z-index:1;margin:17px auto 0;width:fit-content;max
           <a href="venir.html#horaires">Horaires &amp; lieux</a>
           <a href="venir.html#premiere">Première visite</a>
           <a href="venir.html#faq">FAQ</a>
+          <a href="venir.html#venue">Votre venue</a>
         </div>
       </div>
       <div class="menu-groupe">
         <a class="gros" href="connexion.html">Connexion</a><button class="menu-fleche" aria-label="Déplier" onclick="basculerSousMenu(this)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M6 9l6 6 6-6"/></svg></button>
         <div class="menu-sous">
-          <a href="connexion.html#visio">Études bibliques en visio</a>
-          <a href="connexion.html#suivi">Suivi pastoral</a>
-          <a href="connexion.html#etapes">Baptême &amp; mariage</a>
+          <a href="connexion.html#ensemble">Notre vie d'église</a>
+          <a href="connexion.html#faq">FAQ</a>
+          <a href="connexion.html#pas-de-plus">Venir nous découvrir</a>
         </div>
       </div>
       <div class="menu-groupe menu-groupe--simple">
@@ -690,7 +729,7 @@ h1.ap-titre{position:relative;z-index:1;margin:17px auto 0;width:fit-content;max
       <nav class="ap-sous" aria-label="Sommaire de la page">
         <a href="#mission">Notre vision</a>
         <a href="#vision">Notre mission</a>
-        <a href="#pourquoi">Pourquoi J33</a>
+        <a href="#pourquoi">Pourquoi J33 ?</a>
         <a href="#valeurs">Nos valeurs</a>
         <a href="#croyances">Nos fondements</a>
         <a href="#responsables">Nos responsables</a>
@@ -703,8 +742,8 @@ h1.ap-titre{position:relative;z-index:1;margin:17px auto 0;width:fit-content;max
     <h2 class="titre-bloc">Voir un réveil<br><span class="or">naître ici</span></h2>
     <div class="texte-bloc">
       <p><strong>Notre vision est de voir un réveil naître à Is-sur-Tille et ses environs</strong> à travers une église qui forme des disciples matures et passionnés, vivant la plénitude de Dieu, qui restaure les cœurs brisés et rallume la flamme spirituelle de cette région.</p>
-      <p>Nous croyons que notre territoire n'est pas étrangère à la présence de Dieu. Dans le passé, une église vivante y a déjà brillé, et cet héritage spirituel fait partie de son identité. Aujourd'hui, nous désirons voir cette flamme ravivée : que l'Évangile retrouve toute sa place dans les cœurs et les foyers.</p>
-      <p>Nous accueillons chacun avec amour et compassion, quelle que soit son histoire, afin que tous puissent découvrir la grâce, la restauration et la transformation que donne Jésus-Christ. Par la prière, l'unité et la fidélité, nous croyons que Dieu fera jaillir <strong>un réveil durable</strong>.</p>
+      <p>Nous croyons que notre territoire n'est pas étranger à la présence de Dieu. Dans le passé, une église vivante y a déjà brillé, et cet héritage spirituel fait partie de son identité. Aujourd'hui, nous désirons voir cette flamme ravivée : que l'Évangile retrouve toute sa place dans les cœurs et les foyers.</p>
+      <p>Nous accueillons chacun avec amour et compassion, quelle que soit son histoire, afin que tous puissent découvrir la grâce, la restauration et la transformation qu'offre Jésus-Christ. Par la prière, l'unité et la fidélité, nous croyons que Dieu fera jaillir <strong>un réveil durable</strong>.</p>
     </div>
   </section>
 </header>
@@ -712,30 +751,62 @@ h1.ap-titre{position:relative;z-index:1;margin:17px auto 0;width:fit-content;max
 <section id="vision" class="reveal" style="padding-top:0">
   <span class="eyebrow">notre mission</span>
   <h2 class="titre-bloc">Les piliers qui portent<br><span class="or">notre vision</span></h2>
-  <div class="piliers">
-    <div class="pilier">
-      <span class="tag">pilier 01</span>
-      <h3>Former des disciples enracinés et authentiques</h3>
-      <p>Enseignement biblique, accompagnement spirituel, vie de foi concrète.</p>
-      <div class="versets"><span class="ref">Matthieu 28.19-20</span> <span class="ref">Jean 8.31-32</span> <span class="ref">Jean 15.5-8</span> <span class="ref">Actes 2.42</span> <span class="ref">Colossiens 2.6-7</span> <span class="ref">Éphésiens 4.11-15</span> <span class="ref">2 Timothée 2.2</span></div>
+  <div class="piliers-wrap" id="piliersWrap">
+    <div class="pil active" data-i="0">
+      <button class="pil-tete" type="button" aria-expanded="true" aria-controls="pilc0">
+        <span class="pil-titre">Faire de la prière et de la présence de Dieu le centre</span>
+      </button>
+      <div class="pil-corps" id="pilc0" role="region">
+        <div class="pil-corps-in">
+          <p class="pil-desc">Louange, adoration, intercession et dépendance au Saint-Esprit.</p>
+          <div class="versets"><span class="ref">Psaume 16.11</span> <span class="ref">Psaume 27.4</span> <span class="ref">Jean 7.38-39</span> <span class="ref">Actes 1.8</span> <span class="ref">Romains 8.14</span> <span class="ref">Éphésiens 5.18-19</span> <span class="ref">Jacques 5.16</span></div>
+        </div>
+        <span class="pil-num pil-num-corps" aria-hidden="true">01</span>
+      </div>
+      <span class="pil-num pil-num-tete" aria-hidden="true">01</span>
+      <svg class="pil-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg>
     </div>
-    <div class="pilier">
-      <span class="tag">pilier 02</span>
-      <h3>Faire de la prière et de la présence de Dieu le centre</h3>
-      <p>Louange, adoration, intercession et dépendance au Saint-Esprit.</p>
-      <div class="versets"><span class="ref">Psaume 16.11</span> <span class="ref">Psaume 27.4</span> <span class="ref">Jean 7.38-39</span> <span class="ref">Actes 1.8</span> <span class="ref">Romains 8.14</span> <span class="ref">Éphésiens 5.18-19</span> <span class="ref">Jacques 5.16</span></div>
+    <div class="pil" data-i="1">
+      <button class="pil-tete" type="button" aria-expanded="false" aria-controls="pilc1">
+        <span class="pil-titre">Annoncer l'Évangile et rallumer la flamme de la région</span>
+      </button>
+      <div class="pil-corps" id="pilc1" role="region">
+        <div class="pil-corps-in">
+          <p class="pil-desc">Témoignage public, évangélisation locale, spectacles, concerts et rassemblements ouverts à tous.</p>
+          <div class="versets"><span class="ref">Matthieu 5.14-16</span> <span class="ref">Actes 1.8</span> <span class="ref">Romains 10.14-15</span> <span class="ref">Habacuc 3.2</span> <span class="ref">Marc 16.15</span> <span class="ref">Actes 13.47</span> <span class="ref">Romains 1.16</span> <span class="ref">Psaume 67.1-3</span></div>
+        </div>
+        <span class="pil-num pil-num-corps" aria-hidden="true">02</span>
+      </div>
+      <span class="pil-num pil-num-tete" aria-hidden="true">02</span>
+      <svg class="pil-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg>
     </div>
-    <div class="pilier">
-      <span class="tag">pilier 03</span>
-      <h3>Accueillir et restaurer les cœurs brisés</h3>
-      <p>Accompagnement des personnes en recherche, soutien des familles, restauration des cœurs.</p>
-      <div class="versets"><span class="ref">Matthieu 11.28</span> <span class="ref">Ésaïe 61.1</span> <span class="ref">Jean 13.34-35</span> <span class="ref">Romains 15.7</span> <span class="ref">Galates 6.1-2</span> <span class="ref">1 Thessaloniciens 5.14</span> <span class="ref">Hébreux 13.2</span></div>
+    <div class="pil" data-i="2">
+      <button class="pil-tete" type="button" aria-expanded="false" aria-controls="pilc2">
+        <span class="pil-titre">Accueillir et restaurer les cœurs brisés</span>
+      </button>
+      <div class="pil-corps" id="pilc2" role="region">
+        <div class="pil-corps-in">
+          <p class="pil-desc">Relation d'aide, soutien des familles, restauration des cœurs.</p>
+          <div class="versets"><span class="ref">Matthieu 11.28</span> <span class="ref">Ésaïe 61.1</span> <span class="ref">Jean 13.34-35</span> <span class="ref">Romains 15.7</span> <span class="ref">Galates 6.1-2</span> <span class="ref">1 Thessaloniciens 5.14</span> <span class="ref">Hébreux 13.2</span></div>
+        </div>
+        <span class="pil-num pil-num-corps" aria-hidden="true">03</span>
+      </div>
+      <span class="pil-num pil-num-tete" aria-hidden="true">03</span>
+      <svg class="pil-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg>
     </div>
-    <div class="pilier">
-      <span class="tag">pilier 04</span>
-      <h3>Annoncer l'Évangile et rallumer la flamme de la région</h3>
-      <p>Témoignage public, évangélisation locale, faire des nations des disciples.</p>
-      <div class="versets"><span class="ref">Matthieu 5.14-16</span> <span class="ref">Actes 1.8</span> <span class="ref">Romains 10.14-15</span> <span class="ref">Habacuc 3.2</span> <span class="ref">Marc 16.15</span> <span class="ref">Actes 13.47</span> <span class="ref">Romains 1.16</span> <span class="ref">Psaume 67.1-3</span></div>
+    <div class="pil" data-i="3">
+      <button class="pil-tete" type="button" aria-expanded="false" aria-controls="pilc3">
+        <span class="pil-titre">Former des disciples enracinés et authentiques</span>
+      </button>
+      <div class="pil-corps" id="pilc3" role="region">
+        <div class="pil-corps-in">
+          <p class="pil-desc">Enseignement biblique, accompagnement spirituel, vie de foi concrète.</p>
+          <div class="versets"><span class="ref">Matthieu 28.19-20</span> <span class="ref">Jean 8.31-32</span> <span class="ref">Jean 15.5-8</span> <span class="ref">Actes 2.42</span> <span class="ref">Colossiens 2.6-7</span> <span class="ref">Éphésiens 4.11-15</span> <span class="ref">2 Timothée 2.2</span></div>
+        </div>
+        <span class="pil-num pil-num-corps" aria-hidden="true">04</span>
+      </div>
+      <span class="pil-num pil-num-tete" aria-hidden="true">04</span>
+      <svg class="pil-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg>
     </div>
   </div>
 </section>
@@ -1719,6 +1790,36 @@ if(cartesAnim.length === 6){
   if(window.lenis && window.lenis.on){ window.lenis.on('scroll', placer); }
   let tic=false;
   window.addEventListener('scroll', ()=>{ if(!tic){ requestAnimationFrame(()=>{ placer(); tic=false; }); tic=true; } }, {passive:true});
+})();
+</script>
+<script>
+/* ---------- piliers : desktop (numéro doré au survol/clic) ; mobile (accordéon) ---------- */
+(function(){
+  const wrap = document.getElementById('piliersWrap');
+  if(!wrap) return;
+  const pils = Array.prototype.slice.call(wrap.querySelectorAll('.pil'));
+  const mq = window.matchMedia('(min-width:761px)');
+
+  function aria(p, on){ const t = p.querySelector('.pil-tete'); if(t) t.setAttribute('aria-expanded', on ? 'true' : 'false'); }
+  function activerSeul(i){ pils.forEach(function(p, idx){ const on = idx === i; p.classList.toggle('active', on); aria(p, on); }); }
+
+  pils.forEach(function(p, i){
+    p.addEventListener('mouseenter', function(){
+      if(mq.matches) activerSeul(i);                 /* desktop : doré au survol, et le reste */
+    });
+    p.addEventListener('click', function(){
+      if(mq.matches){ activerSeul(i); return; }      /* desktop : doré au clic aussi */
+      /* ---- mobile : accordéon, ouverture/fermeture simultanées ---- */
+      if(p.classList.contains('active')){ p.classList.remove('active'); aria(p, false); }
+      else { activerSeul(i); }                        /* ouvre i et ferme les autres en même temps */
+    });
+  });
+
+  /* reset au changement de disposition */
+  let w = window.innerWidth;
+  window.addEventListener('resize', function(){
+    if(window.innerWidth !== w){ w = window.innerWidth; activerSeul(0); }
+  });
 })();
 </script>
 </body>
