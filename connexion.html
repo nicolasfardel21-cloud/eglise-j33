@@ -449,9 +449,10 @@ section{padding:110px 28px;max-width:1500px;margin:0 auto}
   .section-form .form-inner{grid-template-columns:1fr;gap:34px}
 }
 
-/* ---------- croix dessinée au scroll : respiration entre les 2 sections ---------- */
-.croix-scroll{position:relative;max-width:none;width:100%;margin:0;height:min(84svh,660px);overflow:hidden;
-  background:var(--noir);border-top:1px solid var(--ligne);border-bottom:1px solid var(--ligne);
+/* ---------- croix dessinée au scroll + figée (sticky), recouverte par la section suivante ---------- */
+.croix-scroll{position:relative;z-index:1;max-width:none;width:100%;margin:0;height:200svh}
+.cx-colle{position:sticky;top:0;height:100svh;overflow:hidden;
+  background:var(--noir);border-top:1px solid var(--ligne);
   display:flex;flex-direction:column;align-items:center;justify-content:center}
 .cx-zone{position:relative;width:clamp(170px,25vw,290px);height:clamp(300px,44vw,470px)}
 .cx-bar{position:absolute;background:var(--or);will-change:transform;
@@ -464,6 +465,8 @@ section{padding:110px 28px;max-width:1500px;margin:0 auto}
   .cx-v{transform:translateX(-50%) scaleY(1)}
   .cx-h{transform:translateY(-50%) scaleX(1)}
 }
+/* la section suivante remonte par-dessus la croix figée */
+#ensemble{position:relative;z-index:2;background:var(--fond);margin-top:-100svh}
 
 /* ---------- footer ---------- */
 footer{padding:90px 28px 40px;max-width:1500px;margin:0 auto;border-top:1px solid var(--ligne)}
@@ -660,12 +663,14 @@ footer{padding:90px 28px 40px;max-width:1500px;margin:0 auto;border-top:1px soli
   </div>
 </section>
 
-<div class="croix-scroll reveal" aria-label="Croix">
-  <div class="cx-zone">
-    <div class="cx-bar cx-h"></div>
-    <div class="cx-bar cx-v"></div>
+<div class="croix-scroll" aria-label="Croix">
+  <div class="cx-colle">
+    <div class="cx-zone">
+      <div class="cx-bar cx-h"></div>
+      <div class="cx-bar cx-v"></div>
+    </div>
+    <p class="cx-ref">Colossiens 1:18-20</p>
   </div>
-  <p class="cx-ref">Colossiens 1:18-20</p>
 </div>
 
 <section id="ensemble" class="reveal" style="padding-top:clamp(80px,11vh,120px)">
@@ -1453,14 +1458,17 @@ if(cartesAnim.length === 6){
 /* ---------- nav clair (progressif) quand il passe au-dessus de la croix (section sombre) ---------- */
 (function(){
   const bande = document.querySelector('.croix-scroll');
+  const ensemble = document.getElementById('ensemble');
   if(!bande) return;
   const nav = document.querySelector('nav');
   const navH = () => nav ? nav.offsetHeight : 64;
   let tick = false;
   function maj(){
-    const r = bande.getBoundingClientRect();
+    const rc = bande.getBoundingClientRect();
+    const re = ensemble ? ensemble.getBoundingClientRect() : {top: 1e9};
     const y = navH() * 0.5;
-    const sombre = r.top <= y && r.bottom >= y;
+    /* clair tant que le fond noir occupe le haut ET que la section blanche ne l'a pas recouvert */
+    const sombre = rc.top <= y && re.top > y;
     document.body.classList.toggle('nav-sombre', sombre);
     tick = false;
   }
