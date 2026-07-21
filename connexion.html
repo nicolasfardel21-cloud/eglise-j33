@@ -481,12 +481,19 @@ footer{padding:90px 28px 40px;max-width:1500px;margin:0 auto;border-top:1px soli
 .curseur{display:inline-block;width:2px;height:1.05em;background:var(--or);vertical-align:-.18em;margin:0 1px;animation:clignote .75s steps(1) infinite}
 @keyframes clignote{50%{opacity:0}}
 
+/* ---------- bande « respiration » : effet Ken Burns au scroll, entre « Une église Familiale » et « Notre vie d'Église » ---------- */
+.kb-scene{position:relative;height:min(70vh,640px);min-height:340px;overflow:hidden;
+  background:radial-gradient(circle at 30% 25%,var(--bleu-pale),transparent 55%),radial-gradient(circle at 72% 78%,rgba(181,151,60,.28),transparent 55%),#1b2836}
+.kb-scene img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;
+  transform-origin:58% 38%;transform:scale(1.06);will-change:transform}
+.kb-scene.sans-image img{display:none}
+.kb-scene::after{content:"";position:absolute;inset:0;pointer-events:none;
+  background:linear-gradient(180deg,rgba(12,17,28,.32),transparent 28%,transparent 70%,rgba(12,17,28,.4))}
+@media(max-width:820px){.kb-scene{height:min(56svh,460px);min-height:280px}}
+@media(prefers-reduced-motion:reduce){.kb-scene img{transform:scale(1.06)!important}}
+
 /* ---------- section « moments » : tuiles image + dépliage (façon maquette) ---------- */
-.moments-intro{text-align:center;max-width:900px;margin:0 auto}
-.moments-intro .eyebrow{margin-bottom:18px}
-.moments-titre{font-family:'Archivo',sans-serif;font-weight:700;letter-spacing:-.01em;
-  font-size:clamp(1.4rem,2.9vw,2.25rem);line-height:1.22;margin:0}
-.moments-titre .or-txt{color:var(--or)}
+.moments-intro{max-width:700px}
 
 .tuiles-rangee{display:grid;gap:24px}
 .tuiles-2{grid-template-columns:1fr 1fr;margin-top:46px}
@@ -644,12 +651,17 @@ footer{padding:90px 28px 40px;max-width:1500px;margin:0 auto;border-top:1px soli
   </div>
 </section>
 
+<div id="respire" class="kb-scene reveal" aria-hidden="true">
+  <img src="images_connexion/Illustration_7.jpg" alt="" loading="lazy" onerror="this.closest('.kb-scene').classList.add('sans-image')">
+</div>
+
 <section id="ensemble" class="reveal" style="padding-top:0">
   <div class="moments-intro">
     <span class="eyebrow">ce que nous vivons ensemble</span>
-    <h2 class="moments-titre">Voici les moments qui <span class="or-txt">rythment notre semaine</span>.</h2>
+    <h2 class="titre-bloc">Notre<br><span class="or">vie d'Église</span></h2>
     <button type="button" class="decouvrir-btn" id="btnDecouvrir" aria-expanded="false" aria-controls="ddScene" onclick="basculerDecouvrir()">
-      <span class="dd-label">Cliquez ici pour le découvrir en images</span>
+      <span class="dd-label">Découvrir en image</span>
+      <span class="dd-fl" aria-hidden="true">▾</span>
     </button>
   </div>
   <div class="decouvrir-scene" id="ddScene" aria-hidden="true">
@@ -713,19 +725,19 @@ footer{padding:90px 28px 40px;max-width:1500px;margin:0 auto;border-top:1px soli
     <div class="faq-liste">
       <details>
     <summary>Comment se passe une réunion de prière ? Dois-je prier à voix haute ?</summary>
-    <div class="rep">Pas du tout ! Nos réunions de prière sont des moments simples et paisibles. Nous prions ensemble pour les besoins de chacun, pour l'église et pour notre région. Vous êtes totalement libre de prier à haute voix si vous le souhaitez, ou de simplement vous associer en silence et écouter. Votre seule présence est déjà un encouragement.</div>
+    <div class="rep">Non il n'y a pas d'obligation à prier à voix haute ! Nos réunions de prière sont des moments simples et paisibles. Nous prions ensemble pour les besoins de chacun, pour l'église et pour notre région. Vous êtes totalement libre de prier à haute voix si vous le souhaitez, ou de simplement vous associer à voix basse et écouter.</div>
   </details>
   <details>
-    <summary>Comment se déroulent les soirées louange avec repas partagé ? Que dois-je apporter ?</summary>
-    <div class="rep">Ces soirées sont des moments de fête et de convivialité très simples. Nous passons un temps à chanter et célébrer Dieu ensemble (la louange), puis nous partageons un buffet avec ce que chacun a apporté (salade, plat, dessert ou simplement une boisson). C'est le moment idéal pour faire connaissance et discuter librement. Si vous venez pour la première fois et que vous n'avez rien pu apporter, pas d'inquiétude : venez les mains vides, il y a toujours largement assez pour tout le monde !</div>
+    <summary>Comment se déroulent les repas partagé des soirées louange ? Que dois-je apporter ?</summary>
+    <div class="rep">Ces soirées sont des temps de convivialité très simples. En plus du temps de louange, nous partageons un buffet avec ce que chacun a apporté (salade, plat, dessert ou simplement une boisson). C'est le moment idéal pour faire connaissance et discuter librement. Si vous venez pour la première fois et que vous n'avez rien pu apporter, pas d'inquiétude il y en aura assez pour tout le monde !</div>
   </details>
   <details>
-    <summary>Comment rejoindre les études bibliques en visio ?</summary>
-    <div class="rep">Elles ont lieu un dimanche par mois, de 16h30 à 17h30, en ligne. Pour préserver le cadre convivial et familial de ces échanges, nous aimons généralement faire d'abord connaissance lors d'un culte le dimanche matin. Venez nous rencontrer, et c'est avec joie que nous vous partagerons ensuite le lien de connexion !</div>
+    <summary>Comment rejoindre les études bibliques ?</summary>
+    <div class="rep">Elles ont lieu un dimanche après-midi par mois, durant une heure et en ligne. Pour préserver le cadre convivial et familial de ces échanges, nous aimons généralement faire d'abord connaissance lors d'un culte le dimanche matin. Venez nous rencontrer, et c'est avec joie que nous vous partagerons ensuite le lien de connexion !</div>
   </details>
   <details>
     <summary>Faut-il déjà connaître la Bible pour participer ?</summary>
-    <div class="rep">Pas du tout. Nos temps d'étude sont pensés pour tous les niveaux : que vous ouvriez la Bible pour la première fois ou depuis des années, vous êtes le bienvenu pour poser vos questions et avancer à votre rythme.</div>
+    <div class="rep">Non ce n'est pas une obligation. Nos temps de culte sont l'occasion de la découvrir et de recevoir un enseignement accessible à tous. Quant à nos temps d'étude, ils sont ouverts à tous les niveaux : que vous ouvriez la Bible pour la première fois ou depuis des années, vous trouverez un espace bienveillant pour poser vos questions et progresser à votre rythme.</div>
   </details>
   <details>
     <summary>Comment demander un suivi pastoral ?</summary>
@@ -1083,6 +1095,9 @@ if(!reduit){
   const csScroll = document.getElementById('croyancesScroll');
   const csPiste  = document.getElementById('csPiste');
   const csBarre  = document.getElementById('csBarre');
+  const kbScene = document.getElementById('respire');
+  const kbImg = kbScene ? kbScene.querySelector('img') : null;
+  const reduitMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   function dimensionnerCs(){
     if(!csScroll || !csPiste) return;
     if(window.innerWidth <= 820){ csScroll.style.height = ''; return; }
@@ -1146,6 +1161,14 @@ if(!reduit){
       const p = progression(versetGeant.parentElement);
       versetGeant.style.transform = `scale(${.92+Math.min(p*1.6,1)*.08})`;
       versetGeant.style.opacity = Math.min(1,p*2.4);
+    }
+    if(kbImg && kbScene && !reduitMotion){
+      /* effet Ken Burns : zoom lent + léger panoramique vertical, calés sur la
+         progression du scroll pendant toute la traversée de la bande (pas d'animation par minuterie) */
+      const p = progression(kbScene);
+      const echelle = 1.04 + p * 0.16;
+      const decalage = (0.5 - p) * 34;
+      kbImg.style.transform = `scale(${echelle.toFixed(4)}) translateY(${decalage.toFixed(2)}px)`;
     }
     /* photos latérales : entrent par le bas, montent en continu, sortent par le haut.
     /* images du héro : léger parallaxe au scroll (montent à des vitesses différentes) */
