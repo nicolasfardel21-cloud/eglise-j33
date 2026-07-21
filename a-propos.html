@@ -369,17 +369,21 @@ section{padding:110px 28px;max-width:1500px;margin:0 auto}
 .bloc-visuel .ph:nth-child(2){transform:translateY(36px)}
 @media(max-width:760px){.bloc-visuel{grid-template-columns:1fr}.bloc-visuel .ph{aspect-ratio:16/10}.bloc-visuel .ph:nth-child(2){transform:none}}
 
-/* ---------- piliers / valeurs (liste + panneau) ---------- */
+/* ---------- piliers / valeurs ---------- */
+/* MOBILE : accordéon. Numéro doré en bas à droite du titre (fermé),
+   qui bascule en bas à droite du texte, en doré effacé, à l'ouverture. */
 .piliers-wrap{margin-top:70px;border-top:1px solid var(--ligne)}
 .pil{border-bottom:1px solid var(--ligne)}
-.pil-tete{width:100%;display:flex;align-items:center;gap:18px;background:none;border:0;
+.pil-tete{width:100%;display:flex;align-items:flex-end;gap:14px;background:none;border:0;
   cursor:pointer;text-align:left;padding:22px 6px;font-family:inherit;color:var(--encre);
   transition:background .3s}
-.pil-num{font-family:'Anton',sans-serif;font-weight:400;font-size:1.35rem;color:var(--or);
-  line-height:1;letter-spacing:.02em;flex:none;min-width:1.6em}
 .pil-titre{font-family:'Anton',sans-serif;font-weight:400;font-size:1.3rem;line-height:1.12;
   flex:1 1 auto}
-.pil-chevron{flex:none;width:22px;height:22px;color:var(--gris);transition:transform .4s cubic-bezier(.76,0,.24,1)}
+.pil-num{font-family:'Anton',sans-serif;font-weight:400;line-height:.8;letter-spacing:.02em}
+.pil-num-tete{flex:none;font-size:1.5rem;color:var(--or)}          /* fermé : doré plein */
+.pil.active .pil-num-tete{display:none}                            /* ouvert : bascule au texte */
+.pil-chevron{flex:none;width:22px;height:22px;color:var(--gris);margin-bottom:3px;
+  transition:transform .4s cubic-bezier(.76,0,.24,1)}
 .pil.active .pil-chevron{transform:rotate(180deg)}
 /* corps */
 .pil-corps{position:relative;overflow:hidden;max-height:0;opacity:0;
@@ -390,27 +394,27 @@ section{padding:110px 28px;max-width:1500px;margin:0 auto}
 .pil-corps .versets{margin-top:18px;font-size:var(--tt,.9375rem);color:var(--gris);
   line-height:1.8;display:flex;flex-wrap:wrap;gap:0 16px}
 .pil-corps .versets .ref{text-decoration:underline;text-underline-offset:3px}
-.pil-filigrane{position:absolute;left:-2px;bottom:-12px;z-index:0;pointer-events:none;
-  font-family:'Anton',sans-serif;font-weight:400;line-height:.72;
-  font-size:clamp(5rem,16vw,8.5rem);color:rgba(16,22,34,.06)}
+.pil-num-corps{position:absolute;right:6px;bottom:14px;z-index:0;font-size:1.5rem;
+  color:rgba(181,151,60,.32);pointer-events:none}   /* même taille (mobile), doré effacé */
 
-/* ===== DESKTOP : liste à gauche, panneau à droite ===== */
+/* ===== DESKTOP : retour aux tuiles ; numéro géant en filigrane bas-droite ===== */
 @media(min-width:761px){
-  .piliers-wrap{position:relative;min-height:var(--pil-h,420px);
-    border-left:1px solid var(--ligne)}
-  .pil{border-bottom:1px solid var(--ligne)}
-  .pil-tete{width:48%;padding:26px 22px}
-  .pil-titre{font-size:1.45rem}
-  .pil-chevron{display:none}
-  .pil.active .pil-tete{background:var(--bleu-pale);box-shadow:inset 3px 0 0 var(--or)}
-  .pil-corps{position:absolute;top:0;bottom:0;right:0;width:52%;max-height:none;opacity:0;
-    visibility:hidden;overflow:visible;border-left:1px solid var(--ligne);
-    padding:40px 40px 34px;display:flex;flex-direction:column;
-    transition:opacity .45s ease,visibility .45s ease}
-  .pil.active .pil-corps{opacity:1;visibility:visible}
-  .pil-corps-in{padding:0}
-  .pil-corps .versets{margin-top:auto;padding-top:26px}
-  .pil-filigrane{left:auto;right:26px;bottom:14px}
+  .piliers-wrap{margin-top:70px;display:grid;
+    grid-template-columns:repeat(auto-fit,minmax(250px,1fr));
+    border-top:1px solid var(--ligne);border-left:1px solid var(--ligne)}
+  .pil{position:relative;overflow:hidden;border-right:1px solid var(--ligne);
+    border-bottom:1px solid var(--ligne);background:var(--fond);min-height:240px;
+    display:flex;flex-direction:column;transition:background .3s}
+  .pil:hover{background:var(--bleu-pale)}
+  .pil-tete{padding:34px 26px 0;cursor:default;pointer-events:none;align-items:flex-start}
+  .pil-titre{font-size:1.5rem;line-height:1.1}
+  .pil-chevron,.pil-num-tete{display:none}
+  .pil-corps{position:static;max-height:none;opacity:1;overflow:visible;
+    flex:1;display:flex;flex-direction:column}
+  .pil-corps-in{flex:1;display:flex;flex-direction:column;padding:14px 26px 34px}
+  .pil-corps .versets{margin-top:auto}
+  .pil-num-corps{right:16px;bottom:2px;line-height:.7;
+    font-size:clamp(4.5rem,8vw,8rem);color:rgba(181,151,60,.16)}   /* grossit sur desktop */
 }
 
 /* ---------- valeurs (liste numérotée façon 2819) ---------- */
@@ -749,8 +753,8 @@ h1.ap-titre{position:relative;z-index:1;margin:17px auto 0;width:fit-content;max
   <div class="piliers-wrap" id="piliersWrap">
     <div class="pil active" data-i="0">
       <button class="pil-tete" type="button" aria-expanded="true" aria-controls="pilc0">
-        <span class="pil-num">01</span>
         <span class="pil-titre">Faire de la prière et de la présence de Dieu le centre</span>
+        <span class="pil-num pil-num-tete" aria-hidden="true">01</span>
         <svg class="pil-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg>
       </button>
       <div class="pil-corps" id="pilc0" role="region">
@@ -758,27 +762,27 @@ h1.ap-titre{position:relative;z-index:1;margin:17px auto 0;width:fit-content;max
           <p class="pil-desc">Louange, adoration, intercession et dépendance au Saint-Esprit.</p>
           <div class="versets"><span class="ref">Psaume 16.11</span> <span class="ref">Psaume 27.4</span> <span class="ref">Jean 7.38-39</span> <span class="ref">Actes 1.8</span> <span class="ref">Romains 8.14</span> <span class="ref">Éphésiens 5.18-19</span> <span class="ref">Jacques 5.16</span></div>
         </div>
-        <span class="pil-filigrane" aria-hidden="true">01</span>
+        <span class="pil-num pil-num-corps" aria-hidden="true">01</span>
       </div>
     </div>
     <div class="pil" data-i="1">
       <button class="pil-tete" type="button" aria-expanded="false" aria-controls="pilc1">
-        <span class="pil-num">02</span>
         <span class="pil-titre">Annoncer l'Évangile et rallumer la flamme de la région</span>
+        <span class="pil-num pil-num-tete" aria-hidden="true">02</span>
         <svg class="pil-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg>
       </button>
       <div class="pil-corps" id="pilc1" role="region">
         <div class="pil-corps-in">
-          <p class="pil-desc">Témoignage public, évangélisation locale, spectacles, concerts et rassemblements.</p>
+          <p class="pil-desc">Témoignage public, évangélisation locale, spectacles, concerts et rassemblements ouverts à tous.</p>
           <div class="versets"><span class="ref">Matthieu 5.14-16</span> <span class="ref">Actes 1.8</span> <span class="ref">Romains 10.14-15</span> <span class="ref">Habacuc 3.2</span> <span class="ref">Marc 16.15</span> <span class="ref">Actes 13.47</span> <span class="ref">Romains 1.16</span> <span class="ref">Psaume 67.1-3</span></div>
         </div>
-        <span class="pil-filigrane" aria-hidden="true">02</span>
+        <span class="pil-num pil-num-corps" aria-hidden="true">02</span>
       </div>
     </div>
     <div class="pil" data-i="2">
       <button class="pil-tete" type="button" aria-expanded="false" aria-controls="pilc2">
-        <span class="pil-num">03</span>
         <span class="pil-titre">Accueillir et restaurer les cœurs brisés</span>
+        <span class="pil-num pil-num-tete" aria-hidden="true">03</span>
         <svg class="pil-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg>
       </button>
       <div class="pil-corps" id="pilc2" role="region">
@@ -786,13 +790,13 @@ h1.ap-titre{position:relative;z-index:1;margin:17px auto 0;width:fit-content;max
           <p class="pil-desc">Relation d'aide, soutien des familles, restauration des cœurs.</p>
           <div class="versets"><span class="ref">Matthieu 11.28</span> <span class="ref">Ésaïe 61.1</span> <span class="ref">Jean 13.34-35</span> <span class="ref">Romains 15.7</span> <span class="ref">Galates 6.1-2</span> <span class="ref">1 Thessaloniciens 5.14</span> <span class="ref">Hébreux 13.2</span></div>
         </div>
-        <span class="pil-filigrane" aria-hidden="true">03</span>
+        <span class="pil-num pil-num-corps" aria-hidden="true">03</span>
       </div>
     </div>
     <div class="pil" data-i="3">
       <button class="pil-tete" type="button" aria-expanded="false" aria-controls="pilc3">
-        <span class="pil-num">04</span>
         <span class="pil-titre">Former des disciples enracinés et authentiques</span>
+        <span class="pil-num pil-num-tete" aria-hidden="true">04</span>
         <svg class="pil-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg>
       </button>
       <div class="pil-corps" id="pilc3" role="region">
@@ -800,7 +804,7 @@ h1.ap-titre{position:relative;z-index:1;margin:17px auto 0;width:fit-content;max
           <p class="pil-desc">Enseignement biblique, accompagnement spirituel, vie de foi concrète.</p>
           <div class="versets"><span class="ref">Matthieu 28.19-20</span> <span class="ref">Jean 8.31-32</span> <span class="ref">Jean 15.5-8</span> <span class="ref">Actes 2.42</span> <span class="ref">Colossiens 2.6-7</span> <span class="ref">Éphésiens 4.11-15</span> <span class="ref">2 Timothée 2.2</span></div>
         </div>
-        <span class="pil-filigrane" aria-hidden="true">04</span>
+        <span class="pil-num pil-num-corps" aria-hidden="true">04</span>
       </div>
     </div>
   </div>
@@ -1788,14 +1792,14 @@ if(cartesAnim.length === 6){
 })();
 </script>
 <script>
-/* ---------- piliers : survol (desktop) / accordéon (mobile) ---------- */
+/* ---------- piliers : accordéon (mobile) ; tuiles statiques (desktop) ---------- */
 (function(){
   const wrap = document.getElementById('piliersWrap');
   if(!wrap) return;
   const pils = Array.prototype.slice.call(wrap.querySelectorAll('.pil'));
   const mqDesktop = window.matchMedia('(min-width:761px)');
 
-  function activer(i){
+  function ouvrir(i){
     pils.forEach(function(p, idx){
       const on = idx === i;
       p.classList.toggle('active', on);
@@ -1804,54 +1808,18 @@ if(cartesAnim.length === 6){
     });
   }
 
-  /* desktop : hauteur du panneau = plus grand contenu (évite les sauts de mise en page) */
-  function mesurerHauteur(){
-    if(!mqDesktop.matches){ wrap.style.removeProperty('--pil-h'); return; }
-    let h = 0;
-    pils.forEach(function(p){
-      const c = p.querySelector('.pil-corps');
-      const prev = c.getAttribute('style') || '';
-      c.style.position = 'static';
-      c.style.height = 'auto';
-      c.style.maxHeight = 'none';
-      c.style.opacity = '0';
-      c.style.visibility = 'hidden';
-      h = Math.max(h, c.offsetHeight);
-      c.setAttribute('style', prev);
-    });
-    if(h > 0) wrap.style.setProperty('--pil-h', h + 'px');
-  }
-
   pils.forEach(function(p, i){
     const tete = p.querySelector('.pil-tete');
     if(!tete) return;
     tete.addEventListener('click', function(){
-      if(mqDesktop.matches){
-        activer(i);
+      if(mqDesktop.matches) return;                 /* desktop : tuiles fixes, pas d'accordéon */
+      if(p.classList.contains('active')){
+        p.classList.remove('active');
+        tete.setAttribute('aria-expanded', 'false');
       } else {
-        /* accordéon : clic sur l'ouvert le referme */
-        if(p.classList.contains('active')){
-          p.classList.remove('active');
-          tete.setAttribute('aria-expanded', 'false');
-        } else {
-          activer(i);
-        }
+        ouvrir(i);
       }
     });
-    tete.addEventListener('mouseenter', function(){
-      if(mqDesktop.matches) activer(i);
-    });
-  });
-
-  mesurerHauteur();
-  if(document.fonts && document.fonts.ready) document.fonts.ready.then(mesurerHauteur);
-  let largeurPrec = window.innerWidth;
-  window.addEventListener('resize', function(){
-    if(window.innerWidth !== largeurPrec){
-      largeurPrec = window.innerWidth;
-      activer(0);            /* on repart du pilier 01 au changement de disposition */
-      mesurerHauteur();
-    }
   });
 })();
 </script>
