@@ -209,6 +209,12 @@ body.menu-ouvert .menu-reseaux a:nth-child(3){transition-delay:1.15s}
 .cs-progres{position:absolute;bottom:0;left:0;right:0;height:3px;background:var(--ligne-l);z-index:3}
 .cs-progres span{display:block;height:100%;width:0;background:var(--or)}
 
+/* ── structure mobile des versets (bascule paragraphe ⇆ liste) : neutre en desktop ──
+   Le wrapper disparaît de la mise en page (display:contents) et les couches mobiles
+   sont masquées, donc le desktop reste strictement identique. */
+.cs-m-body{display:contents}
+.cs-m-listmode,.cs-m-toggle{display:none}
+
 /* ── MOBILE : titre figé, tuiles empilées qui glissent l'une sur l'autre ── */
 @media(max-width:820px){
   /* mobile : on annule le mécanisme horizontal, place à l'empilement vertical sticky */
@@ -249,6 +255,46 @@ body.menu-ouvert .menu-reseaux a:nth-child(3){transition-delay:1.15s}
   .cs-tuile p+p{margin-top:0}
   .cs-tuile .versets{padding-top:12px;line-height:1.7}
   .cs-progres{display:none}
+
+  /* ── MOBILE : bascule « paragraphe ⇆ liste de versets » ──
+     Le paragraphe et la couche « liste » se superposent dans la MÊME cellule de grille :
+     la hauteur de la tuile = max(paragraphe, texte du verset le plus long + liste).
+     Elle ne change donc jamais au clic (les couches ne font que glisser). */
+  .cs-m-body{display:grid;flex:0 0 auto}
+  .cs-m-body > .cs-corps{grid-area:1/1;min-width:0;
+    transition:transform .5s cubic-bezier(.76,0,.24,1),opacity .38s ease}
+  .cs-m-listmode{grid-area:1/1;display:flex;flex-direction:column;min-width:0;min-height:0;
+    transform:translateX(102%);opacity:0;pointer-events:none;
+    transition:transform .5s cubic-bezier(.76,0,.24,1),opacity .38s ease}
+  /* la liste desktop et l'overlay desktop ne servent pas en mobile */
+  .cs-tuile > .versets{display:none}
+  .cs-tuile .cs-verset-vue{display:none!important}
+  /* état « liste affichée » : le paragraphe sort à gauche, la liste entre depuis la droite */
+  .cs-tuile.cs-m-liste > .cs-m-body > .cs-corps{transform:translateX(-102%);opacity:0;pointer-events:none}
+  .cs-tuile.cs-m-liste .cs-m-listmode{transform:translateX(0);opacity:1;pointer-events:auto}
+  /* zone haute : texte du verset (sous le titre) ; un « sizer » invisible réserve la place
+     du verset le plus long pour que la hauteur reste constante */
+  .cs-m-vwrap{position:relative;flex:0 0 auto}
+  .cs-m-vsizer{visibility:hidden;font-size:var(--tt,.9375rem);line-height:1.7;
+    border-left:3px solid transparent;padding-left:14px;white-space:pre-wrap}
+  .cs-m-vtxt{position:absolute;inset:0;overflow:auto;font-size:var(--tt,.9375rem);line-height:1.7;
+    color:var(--encre);border-left:3px solid var(--or);padding-left:14px;
+    opacity:0;transition:opacity .3s}
+  .cs-tuile.cs-m-verset .cs-m-vtxt{opacity:1}
+  /* liste des versets : justifiée en bas de la tuile, cliquable */
+  .cs-m-list{margin-top:auto;padding-top:16px;font-size:var(--tt,.9375rem);color:var(--gris);
+    line-height:1.9;display:flex;flex-wrap:wrap;gap:0 16px}
+  .cs-m-ref{color:var(--gris);text-decoration:underline;text-underline-offset:3px;
+    cursor:pointer;white-space:nowrap;transition:color .2s}
+  .cs-m-ref:hover,.cs-m-ref.actif{color:var(--or)}
+  /* ligne unique « Voir les versets » / « Revenir », tout en bas de la tuile */
+  .cs-m-toggle{display:block;margin-top:14px;background:none;border:0;padding:0;cursor:pointer;
+    font-family:'Anton',sans-serif;font-weight:400;font-size:1rem;letter-spacing:.06em;
+    text-transform:uppercase;color:var(--or);text-decoration:underline;text-underline-offset:3px;
+    text-align:left}
+}
+@media(prefers-reduced-motion: reduce) and (max-width:820px){
+  .cs-m-body > .cs-corps,.cs-m-listmode,.cs-m-vtxt{transition:none}
 }
 @media(prefers-reduced-motion: reduce) and (min-width:821px){
   .croyances-scroll{height:auto !important}
@@ -1247,10 +1293,76 @@ if(!reduit){
       versetsDiv.appendChild(span);
       if(i < refs.length-1) versetsDiv.appendChild(document.createTextNode(' '));
     });
-    /* bouton Revenir */
+    /* bouton Revenir (desktop) */
     vue.querySelector('.cs-revenir').addEventListener('click', ()=>{
       tuile.classList.remove('montre-verset');
       tuile.querySelectorAll('.cs-ref').forEach(r=>r.classList.remove('actif'));
+    });
+
+    /* ── structure MOBILE : bascule paragraphe ⇆ liste des versets ──
+       On enveloppe .cs-corps dans .cs-m-body (display:contents en desktop → invisible pour
+       la mise en page), et on ajoute une couche « liste » superposée + un toggle. Tout est
+       masqué en desktop par CSS, donc le desktop n'est pas modifié. */
+    const mbody = document.createElement('div');
+    mbody.className = 'cs-m-body';
+    tuile.insertBefore(mbody, corps);
+    mbody.appendChild(corps);
+
+    const listmode = document.createElement('div');
+    listmode.className = 'cs-m-listmode';
+    const vwrap = document.createElement('div');
+    vwrap.className = 'cs-m-vwrap';
+    const vsizer = document.createElement('div');   /* réserve la place du verset le plus long */
+    vsizer.className = 'cs-m-vsizer';
+    const mvtxt = document.createElement('div');     /* texte du verset affiché */
+    mvtxt.className = 'cs-m-vtxt';
+    vwrap.appendChild(vsizer); vwrap.appendChild(mvtxt);
+    const mlist = document.createElement('div');
+    mlist.className = 'cs-m-list';
+    listmode.appendChild(vwrap); listmode.appendChild(mlist);
+    mbody.appendChild(listmode);
+
+    const toggle = document.createElement('button');
+    toggle.className = 'cs-m-toggle';
+    toggle.type = 'button';
+    toggle.textContent = 'Voir les versets';
+    tuile.appendChild(toggle);   /* tout en bas de la tuile */
+
+    /* liste mobile cliquable + repérage du verset le plus long (pour le sizer) */
+    const bibleM = chargerBible();
+    let plusLong = '';
+    refs.forEach((ref,i)=>{
+      const txt = bibleM[normaliserRef(ref)] || '';
+      if(txt.length > plusLong.length) plusLong = txt;
+      const span = document.createElement('span');
+      span.className = 'cs-m-ref';
+      span.textContent = ref;
+      span.addEventListener('click', ()=>{
+        mlist.querySelectorAll('.cs-m-ref').forEach(r=>r.classList.remove('actif'));
+        span.classList.add('actif');
+        tuile.classList.add('cs-m-verset');
+        mvtxt.textContent = 'Chargement…';
+        try{
+          const t = chargerBible()[normaliserRef(ref)];
+          mvtxt.textContent = t || ('Le texte de « ' + ref + ' » n\'est pas encore disponible.');
+        }catch(e){
+          mvtxt.textContent = 'Impossible de charger le texte pour le moment.';
+        }
+      });
+      mlist.appendChild(span);
+      if(i < refs.length-1) mlist.appendChild(document.createTextNode(' '));
+    });
+    vsizer.textContent = plusLong || '.';
+
+    /* toggle unique : ouvre la liste / revient au contenu de la tuile */
+    toggle.addEventListener('click', ()=>{
+      const ouvert = tuile.classList.toggle('cs-m-liste');
+      toggle.textContent = ouvert ? 'Revenir' : 'Voir les versets';
+      if(!ouvert){
+        tuile.classList.remove('cs-m-verset');
+        mlist.querySelectorAll('.cs-m-ref').forEach(r=>r.classList.remove('actif'));
+        mvtxt.textContent = '';
+      }
     });
   });
   const csPiste  = document.getElementById('csPiste');
