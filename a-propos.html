@@ -370,39 +370,40 @@ section{padding:110px 28px;max-width:1500px;margin:0 auto}
 @media(max-width:760px){.bloc-visuel{grid-template-columns:1fr}.bloc-visuel .ph{aspect-ratio:16/10}.bloc-visuel .ph:nth-child(2){transform:none}}
 
 /* ---------- piliers / valeurs ---------- */
-/* MOBILE : accordéon. Titre en haut ; sous le titre, chevron centré + numéro
-   collé en bas à droite. Numéro gris fermé → doré à l'ouverture. */
+/* MOBILE : accordéon. Titre en haut ; numéro (bas-droite) + chevron (bas-centre)
+   ancrés au bas du PILIER entier → ils descendent quand le corps se déplie.
+   Numéro gris fermé → doré à l'ouverture. */
 .piliers-wrap{margin-top:70px;border-top:1px solid var(--ligne)}
-.pil{border-bottom:1px solid var(--ligne)}
-.pil-tete{position:relative;width:100%;display:block;background:none;border:0;
-  cursor:pointer;text-align:left;padding:22px 8px 48px 6px;font-family:inherit;color:var(--encre)}
+.pil{position:relative;border-bottom:1px solid var(--ligne);padding-bottom:58px}
+.pil-tete{width:100%;display:block;background:none;border:0;
+  cursor:pointer;text-align:left;padding:22px 8px 6px 6px;font-family:inherit;color:var(--encre)}
 .pil-titre{font-family:'Anton',sans-serif;font-weight:400;font-size:1.3rem;line-height:1.12;display:block}
-.pil-num{font-family:'Anton',sans-serif;font-weight:400;line-height:.8;letter-spacing:.02em}
-.pil-num-tete{position:absolute;right:0;bottom:6px;font-size:2.5rem;
+.pil-num{font-family:'Anton',sans-serif;font-weight:400;line-height:.8}
+.pil-num-tete{position:absolute;right:0;bottom:6px;font-size:3.4rem;
   color:rgba(16,22,34,.30);transition:color .35s}          /* fermé : gris */
 .pil.active .pil-num-tete{color:var(--or)}                  /* ouvert : doré */
-.pil-chevron{position:absolute;left:50%;bottom:14px;width:24px;height:24px;color:var(--gris);
+.pil-chevron{position:absolute;left:50%;bottom:20px;width:24px;height:24px;color:var(--gris);
   transform:translateX(-50%);transition:transform .4s cubic-bezier(.76,0,.24,1)}
 .pil.active .pil-chevron{transform:translateX(-50%) rotate(180deg)}
-.pil-num-corps{display:none}                                /* le numéro reste dans le titre (mobile) */
+.pil-num-corps{display:none}                                /* le numéro reste le num-tete (mobile) */
 /* corps */
 .pil-corps{position:relative;overflow:hidden;max-height:0;opacity:0;
   transition:max-height .5s cubic-bezier(.22,.61,.36,1),opacity .4s ease}
 .pil.active .pil-corps{max-height:640px;opacity:1}
-.pil-corps-in{position:relative;z-index:1;padding:0 6px 26px}
+.pil-corps-in{position:relative;z-index:1;padding:0 6px 8px}
 .pil-desc{font-size:var(--tt,.9375rem);color:var(--gris);max-width:60ch}
 .pil-corps .versets{margin-top:18px;font-size:var(--tt,.9375rem);color:var(--gris);
   line-height:1.8;display:flex;flex-wrap:wrap;gap:0 16px}
 .pil-corps .versets .ref{text-decoration:underline;text-underline-offset:3px}
 
-/* ===== DESKTOP : tuiles ; numéro géant collé à droite, gris → doré (survol/clic) ===== */
+/* ===== DESKTOP : tuiles ; numéro géant collé à droite (sans marge), gris → doré ===== */
 @media(min-width:761px){
   .piliers-wrap{margin-top:70px;display:grid;
     grid-template-columns:repeat(auto-fit,minmax(250px,1fr));
     border-top:1px solid var(--ligne);border-left:1px solid var(--ligne)}
   .pil{position:relative;overflow:hidden;border-right:1px solid var(--ligne);
     border-bottom:1px solid var(--ligne);background:var(--fond);min-height:240px;
-    display:flex;flex-direction:column}
+    padding-bottom:0;display:flex;flex-direction:column}
   .pil-tete{padding:34px 26px 0;cursor:default;display:block}
   .pil-titre{font-size:1.5rem;line-height:1.1}
   .pil-chevron,.pil-num-tete{display:none}
@@ -415,6 +416,7 @@ section{padding:110px 28px;max-width:1500px;margin:0 auto}
     color:rgba(16,22,34,.12);transition:color .35s}          /* gris par défaut */
   .pil.active .pil-num-corps{color:rgba(181,151,60,.55)}      /* doré quand actif */
 }
+
 
 /* ---------- valeurs (liste numérotée façon 2819) ---------- */
 .valeurs-liste{margin-top:60px;border-top:1px solid var(--ligne)}
@@ -753,8 +755,6 @@ h1.ap-titre{position:relative;z-index:1;margin:17px auto 0;width:fit-content;max
     <div class="pil active" data-i="0">
       <button class="pil-tete" type="button" aria-expanded="true" aria-controls="pilc0">
         <span class="pil-titre">Faire de la prière et de la présence de Dieu le centre</span>
-        <span class="pil-num pil-num-tete" aria-hidden="true">01</span>
-        <svg class="pil-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg>
       </button>
       <div class="pil-corps" id="pilc0" role="region">
         <div class="pil-corps-in">
@@ -763,12 +763,12 @@ h1.ap-titre{position:relative;z-index:1;margin:17px auto 0;width:fit-content;max
         </div>
         <span class="pil-num pil-num-corps" aria-hidden="true">01</span>
       </div>
+      <span class="pil-num pil-num-tete" aria-hidden="true">01</span>
+      <svg class="pil-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg>
     </div>
     <div class="pil" data-i="1">
       <button class="pil-tete" type="button" aria-expanded="false" aria-controls="pilc1">
         <span class="pil-titre">Annoncer l'Évangile et rallumer la flamme de la région</span>
-        <span class="pil-num pil-num-tete" aria-hidden="true">02</span>
-        <svg class="pil-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg>
       </button>
       <div class="pil-corps" id="pilc1" role="region">
         <div class="pil-corps-in">
@@ -777,12 +777,12 @@ h1.ap-titre{position:relative;z-index:1;margin:17px auto 0;width:fit-content;max
         </div>
         <span class="pil-num pil-num-corps" aria-hidden="true">02</span>
       </div>
+      <span class="pil-num pil-num-tete" aria-hidden="true">02</span>
+      <svg class="pil-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg>
     </div>
     <div class="pil" data-i="2">
       <button class="pil-tete" type="button" aria-expanded="false" aria-controls="pilc2">
         <span class="pil-titre">Accueillir et restaurer les cœurs brisés</span>
-        <span class="pil-num pil-num-tete" aria-hidden="true">03</span>
-        <svg class="pil-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg>
       </button>
       <div class="pil-corps" id="pilc2" role="region">
         <div class="pil-corps-in">
@@ -791,12 +791,12 @@ h1.ap-titre{position:relative;z-index:1;margin:17px auto 0;width:fit-content;max
         </div>
         <span class="pil-num pil-num-corps" aria-hidden="true">03</span>
       </div>
+      <span class="pil-num pil-num-tete" aria-hidden="true">03</span>
+      <svg class="pil-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg>
     </div>
     <div class="pil" data-i="3">
       <button class="pil-tete" type="button" aria-expanded="false" aria-controls="pilc3">
         <span class="pil-titre">Former des disciples enracinés et authentiques</span>
-        <span class="pil-num pil-num-tete" aria-hidden="true">04</span>
-        <svg class="pil-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg>
       </button>
       <div class="pil-corps" id="pilc3" role="region">
         <div class="pil-corps-in">
@@ -805,6 +805,8 @@ h1.ap-titre{position:relative;z-index:1;margin:17px auto 0;width:fit-content;max
         </div>
         <span class="pil-num pil-num-corps" aria-hidden="true">04</span>
       </div>
+      <span class="pil-num pil-num-tete" aria-hidden="true">04</span>
+      <svg class="pil-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg>
     </div>
   </div>
 </section>
@@ -1797,8 +1799,6 @@ if(cartesAnim.length === 6){
   if(!wrap) return;
   const pils = Array.prototype.slice.call(wrap.querySelectorAll('.pil'));
   const mq = window.matchMedia('(min-width:761px)');
-  const DUREE = 520;               /* couvre la transition max-height (.5s) */
-  let enCours = false;
 
   function aria(p, on){ const t = p.querySelector('.pil-tete'); if(t) t.setAttribute('aria-expanded', on ? 'true' : 'false'); }
   function activerSeul(i){ pils.forEach(function(p, idx){ const on = idx === i; p.classList.toggle('active', on); aria(p, on); }); }
@@ -1809,17 +1809,9 @@ if(cartesAnim.length === 6){
     });
     p.addEventListener('click', function(){
       if(mq.matches){ activerSeul(i); return; }      /* desktop : doré au clic aussi */
-      /* ---- mobile : accordéon, fermeture avant ouverture ---- */
-      if(enCours) return;
-      if(p.classList.contains('active')){ p.classList.remove('active'); aria(p, false); return; }
-      const ouvert = pils.filter(function(x){ return x.classList.contains('active'); })[0];
-      if(ouvert && ouvert !== p){
-        enCours = true;
-        ouvert.classList.remove('active'); aria(ouvert, false);   /* on ferme d'abord */
-        setTimeout(function(){ p.classList.add('active'); aria(p, true); enCours = false; }, DUREE);
-      } else {
-        p.classList.add('active'); aria(p, true);
-      }
+      /* ---- mobile : accordéon, ouverture/fermeture simultanées ---- */
+      if(p.classList.contains('active')){ p.classList.remove('active'); aria(p, false); }
+      else { activerSeul(i); }                        /* ouvre i et ferme les autres en même temps */
     });
   });
 
