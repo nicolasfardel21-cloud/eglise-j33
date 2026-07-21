@@ -528,7 +528,7 @@ footer{padding:90px 28px 40px;max-width:1500px;margin:0 auto;border-top:1px soli
   .tuile,.tuile-media img,.tuile-texte,.tuile-plus,.tuile-plus .tp-fl{transition:none}
 }
 
-/* ---- « Découvrir en images » : révélation animée (20 images, arrivée aléatoire, accélération) ---- */
+/* ---- « Découvrir en images » : révélation animée (30 images, arrivée aléatoire, accélération) ---- */
 .decouvrir-btn{margin:26px auto 0;display:inline-flex;align-items:center;gap:11px;background:none;border:0;cursor:pointer;
   font-family:'Anton',sans-serif;font-weight:400;text-transform:uppercase;letter-spacing:.14em;font-size:.92rem;
   color:var(--or);padding:8px 4px;transition:gap .25s,color .25s}
@@ -835,13 +835,13 @@ window.addEventListener('resize', ()=>{
   document.querySelectorAll('.tuile.ouverte .tuile-texte').forEach(t=>{ t.style.maxHeight = t.scrollHeight + 'px'; });
 });
 
-/* ---------- « Découvrir en images » : révélation animée de 20 images ----------
+/* ---------- « Découvrir en images » : révélation animée de 30 images ----------
    Au clic : le titre remonte sous le menu, la scène s'ouvre, une 1re image entre
    par le haut (comme si elle sortait du titre), puis chaque image en remplace une
    autre depuis une direction aléatoire (haut/bas/gauche/droite), de plus en plus vite
    (accélération exponentielle). À la fin, tout se replie. Reclic = repli immédiat. */
 (function(){
-  const N = 20;
+  const N = 30;
   const chemin = i => 'images_connexion/images_decouvrir_' + i + '.jpg';
   const dirs = ['haut','bas','gauche','droite'];
   const depart = d => d==='haut' ? 'translateY(-102%)' : d==='bas' ? 'translateY(102%)'
@@ -908,12 +908,13 @@ window.addEventListener('resize', ()=>{
     (function suivant(){
       if(tk !== token || !actif) return;          // annulé (repli ou nouveau clic)
       if(i >= N){
-        /* terminé : on laisse la DERNIÈRE image s'afficher un instant,
-           PUIS on redescend pour réafficher le titre, PUIS on replie */
+        /* terminé : on laisse la DERNIÈRE image s'afficher un instant, on REPLIE TOUT,
+           puis seulement après on redescend pour réafficher le titre */
         timer = setTimeout(()=>{
           if(tk !== token || !actif) return;
-          scrollVersTitre();
-          timer = setTimeout(()=>{ if(tk === token && actif) replier(); }, 950);
+          replier();
+          const tkFin = token;
+          setTimeout(()=>{ if(tkFin === token) scrollVersTitre(); }, 640);
         }, 1200);
         return;
       }
