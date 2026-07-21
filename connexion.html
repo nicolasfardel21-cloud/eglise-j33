@@ -477,6 +477,8 @@ section{padding:110px 28px;max-width:1500px;margin:0 auto}
 /* la section suivante remonte par-dessus la croix figée ; fond blanc pleine largeur (le conteneur est foncé) */
 #ensemble{position:relative;z-index:2;background:var(--fond);margin-top:-100svh}
 #ensemble::before{content:"";position:absolute;top:0;bottom:0;left:50%;margin-left:-50vw;width:100vw;background:var(--fond);z-index:-1}
+/* mobile : la fen\u00eatre est souvent plus haute (dvh > svh) \u2192 phase de maintien plus longue pour ne pas recouvrir trop t\u00f4t */
+@media(max-width:900px){.croix-scroll{height:252svh}}
 
 /* ---------- footer ---------- */
 footer{padding:90px 28px 40px;max-width:1500px;margin:0 auto;border-top:1px solid var(--ligne)}
