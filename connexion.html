@@ -1541,13 +1541,14 @@ if(cartesAnim.length === 6){
     const vh = window.innerHeight;
     const mob = window.innerWidth <= 900;
     /* START : le tracé démarre quand le bord haut de la barre franchit le bas de l'écran,
-       soit r.top = vh − decalH → START = 1 − decalH/vh (desktop). Mobile : départ dès
-       l'entrée de la bande (START = 1), réglage validé, non touché.
+       soit r.top = vh − decalH → START = 1 − decalH/vh. Règle commune mobile et desktop :
+       la barre arrive à l'écran vierge et se trace à partir de là.
        FIN : prolongation APRÈS l'épinglage pour tenir une fenêtre totale constante de
-       1.35 vh sans déplacer la croix (elle reste figée et centrée). */
+       1.35 vh sans déplacer la croix (elle reste figée et centrée). Nul en mobile :
+       la verticale reste bouclée exactement à l'épinglage. */
     const TOTAL = 1.35;
-    const START = mob ? 1.0 : Math.min(1, Math.max(0.15, 1 - decalH / vh));
-    const FIN   = mob ? 0   : Math.max(0, TOTAL - START);
+    const START = Math.min(1, Math.max(0.15, 1 - decalH / vh));
+    const FIN   = mob ? 0 : Math.max(0, TOTAL - START);
     const p = Math.min(1, Math.max(0, (vh * START - r.top) / (vh * (START + FIN))));
     const hp = Math.min(1, p / 0.5);                    /* horizontale : 1re moitié */
     const vp = Math.min(1, Math.max(0, (p - 0.5) / 0.5)); /* verticale : 2e moitié */
