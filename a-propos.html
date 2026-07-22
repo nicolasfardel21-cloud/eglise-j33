@@ -1358,7 +1358,11 @@ if(!reduit){
     toggle.addEventListener('click', ()=>{
       const ouvert = tuile.classList.toggle('cs-m-liste');
       toggle.textContent = ouvert ? 'Revenir' : 'Voir les versets';
-      if(!ouvert){
+      if(ouvert){
+        /* le premier verset s'affiche d'emblée : pas de zone vide à l'ouverture */
+        const premier = mlist.querySelector('.cs-m-ref');
+        if(premier) premier.click();
+      }else{
         tuile.classList.remove('cs-m-verset');
         mlist.querySelectorAll('.cs-m-ref').forEach(r=>r.classList.remove('actif'));
         mvtxt.textContent = '';
@@ -1435,10 +1439,21 @@ if(!reduit){
       /* les tuiles se figent juste SOUS l'en-tête (eyebrow + titre + boutons avant/après) */
       if(entete) csScroll.style.setProperty('--cs-tuile-top', (58 + Math.round(entete.getBoundingClientRect().height)) + 'px');
       ajusterTailleTuiles();
+      /* La piste est le bloc conteneur des tuiles sticky : sans marge sous la dernière
+         tuile, celle-ci n'a aucune course d'épinglage et la section suivante apparaît
+         avant qu'elle n'atteigne le haut. On prolonge donc la piste juste assez pour
+         que la dernière tuile soit épinglée en haut quand la suite entre à l'écran. */
+      const derniere = csTuiles[csTuiles.length - 1];
+      if(derniere){
+        const pinTop = parseFloat(getComputedStyle(csScroll).getPropertyValue('--cs-tuile-top')) || 0;
+        const reste = hauteurMax() - pinTop - derniere.getBoundingClientRect().height;
+        csPiste.style.paddingBottom = Math.max(0, Math.round(reste)) + 'px';
+      }
       return;
     }
     document.documentElement.style.removeProperty('--tt');
     csScroll.style.removeProperty('--cs-tuile-top');
+    csPiste.style.paddingBottom = '';
     csTuiles.forEach(t=>{ t.style.clipPath = ''; });
     csScroll.style.height = (csPiste.scrollWidth - window.innerWidth + vh() * 1.55) + 'px';
   }
