@@ -234,9 +234,10 @@ body.menu-ouvert .menu-reseaux a:nth-child(3){transition-delay:1.15s}
      les 2 lignes du titre ont la même taille de police donc la même hauteur de ligne */
   .cs-sauts{display:flex;flex-direction:column;gap:0;margin:0}
   .cs-sauts a{flex:1 1 0;font-size:0;gap:2px;padding:0 2px;
-    display:flex;align-items:flex-end;justify-content:center;color:var(--encre)}
+    display:flex;align-items:baseline;justify-content:center;color:var(--encre)}
   .cs-sauts a::before,.cs-sauts a::after{font-size:1.35rem;line-height:1;color:var(--or)}
-  .cs-sauts a .fl{font-size:1.7rem;line-height:1;color:var(--encre);transform:translateY(-3px)}
+  .cs-sauts a .fl{font-size:1.7rem;line-height:1;color:var(--encre);
+    transform:translateY(var(--fl-dy,0px))}
   .cs-sauts a:hover .fl{color:var(--or)}
   /* l'intro reste dans le flux, pas de transform mobile */
   .cs-intro{transform:none !important;opacity:1 !important;margin-top:8px}
@@ -1459,9 +1460,39 @@ if(!reduit){
       n.style.right = arr(ref - approches[i]);
     });
   }
+  /* Parenthèses (1.35rem) et flèche (1.7rem) n'ont ni la même taille ni le même dessin :
+     posées sur la même ligne de base, leurs centres d'encre ne coïncident pas. On mesure
+     les deux et on décale la flèche pour aligner les centres (mobile uniquement). */
+  function calerFleches(){
+    const sauts = document.querySelectorAll('.cs-sauts');
+    if(!sauts.length) return;
+    if(window.innerWidth > 820){
+      sauts.forEach(s=>s.style.removeProperty('--fl-dy'));
+      return;
+    }
+    const ctx = document.createElement('canvas').getContext('2d');
+    if(!ctx) return;
+    sauts.forEach(s=>{
+      const a = s.querySelector('a'); if(!a) return;
+      const fl = a.querySelector('.fl'); if(!fl) return;
+      const centre = (police, txt)=>{
+        ctx.font = police;
+        const m = ctx.measureText(txt);
+        if(!m || typeof m.actualBoundingBoxAscent !== 'number') return null;
+        return (m.actualBoundingBoxAscent - m.actualBoundingBoxDescent) / 2;
+      };
+      const cp = getComputedStyle(a, '::before');
+      const cf = getComputedStyle(fl);
+      const cParen = centre(cp.fontWeight+' '+cp.fontSize+' '+cp.fontFamily, '(');
+      const cFleche = centre(cf.fontWeight+' '+cf.fontSize+' '+cf.fontFamily, (fl.textContent||'↑').trim());
+      if(cParen === null || cFleche === null) return;
+      s.style.setProperty('--fl-dy', (Math.round((cFleche - cParen) * 10) / 10) + 'px');
+    });
+  }
   function dimensionnerCs(){
     ajusterTitresSection();
     calerNumeros();
+    calerFleches();
     if(!csScroll || !csPiste) return;
     const entete = csScroll.querySelector('.cs-entete');
     if(window.innerWidth <= 820){
