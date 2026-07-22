@@ -35,10 +35,17 @@ a{color:inherit} img{max-width:100%}
 .lien-paren.or{border-color:var(--or);color:var(--or)} .lien-paren.or:hover{background:var(--or);color:#fff}
 
 /* ---------- nav ---------- */
-nav{position:fixed;top:0;left:0;right:0;z-index:100;display:flex;justify-content:space-between;align-items:center;padding:14px 28px;background:linear-gradient(var(--fond) 60%,transparent);transition:background .45s ease}
-body.menu-ouvert nav{background:transparent}
+nav{position:fixed;top:0;left:0;right:0;z-index:100;display:flex;justify-content:space-between;align-items:center;padding:14px 28px;background:transparent}
+/* Le voile blanc du bandeau est porté par ::before, et non plus par le fond du nav, afin de
+   pouvoir être découpé AU PIXEL par la frontière entre la section claire et la bande sombre.
+   --ch / --cb = rognage haut / bas, pilotés au scroll : le voile n'existe QUE là où le fond
+   sous le bandeau est clair. Plus aucun voile résiduel sur le noir, aucune frame de décalage. */
+nav::before{content:"";position:absolute;inset:0;z-index:-1;pointer-events:none;
+  background:linear-gradient(var(--fond) 60%,transparent);
+  clip-path:inset(var(--ch,0px) 0 var(--cb,0px) 0);
+  transition:opacity .45s ease}
+body.menu-ouvert nav::before{opacity:0}
 /* nav au-dessus d'une section sombre : fondu progressif du logo + tirets vers le clair */
-body.nav-sombre nav{background:transparent}
 body.nav-sombre nav .marque{color:var(--creme)}
 body.nav-sombre .burger span{background:var(--creme)}
 nav .marque{font-family:'Anton',sans-serif;font-size:2.1rem;line-height:1;letter-spacing:.06em;text-decoration:none;text-transform:uppercase;transition:color .45s ease}
@@ -450,7 +457,7 @@ section{padding:110px 28px;max-width:1500px;margin:0 auto}
 }
 
 /* ---------- croix dessinée au scroll + figée (sticky), recouverte par la section suivante ---------- */
-.croix-scroll{position:relative;z-index:1;max-width:none;width:100%;margin:0;height:235svh;background:var(--noir)}
+.croix-scroll{position:relative;z-index:1;max-width:none;width:100%;margin:0;height:360svh;background:var(--noir)}
 .cx-colle{position:sticky;top:0;height:100svh;overflow:hidden;
   background:var(--noir);border-top:1px solid var(--ligne);
   display:flex;flex-direction:column;align-items:center;justify-content:center}
@@ -1483,6 +1490,15 @@ if(cartesAnim.length === 6){
     /* clair tant que le fond noir occupe le haut ET que la section blanche ne l'a pas recouvert */
     const sombre = rc.top <= y && re.top > y;
     document.body.classList.toggle('nav-sombre', sombre);
+    /* découpe du voile : on borne à la boîte du nav le segment sombre [rc.top ; re.top].
+       Tant qu'il n'est pas ancré en haut, il monte par le bas → on rogne par le bas.
+       Une fois ancré en haut, c'est la section blanche qui le chasse → on rogne par le haut. */
+    const nh = navH();
+    const hautSombre = Math.max(0, Math.min(nh, rc.top));
+    const basSombre  = Math.max(0, Math.min(nh, re.top));
+    const ch = hautSombre > 0 ? 0 : basSombre;
+    const cb = hautSombre > 0 ? nh - hautSombre : 0;
+    if(nav){ nav.style.setProperty('--ch', ch + 'px'); nav.style.setProperty('--cb', cb + 'px'); }
     tick = false;
   }
   window.addEventListener('scroll', ()=>{ if(!tick){ requestAnimationFrame(maj); tick = true; } }, {passive:true});
@@ -1509,11 +1525,30 @@ if(cartesAnim.length === 6){
     }
   }
   let tick = false;
+  /* décalage statique du BORD HAUT de la barre horizontale par rapport au haut de la bande.
+     On somme les offsetTop (layout) plutôt que getBoundingClientRect, insensible au sticky.
+     .cx-h est positionnée à top:34% puis remontée de 50% par transform → −offsetHeight/2. */
+  let decalH = 0;
+  function mesurer(){
+    let y = 0, el = h;
+    while(el && el !== bande){ y += el.offsetTop; el = el.offsetParent; }
+    decalH = y - h.offsetHeight / 2;
+  }
+  mesurer();
+  if(document.fonts && document.fonts.ready) document.fonts.ready.then(()=>{ mesurer(); maj(); });
   function maj(){
     const r = bande.getBoundingClientRect();
     const vh = window.innerHeight;
-    const START = 0.62; /* la croix commence à se tracer plus tard dans le défilement */
-    const p = Math.min(1, Math.max(0, (vh * START - r.top) / (vh * START)));
+    const mob = window.innerWidth <= 900;
+    /* START : le tracé démarre quand le bord haut de la barre franchit le bas de l'écran,
+       soit r.top = vh − decalH → START = 1 − decalH/vh (desktop). Mobile : départ dès
+       l'entrée de la bande (START = 1), réglage validé, non touché.
+       FIN : prolongation APRÈS l'épinglage pour tenir une fenêtre totale constante de
+       1.35 vh sans déplacer la croix (elle reste figée et centrée). */
+    const TOTAL = 1.35;
+    const START = mob ? 1.0 : Math.min(1, Math.max(0.15, 1 - decalH / vh));
+    const FIN   = mob ? 0   : Math.max(0, TOTAL - START);
+    const p = Math.min(1, Math.max(0, (vh * START - r.top) / (vh * (START + FIN))));
     const hp = Math.min(1, p / 0.5);                    /* horizontale : 1re moitié */
     const vp = Math.min(1, Math.max(0, (p - 0.5) / 0.5)); /* verticale : 2e moitié */
     h.style.transform = `translateY(-50%) scaleX(${hp})`;
@@ -1521,14 +1556,17 @@ if(cartesAnim.length === 6){
     /* le fond est figé (sticky) une fois r.top <= 0 : on révèle alors la citation avant le recouvrement */
     /* la citation se révèle lettre par lettre au scroll (desktop comme mobile) une fois le fond figé */
     if(cite){
-      const q = Math.min(1, Math.max(0, (-r.top) / (vh * 0.27)));
+      /* desktop : le verset démarre juste après la fin du tracé (FIN), puis s'étale 2x plus longtemps */
+      const CDEB = mob ? 0    : FIN + 0.06;
+      const CDUR = mob ? 0.27 : 0.55;
+      const q = Math.min(1, Math.max(0, (-r.top - vh * CDEB) / (vh * CDUR)));
       const reveal = q * letters.length;
       letters.forEach((s, i)=>{ s.style.opacity = Math.min(1, Math.max(0, reveal - i)); });
     }
     tick = false;
   }
   window.addEventListener('scroll', ()=>{ if(!tick){ requestAnimationFrame(maj); tick = true; } }, {passive:true});
-  window.addEventListener('resize', maj);
+  window.addEventListener('resize', ()=>{ mesurer(); maj(); });
   maj();
 })();
 
