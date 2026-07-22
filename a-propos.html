@@ -250,6 +250,9 @@ body.menu-ouvert .menu-reseaux a:nth-child(3){transition-delay:1.15s}
   .cs-tuile:last-child{margin-bottom:0}
   .cs-tuile h3{font-size:clamp(1.4rem,6vw,1.95rem);margin-bottom:10px;padding-right:54px;line-height:1.02}
   .cs-tuile .cs-num{top:0;right:0;font-size:3.4rem}
+  /* la tuile actuellement figée sous l'en-tête passe son numéro en doré,
+     jusqu'à ce que la tuile suivante vienne se figer à son tour */
+  .cs-tuile.cs-figee .cs-num{color:var(--or)}
   .cs-tuile p,.cs-tuile .versets,.cs-tuile .cs-vtxt{font-size:var(--tt,.9375rem)}
   .cs-tuile p{line-height:1.5}
   .cs-tuile p+p{margin-top:0}
@@ -1430,21 +1433,30 @@ if(!reduit){
       tient(taille); /* réapplique la valeur retenue (lo) après le dernier test */
     }
   }
-  /* Le chiffre laisse naturellement un léger blanc à sa droite (l'approche de la
-     police, incluse dans la boîte mais vide d'encre). On mesure cet écart et on
-     l'applique au-dessus, pour un cadrage optiquement identique haut/droite. */
+  /* Le chiffre laisse un léger blanc à sa droite (l'approche de la police, incluse dans
+     la boîte mais vide d'encre). Cette approche DÉPEND du dernier chiffre : « 04 » et
+     « 01 » n'ont pas la même, d'où un écart visible sur certaines tuiles seulement.
+     On retient donc la plus grande comme référence commune, on décale chaque numéro
+     vers la gauche de la différence, et on applique le même écart au-dessus : cadrage
+     identique sur toutes les tuiles, et haut = droite. */
   function calerNumeros(){
     const nums = document.querySelectorAll('.cs-num');
     if(!nums.length) return;
     const ctx = document.createElement('canvas').getContext('2d');
     if(!ctx) return;
+    const approches = [];
     nums.forEach(n=>{
       const cs = getComputedStyle(n);
       ctx.font = cs.fontWeight + ' ' + cs.fontSize + ' ' + cs.fontFamily;
       const m = ctx.measureText((n.textContent || '').trim());
-      if(!m || typeof m.actualBoundingBoxRight !== 'number') return;
-      const approche = Math.max(0, m.width - m.actualBoundingBoxRight);
-      n.style.top = (Math.round(approche * 10) / 10) + 'px';
+      approches.push((m && typeof m.actualBoundingBoxRight === 'number')
+        ? Math.max(0, m.width - m.actualBoundingBoxRight) : 0);
+    });
+    const ref = Math.max.apply(null, approches);
+    const arr = v => (Math.round(v * 10) / 10) + 'px';
+    nums.forEach((n,i)=>{
+      n.style.top   = arr(ref);
+      n.style.right = arr(ref - approches[i]);
     });
   }
   function dimensionnerCs(){
@@ -1626,7 +1638,10 @@ if(!reduit){
       const pMontee = Math.min(1, brut / seuil);
       if(csIntro){
         csIntro.style.transform = `translateY(${-pMontee * hIntro}px)`;
-        csIntro.style.opacity = 1 - pMontee;
+        /* le fondu ne démarre qu'en fin de course : sinon le texte devient transparent
+           bien avant d'avoir quitté sa place, ce qui se voit dès les premiers pixels */
+        const fondu = Math.min(1, Math.max(0, (pMontee - 0.55) / 0.45));
+        csIntro.style.opacity = 1 - fondu;
       }
       /* les tuiles remontent de la hauteur de l'intro pour se coller sous le titre */
       const yTuiles = -pMontee * hIntro;
@@ -1639,6 +1654,12 @@ if(!reduit){
       /* mobile : la tuile précédente se fait « rogner » par le bas au fil du scroll,
          comme si un masque montait devant elle, à mesure que la tuile suivante arrive */
       const pinTop = parseFloat(getComputedStyle(csScroll).getPropertyValue('--cs-tuile-top')) || 0;
+      /* tuile actuellement figée = la dernière (en ordre) à avoir atteint le pin */
+      let figee = -1;
+      csTuiles.forEach((tuile,i)=>{
+        if(tuile.getBoundingClientRect().top <= pinTop + 1) figee = i;
+      });
+      csTuiles.forEach((tuile,i)=>{ tuile.classList.toggle('cs-figee', i === figee); });
       csTuiles.forEach((tuile,i)=>{
         const suivante = csTuiles[i+1];
         if(!suivante){ tuile.style.clipPath = ''; return; }
@@ -1983,10 +2004,19 @@ if(cartesAnim.length === 6){
     });
   });
 
+  /* état initial : en desktop tous les piliers sont déjà dépliés, la classe « active »
+     ne sert qu'à la mise en doré (survol/clic) — elle ne doit donc pas être posée au
+     chargement. En mobile elle ouvre le premier volet de l'accordéon. */
+  function etatInitial(){
+    if(mq.matches){ pils.forEach(function(p){ p.classList.remove('active'); aria(p, false); }); }
+    else { activerSeul(0); }
+  }
+  etatInitial();
+
   /* reset au changement de disposition */
   let w = window.innerWidth;
   window.addEventListener('resize', function(){
-    if(window.innerWidth !== w){ w = window.innerWidth; activerSeul(0); }
+    if(window.innerWidth !== w){ w = window.innerWidth; etatInitial(); }
   });
 })();
 </script>
