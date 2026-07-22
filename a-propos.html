@@ -1430,8 +1430,26 @@ if(!reduit){
       tient(taille); /* réapplique la valeur retenue (lo) après le dernier test */
     }
   }
+  /* Le chiffre laisse naturellement un léger blanc à sa droite (l'approche de la
+     police, incluse dans la boîte mais vide d'encre). On mesure cet écart et on
+     l'applique au-dessus, pour un cadrage optiquement identique haut/droite. */
+  function calerNumeros(){
+    const nums = document.querySelectorAll('.cs-num');
+    if(!nums.length) return;
+    const ctx = document.createElement('canvas').getContext('2d');
+    if(!ctx) return;
+    nums.forEach(n=>{
+      const cs = getComputedStyle(n);
+      ctx.font = cs.fontWeight + ' ' + cs.fontSize + ' ' + cs.fontFamily;
+      const m = ctx.measureText((n.textContent || '').trim());
+      if(!m || typeof m.actualBoundingBoxRight !== 'number') return;
+      const approche = Math.max(0, m.width - m.actualBoundingBoxRight);
+      n.style.top = (Math.round(approche * 10) / 10) + 'px';
+    });
+  }
   function dimensionnerCs(){
     ajusterTitresSection();
+    calerNumeros();
     if(!csScroll || !csPiste) return;
     const entete = csScroll.querySelector('.cs-entete');
     if(window.innerWidth <= 820){
@@ -1459,7 +1477,11 @@ if(!reduit){
         const pinTop = parseFloat(getComputedStyle(csScroll).getPropertyValue('--cs-tuile-top')) || 0;
         const hLast = derniere.getBoundingClientRect().height;
         const hMax  = Math.max.apply(null, csTuiles.map(t=>t.getBoundingClientRect().height));
-        const besoin = Math.max(hMax, hauteurMax() - pinTop) - hLast;
+        /* La pile décroche à : arrivée de la dernière tuile + (hLast + cale − hMax).
+           On fixe donc la cale pour obtenir exactement PAUSE px d'arrêt, quel que soit
+           le format (sinon la pause varie de 4 à 52 px selon la hauteur d'écran). */
+        const PAUSE = 4;
+        const besoin = hMax + PAUSE - hLast;
         cale.style.height = Math.max(0, Math.round(besoin)) + 'px';
       }
       return;
