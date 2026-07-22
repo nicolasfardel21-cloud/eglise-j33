@@ -1469,41 +1469,30 @@ if(!reduit){
       /* les tuiles se figent juste SOUS l'en-tête (eyebrow + titre + boutons avant/après) */
       if(entete) csScroll.style.setProperty('--cs-tuile-top', (58 + Math.round(entete.getBoundingClientRect().height)) + 'px');
       ajusterTailleTuiles();
-      /* Les tuiles sticky décrochent toutes ensemble dès que le bas de la piste est
-         atteint. Sans marge sous la dernière tuile, ce décrochage survient AVANT que
-         celle-ci ne soit arrivée en haut : la pile se met à monter trop tôt.
-         Un padding ne suffit pas (la zone de contrainte du sticky suit la boîte de
-         CONTENU), il faut donc une vraie cale. Sa hauteur couvre les deux besoins :
-           • hMax − hLast : garder toutes les tuiles figées jusqu'à l'arrivée de la dernière ;
-           • (lvh − pinTop) − hLast : éviter que la section suivante n'entre avant. */
+      /* Une tuile décroche quand le bas de la piste passe au-dessus de « pin + sa
+         hauteur » : les tuiles plus HAUTES que la dernière décrochent donc avant son
+         arrivée en haut. Plutôt qu'une cale sous la pile (qui épinglait la dernière
+         tuile pendant toute sa hauteur — l'effet d'ancrage), on égalise la hauteur de
+         la dernière tuile sur la plus haute : toutes décrochent alors exactement à son
+         arrivée, et le scroll enchaîne sans temps mort. */
       const derniere = csTuiles[csTuiles.length - 1];
-      let cale = document.getElementById('csCale');
-      if(!cale){
-        cale = document.createElement('div');
-        cale.id = 'csCale';
-        cale.setAttribute('aria-hidden','true');
-        csPiste.appendChild(cale);
-      }
-      cale.style.display = 'block';
       if(derniere){
-        const pinTop = parseFloat(getComputedStyle(csScroll).getPropertyValue('--cs-tuile-top')) || 0;
+        derniere.style.minHeight = '';
+        const hAutres = csTuiles.length > 1
+          ? Math.max.apply(null, csTuiles.slice(0,-1).map(t=>t.getBoundingClientRect().height))
+          : 0;
         const hLast = derniere.getBoundingClientRect().height;
-        const hMax  = Math.max.apply(null, csTuiles.map(t=>t.getBoundingClientRect().height));
-        /* La pile décroche à : arrivée de la dernière tuile + (hLast + cale − hMax).
-           On fixe donc la cale pour obtenir exactement PAUSE px d'arrêt, quel que soit
-           le format (sinon la pause varie de 4 à 52 px selon la hauteur d'écran). */
-        const PAUSE = 4;
-        const besoin = hMax + PAUSE - hLast;
-        cale.style.height = Math.max(0, Math.round(besoin)) + 'px';
+        /* petite réserve : la dernière tuile doit être franchement ≥ à la plus haute,
+           sinon le décrochage s'amorce quelques pixels avant son arrivée */
+        const cible = Math.ceil(hAutres) + 24;
+        derniere.style.minHeight = cible > hLast ? (cible + 'px') : '';
       }
       return;
     }
     document.documentElement.style.removeProperty('--tt');
     csScroll.style.removeProperty('--cs-tuile-top');
     csPiste.style.paddingBottom = '';
-    const caleD = document.getElementById('csCale');
-    if(caleD){ caleD.style.display = 'none'; caleD.style.height = '0px'; }
-    csTuiles.forEach(t=>{ t.style.clipPath = ''; });
+    csTuiles.forEach(t=>{ t.style.clipPath = ''; t.style.minHeight = ''; });
     csScroll.style.height = (csPiste.scrollWidth - window.innerWidth + vh() * 1.55) + 'px';
   }
   let derniereLargeur = window.innerWidth;
