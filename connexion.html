@@ -976,6 +976,23 @@ window.addEventListener('resize', ()=>{
                     : d==='gauche' ? 'translateX(-102%)' : 'translateX(102%)';
   const reduit = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   let actif = false, token = 0, timer = null, verrou = null;
+  let dossierPrecharge = null;
+
+  /* précharge les 30 images du dossier donné (mobile/desktop) en tâche de fond,
+     sans les insérer dans le DOM : elles atterrissent dans le cache HTTP, prêtes
+     pour la lecture. Ne refait rien si ce dossier est déjà précharge. */
+  function precharger(dossier){
+    if(dossier === dossierPrecharge) return;
+    dossierPrecharge = dossier;
+    for(let i = 1; i <= N; i++){
+      const im = new Image();
+      im.src = 'images/connexion/galerie/' + dossier + '/galerie_' + i + '.jpg';
+    }
+  }
+  /* lancé une fois la page chargée, sans concurrencer les ressources critiques */
+  const lancerPrechargement = () => precharger(dossierGalerie());
+  if('requestIdleCallback' in window) requestIdleCallback(lancerPrechargement, { timeout: 2000 });
+  else window.addEventListener('load', () => setTimeout(lancerPrechargement, 300));
 
   window.basculerDecouvrir = function(){ actif ? replier() : ouvrir(); };
 
@@ -1014,6 +1031,7 @@ window.addEventListener('resize', ()=>{
 
   function ouvrir(){
     actif = true; token++;
+    precharger(dossierGalerie());   // revérifie mobile/desktop : la fenêtre a pu changer de taille entre-temps
     const btn = document.getElementById('btnDecouvrir'), scene = document.getElementById('ddScene');
     btn.classList.add('actif'); btn.setAttribute('aria-expanded','true');
     libelle('Arrêter');
