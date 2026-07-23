@@ -707,7 +707,7 @@ document.querySelectorAll('.reveal').forEach(el=>obs.observe(el));
   let tick = false;
   function maj(){
     tick = false;
-    document.body.classList.toggle('nav-sur-photo', media.getBoundingClientRect().bottom > nav.offsetHeight);
+    document.body.classList.toggle('nav-sur-photo', media.getBoundingClientRect().bottom > 0);
   }
   maj();
   addEventListener('scroll', ()=>{ if(!tick){ tick = true; requestAnimationFrame(maj); } }, {passive:true});
