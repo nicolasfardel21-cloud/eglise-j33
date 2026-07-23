@@ -177,6 +177,21 @@ body.menu-ouvert .menu-reseaux a:nth-child(3){transition-delay:1.15s}
   .cs-tuile{width:min(1260px,90vw);padding:26px 40px}
   .cs-tuile h3{font-size:clamp(1.4rem,3vw,2rem);margin-bottom:10px}
 }
+/* ---------- écrans très larges : la confession défile sur toute la largeur ----------
+   #croyances est un <section>, donc bridé par section{max-width:1500px} : .cs-colle
+   (sticky + overflow:hidden) ne faisait que 1500px et rognait la piste. On affranchit
+   la section ; l'en-tête passe pleine largeur pour que son fond blanc masque toujours
+   les tuiles qui remontent derrière lui, mais son PADDING le maintient au pixel près
+   sur la colonne (contenu de 1444px centré, exactement comme avant). */
+@media(min-width:1501px){
+  #croyances{max-width:none}
+  .cs-entete{max-width:none;
+    padding-left:calc((100% - 1500px)/2 + 28px);
+    padding-right:calc((100% - 1500px)/2 + 28px)}
+  /* première tuile calée sous le titre ; la marge de droite reste à 28px pour que la
+     dernière tuile puisse aller jusqu'au bord de l'écran */
+  .cs-piste{padding-left:calc((100% - 1500px)/2 + 28px)}
+}
 .cs-tuile:nth-child(odd){background:#F4F4F2}
 .cs-num{position:absolute;top:0;right:0;font-family:'Anton',sans-serif;font-size:clamp(4.5rem,8vw,8rem);line-height:1;text-box:trim-both cap alphabetic;color:rgba(16,22,34,.16);transition:color .3s}
 .cs-tuile:hover .cs-num{color:var(--or)}
