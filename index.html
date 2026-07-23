@@ -469,6 +469,23 @@ section{padding:110px 28px;max-width:1500px;margin:0 auto}
   /* repli CSS des boutons (le JS les recale ensuite dans le même repère) */
   .hero-anime .cta{left:calc((100% - 1500px)/2 - 15px)}
 }
+/* ---------- au-delà du cadre : images agrandies ----------------------------------
+   Le seuil est celui du cadre (1930px) : les images grossissent exactement là où elles
+   ont été rentrées des bords, jamais avant. En dessous, rien ne change.
+
+   #hph3 est le cas délicat : sa largeur nourrit le garde-fou du titre
+   (limite = 2 x (hph3.left + 0,38 x largeur - centre)). L'élargir en gardant right:4%
+   ferait remonter son bord GAUCHE vers le titre et resserrerait « Fais »/« a moi » de
+   ~70px. On passe donc son ancrage à right:1%, ce qui laisse l'image grandir vers
+   l'EXTÉRIEUR : le bord gauche ne bouge pas d'un pixel (1938 en 2560, comme avant) et
+   le garde-fou gagne même de la marge, puisque le terme 0,38 x largeur augmente.
+   Le titre reste donc strictement identique, avec ~45px de marge de sécurité. */
+@media(min-width:1931px){
+  #hph1{width:clamp(325px,40vw,650px)}
+  #hph2{width:clamp(200px,21.25vw,325px)}
+  #hph3{width:clamp(188px,18.75vw,288px);right:1%}
+  .gpi{width:calc(var(--w) * 1.5)}
+}
 
 /* ---------- visuels ---------- */
 .bloc-visuel{margin:0 auto;max-width:1500px;padding:0 28px;display:grid;grid-template-columns:1fr 1fr 1fr;gap:18px}
@@ -887,6 +904,49 @@ footer{padding:90px 28px 40px;max-width:1500px;margin:0 auto;border-top:1px soli
 </footer>
 
 <script>
+/* ---------- recalculs de mise en page robustes ------------------------------------
+   L'événement 'resize' seul ne suffit pas quand la fenêtre passe d'un écran à l'autre :
+   le devicePixelRatio change, et Chrome envoie parfois son resize avant que la géométrie
+   soit stabilisée — voire pas du tout si la taille en pixels CSS finit identique. Comme
+   ajuster() mesure hph3.getBoundingClientRect(), une lecture intermédiaire resterait
+   figée puisque plus aucun événement ne suit.
+   On combine donc trois déclencheurs, et chaque déclenchement fait TOUJOURS deux passes :
+   une immédiate (rendu fluide pendant le glissement) et une différée ~260ms après le
+   dernier événement, qui ne mesure que la géométrie stabilisée et corrige la première. */
+const surRedim = (function(){
+  const fns = [];
+  let minuteur = null;
+  function passe(){ for(const f of fns){ try{ f(); }catch(e){} } }
+  function programmer(){
+    requestAnimationFrame(passe);
+    clearTimeout(minuteur);
+    minuteur = setTimeout(passe, 260);
+  }
+  window.addEventListener('resize', programmer);
+  /* filet n°1 : ResizeObserver — se déclenche sur tout changement de viewport, y compris
+     ceux d'origine DPI qui n'émettent pas toujours de 'resize'. Filtré sur la LARGEUR
+     seule, sinon la hauteur du document (que dimensionnerCs modifie) le rappellerait en boucle. */
+  if(window.ResizeObserver){
+    let dernierW = document.documentElement.clientWidth;
+    new ResizeObserver(function(){
+      const w = document.documentElement.clientWidth;
+      if(w === dernierW) return;
+      dernierW = w;
+      programmer();
+    }).observe(document.documentElement);
+  }
+  /* filet n°2 : changement de densité de pixels (passage d'un écran à l'autre à taille
+     CSS identique). La requête média porte sur le dpr courant, donc on la ré-arme à chaque fois. */
+  (function suivreDpr(){
+    if(!window.matchMedia) return;
+    const mq = window.matchMedia('(resolution: ' + window.devicePixelRatio + 'dppx)');
+    const auChangement = function(){ programmer(); suivreDpr(); };
+    if(mq.addEventListener) mq.addEventListener('change', auChangement, { once:true });
+    else if(mq.addListener) mq.addListener(auChangement);
+  })();
+  return function(fn){ fns.push(fn); };
+})();
+
 /* ---------- smooth scroll lissé (inertie façon 2819church.org, via Lenis) ----------
    Lenis pilote son propre requestAnimationFrame et émet l'event 'scroll' standard,
    donc toutes les animations au scroll déjà en place (parallaxe héro, carrousel…) restent valides. */
@@ -1001,7 +1061,7 @@ document.querySelectorAll('.mot-rotatif').forEach(motRotatif=>{
   }
   figerLargeur();
   if(document.fonts && document.fonts.ready){ document.fonts.ready.then(figerLargeur); }
-  window.addEventListener('resize', figerLargeur);
+  surRedim(figerLargeur);
   let i = Math.max(0, mots.indexOf(depart)); /* commence sur le mot déjà affiché */
   motRotatif.style.transition = 'opacity .4s ease, transform .4s ease';
   function changer(){
@@ -1055,7 +1115,7 @@ if(!reduit){
     if(window.innerWidth <= 820){ csScroll.style.height = ''; return; }
     csScroll.style.height = (csPiste.scrollWidth - window.innerWidth + vh() * 1.12) + 'px';
   }
-  window.addEventListener('resize', dimensionnerCs);
+  surRedim(dimensionnerCs);
   window.addEventListener('load', dimensionnerCs);
   const vh = () => window.innerHeight;
   dimensionnerCs();
@@ -1608,7 +1668,7 @@ if(cartesAnim.length === 6){
 
   ajuster();
   if(document.fonts && document.fonts.ready) document.fonts.ready.then(ajuster);
-  window.addEventListener('resize', ajuster);
+  surRedim(ajuster);
 
   /* 4) « Et je te répondrai » → la suite du verset apparaît */
   if(suite){
@@ -1725,7 +1785,7 @@ if(cartesAnim.length === 6){
   }
   function surScroll(){ if(!enCours){ enCours = true; requestAnimationFrame(maj); } }
   window.addEventListener('scroll', surScroll, { passive:true });
-  window.addEventListener('resize', surScroll, { passive:true });
+  surRedim(surScroll);
   if(document.fonts && document.fonts.ready) document.fonts.ready.then(maj);
   maj();
 })();
