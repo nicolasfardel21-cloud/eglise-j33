@@ -37,7 +37,7 @@ a{color:inherit} img{max-width:100%}
 /* ---------- nav ---------- */
 nav{position:fixed;top:0;left:0;right:0;z-index:100;display:flex;justify-content:space-between;align-items:center;padding:14px 28px;background:linear-gradient(var(--fond) 60%,transparent)}
 body.menu-ouvert nav{background:transparent}
-nav .marque{font-family:'Anton',sans-serif;font-size:2.1rem;line-height:1;letter-spacing:.06em;text-decoration:none;text-transform:uppercase}
+nav .marque{font-family:'Anton',sans-serif;font-size:2.1rem;line-height:1;letter-spacing:.06em;text-decoration:none;text-transform:uppercase;transition:color .45s ease}
 .burger{background:none;border:none;cursor:pointer;padding:10px;display:flex;flex-direction:column;gap:6px;z-index:101;margin-right:-10px}
 .burger span{display:block;width:30px;height:2.5px;background:var(--encre);transition:transform .35s,opacity .25s,background .35s}
 body.menu-ouvert .burger span{background:var(--creme)}
@@ -409,11 +409,18 @@ footer{padding:90px 28px 40px;max-width:1500px;margin:0 auto;border-top:1px soli
   body.page-contact nav .burger span{background:var(--creme)}
   body.page-contact.menu-ouvert nav{background:transparent}
 }
-/* mobile : la photo est en pleine largeur en haut de page et défile normalement (non sticky) ;
-   tant qu'elle est visible sous le bandeau, celui-ci reste transparent et marque + burger passent
-   en crème (classe posée par le JS en bas de page, selon la position réelle de la photo) */
+/* mobile : la photo est en pleine largeur en haut de page et défile normalement (non sticky).
+   Même mécanique que la croix sur la page "connexion" : le voile blanc du bandeau est porté par
+   ::before (et non plus le fond du nav), découpé au pixel près par --ch/--cb selon ce qu'il reste
+   de la photo dans la bande du nav → passage progressif, pas de bascule brutale. Marque + burger
+   ne repassent en clair qu'une fois la photo entièrement sortie de l'écran (fondu en .45s/.35s). */
 @media(max-width:900px){
-  body.page-contact.nav-sur-photo nav{background:transparent}
+  body.page-contact nav{background:transparent}
+  body.page-contact nav::before{content:"";position:absolute;inset:0;z-index:-1;pointer-events:none;
+    background:linear-gradient(var(--fond) 60%,transparent);
+    clip-path:inset(var(--ch,0px) 0 var(--cb,0px) 0);
+    transition:opacity .45s ease}
+  body.page-contact.menu-ouvert nav::before{opacity:0}
   body.page-contact.nav-sur-photo nav .marque{color:var(--creme)}
   body.page-contact.nav-sur-photo .burger span{background:var(--creme)}
 }
@@ -698,8 +705,10 @@ document.addEventListener('keydown', e => {
 const obs = new IntersectionObserver(es=>{es.forEach(e=>{if(e.isIntersecting){e.target.classList.add('visible');obs.unobserve(e.target);}})},{threshold:0});
 document.querySelectorAll('.reveal').forEach(el=>obs.observe(el));
 
-/* bandeau du menu : reste transparent + crème tant qu'Illustration_1 est visible sous lui
-   (utile en mobile, où la photo défile normalement en haut de page et disparaît sous le bandeau) */
+/* bandeau du menu (mobile) : voile progressif pendant que la photo défile sous lui — même
+   mécanique que la croix sur la page "connexion" (clip-path découpé au pixel selon ce qu'il
+   reste de photo dans la bande du nav). Marque + burger ne repassent en clair qu'une fois
+   la photo entièrement sortie de l'écran. */
 (function(){
   const media = document.querySelector('.split-media');
   const nav = document.querySelector('nav');
@@ -707,7 +716,16 @@ document.querySelectorAll('.reveal').forEach(el=>obs.observe(el));
   let tick = false;
   function maj(){
     tick = false;
-    document.body.classList.toggle('nav-sur-photo', media.getBoundingClientRect().bottom > 0);
+    const r = media.getBoundingClientRect();
+    const nh = nav.offsetHeight;
+    /* la photo occupe déjà le haut de page dès le chargement (pas de phase "montante") :
+       le voile est rogné par le haut, à hauteur de ce qu'il reste de photo dans le bandeau */
+    const ch = Math.max(0, Math.min(nh, r.bottom));
+    nav.style.setProperty('--ch', ch + 'px');
+    nav.style.setProperty('--cb', '0px');
+    /* seuil identique à la page "connexion" : bascule quand la frontière traverse
+       la mi-hauteur du bandeau (soit le centre du glyphe « J33 ») */
+    document.body.classList.toggle('nav-sur-photo', r.bottom > nh * 0.5);
   }
   maj();
   addEventListener('scroll', ()=>{ if(!tick){ tick = true; requestAnimationFrame(maj); } }, {passive:true});
