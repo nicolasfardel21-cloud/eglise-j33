@@ -1055,11 +1055,42 @@ requestAnimationFrame(()=>requestAnimationFrame(()=>document.querySelector('.her
   const zone = document.getElementById('splitVenir');
   const media = document.getElementById('vsMedia');
   if(!zone || !media) return;
+  const tousImgs = [...media.querySelectorAll('img')];
   let imgs = [], actif = 0, tick = false;
   const reduitMvt = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
+  /* calcule et applique le décalage de parallaxe sur TOUTES les images (chargées ou non).
+     Séparé de recenser()/maj() : la 1re image porte déjà la classe "actif" dans le HTML
+     (affichage immédiat sans attendre le JS), donc si on attend que l'image soit chargée
+     (i.complete) pour poser ce transform, elle apparaît d'abord sans décalage puis se
+     replace d'un coup dès que recenser() aboutit — d'où le sursaut au premier affichage. */
+  function positionner(){
+    const r = zone.getBoundingClientRect();
+    const course = zone.offsetHeight - window.innerHeight;
+    if(course <= 0) return null;
+    const p = Math.min(1, Math.max(0, -r.top / course));
+    if(reduitMvt) return p;
+
+    /* mouvement interne : l'image, agrandie de 40 %, glisse de ±17 % du cadre
+       (la marge de 20 % de chaque côté empêche tout bord de se découvrir).
+       Desktop : la progression suit toute la zone, l'image étant fixe.
+       Mobile : elle suit la traversée du cadre à l'écran, de sorte que l'image
+       monte un peu moins vite que le reste de la page. */
+    let y;
+    if(window.matchMedia('(max-width:900px)').matches){
+      const m = media.getBoundingClientRect();
+      const vh = window.innerHeight;
+      const pm = Math.min(1, Math.max(0, (vh - m.top) / (vh + m.height)));
+      y = (pm - .5) * 34;
+    } else {
+      y = (p - .5) * -34;
+    }
+    tousImgs.forEach(i => { i.style.transform = `translate3d(0, ${y}%, 0) scale(1.4)`; });
+    return p;
+  }
+
   function recenser(){
-    imgs = [...media.querySelectorAll('img')].filter(i => i.complete && i.naturalWidth > 0 && getComputedStyle(i).display !== 'none');
+    imgs = tousImgs.filter(i => i.complete && i.naturalWidth > 0 && getComputedStyle(i).display !== 'none');
     if(!imgs.length) return;
     imgs.forEach((i,n)=>i.classList.toggle('actif', n === 0));
     actif = 0;
@@ -1067,31 +1098,8 @@ requestAnimationFrame(()=>requestAnimationFrame(()=>document.querySelector('.her
   }
   function maj(){
     tick = false;
-    if(!imgs.length) return;
-    const r = zone.getBoundingClientRect();
-    const course = zone.offsetHeight - window.innerHeight;
-    if(course <= 0) return;
-    const p = Math.min(1, Math.max(0, -r.top / course));
-
-    /* mouvement interne : l'image, agrandie de 40 %, glisse de ±17 % du cadre
-       (la marge de 20 % de chaque côté empêche tout bord de se découvrir).
-       Desktop : la progression suit toute la zone, l'image étant fixe.
-       Mobile : elle suit la traversée du cadre à l'écran, de sorte que l'image
-       monte un peu moins vite que le reste de la page. */
-    if(!reduitMvt){
-      let y;
-      if(window.matchMedia('(max-width:900px)').matches){
-        const m = media.getBoundingClientRect();
-        const vh = window.innerHeight;
-        const pm = Math.min(1, Math.max(0, (vh - m.top) / (vh + m.height)));
-        y = (pm - .5) * 34;
-      } else {
-        y = (p - .5) * -34;
-      }
-      imgs.forEach(i => { i.style.transform = `translate3d(0, ${y}%, 0) scale(1.4)`; });
-    }
-
-    if(imgs.length < 2) return;
+    const p = positionner();
+    if(p === null || imgs.length < 2) return;
     const i = Math.min(imgs.length - 1, Math.floor(p * imgs.length));
     if(i !== actif){
       imgs[actif].classList.remove('actif');
@@ -1102,6 +1110,7 @@ requestAnimationFrame(()=>requestAnimationFrame(()=>document.querySelector('.her
   addEventListener('scroll', ()=>{ if(!tick){ tick = true; requestAnimationFrame(maj); } }, {passive:true});
   addEventListener('resize', recenser);
   addEventListener('load', recenser);
+  positionner();
   recenser();
 })();
 
