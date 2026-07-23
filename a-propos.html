@@ -813,7 +813,7 @@ h1.ap-titre{position:relative;z-index:1;margin:17px auto 0;width:fit-content;max
   </section>
 </header>
 
-<section id="vision" class="reveal" style="padding-top:0;scroll-margin-top:130px">
+<section id="vision" class="reveal" style="padding-top:0;scroll-margin-top:90px">
   <span class="eyebrow">notre mission</span>
   <h2 class="titre-bloc">Les piliers qui portent<br><span class="or">notre vision</span></h2>
   <div class="piliers-wrap" id="piliersWrap">
@@ -876,7 +876,7 @@ h1.ap-titre{position:relative;z-index:1;margin:17px auto 0;width:fit-content;max
   </div>
 </section>
 
-<section id="pourquoi" class="reveal" style="padding-top:0;scroll-margin-top:130px">
+<section id="pourquoi" class="reveal" style="padding-top:0;scroll-margin-top:90px">
   <span class="eyebrow">pourquoi J33 ?</span>
   <h2 class="titre-bloc">Notre nom raconte<br><span class="or">une histoire</span></h2>
   <div class="texte-bloc"><p>Chaque lettre et chaque chiffre raconte une partie de notre histoire, de notre foi et de notre vision.</p></div>
@@ -914,7 +914,7 @@ h1.ap-titre{position:relative;z-index:1;margin:17px auto 0;width:fit-content;max
   </div>
 </section>
 
-<section id="valeurs" class="reveal" style="padding-top:0;scroll-margin-top:130px">
+<section id="valeurs" class="reveal" style="padding-top:0;scroll-margin-top:90px">
   <span class="eyebrow">nos valeurs</span>
   <h2 class="titre-bloc">Ce qui nous<br><span class="or">fait vibrer</span></h2>
   <div class="valeurs-liste">
@@ -1051,7 +1051,7 @@ h1.ap-titre{position:relative;z-index:1;margin:17px auto 0;width:fit-content;max
   </div>
 </section>
 
-<section id="responsables" class="reveal" style="padding-top:0;scroll-margin-top:130px">
+<section id="responsables" class="reveal" style="padding-top:0;scroll-margin-top:90px">
   <span class="eyebrow">nos responsables</span>
   <h2 class="titre-bloc">Des bergers sous<br><span class="or">le Grand Berger</span></h2>
   <div class="texte-bloc">
@@ -1095,6 +1095,90 @@ h1.ap-titre{position:relative;z-index:1;margin:17px auto 0;width:fit-content;max
    Lenis pilote son propre requestAnimationFrame et émet l'event 'scroll' standard :
    toutes les animations au scroll déjà en place restent valides. */
 let lenis = null;
+
+/* ---- ancrage precis J33 ----------------------------------------------------
+   Lenis vise getBoundingClientRect(), qui inclut le transform des .reveal
+   (translateY(30px)) : la cible est donc mesuree 30px trop bas, puis remonte
+   une fois revelee -> le titre passe sous le bandeau.
+   posAncreJ33 recalcule la position de mise en page reelle (chaine offsetTop,
+   insensible aux transforms) et retranche le scroll-margin-top CSS.
+   Renvoie null si la section n'a pas de scroll-margin-top : dans ce cas on
+   conserve strictement l'ancien comportement. -------------------------------- */
+function posAncreJ33(el){
+  if(!el) return null;
+  var marge = parseFloat(getComputedStyle(el).scrollMarginTop) || 0;
+  if(!marge) return null;
+  var y = 0, n = el;
+  while(n){ y += n.offsetTop; n = n.offsetParent; }
+  return Math.max(0, y - marge);
+}
+function allerAncreJ33(cible, immediat){
+  var p = posAncreJ33(cible);
+  if(p === null){
+    /* section non ciblee : comportement d'origine strictement conserve */
+    if(typeof lenis !== 'undefined' && lenis) lenis.scrollTo(cible, { offset: 0 });
+    else cible.scrollIntoView({behavior: immediat ? 'auto' : 'smooth'});
+    return;
+  }
+  var dispo = (typeof lenis !== 'undefined' && lenis);
+  if(immediat){
+    if(dispo) lenis.scrollTo(p, {immediate:true, force:true});
+    else window.scrollTo({ top: p, behavior: 'auto' });
+    return;
+  }
+  if(dispo) lenis.scrollTo(p, {});
+  else window.scrollTo({ top: p, behavior: 'smooth' });
+  /* la mise en page peut encore bouger pendant le defilement anime (images,
+     hauteurs calculees en JS) : on verifie une fois a l'arrivee et on ne
+     rectifie que si l'ecart subsiste et que l'utilisateur n'a pas repris la main. */
+  var interrompu = false;
+  var stopper = function(){ interrompu = true; };
+  var evs = ['wheel','touchstart','keydown'];
+  evs.forEach(function(ev){ window.addEventListener(ev, stopper, {passive:true}); });
+  setTimeout(function(){
+    evs.forEach(function(ev){ window.removeEventListener(ev, stopper); });
+    if(interrompu) return;
+    var q = posAncreJ33(cible);
+    if(q !== null && Math.abs(window.scrollY - q) > 2){
+      if(dispo) lenis.scrollTo(q, {immediate:true, force:true});
+      else window.scrollTo({ top: q, behavior: 'auto' });
+    }
+  }, 1400);
+}
+/* repositionnement a l'arrivee depuis une autre page : le saut natif du
+   navigateur a lieu avant stabilisation (polices, images, reveal, calculs JS).
+   On recale donc en boucle courte jusqu'a ce que la position se fige, et on
+   s'arrete des que l'utilisateur reprend la main sur le defilement. */
+(function(){
+  var cible = null, stop = false;
+  ['wheel','touchstart','keydown'].forEach(function(ev){
+    window.addEventListener(ev, function(){ stop = true; }, {passive:true});
+  });
+  function recale(){
+    if(stop) return;
+    cible = cible || document.getElementById(location.hash.slice(1));
+    if(!cible) return;
+    var p = posAncreJ33(cible);
+    if(p === null) return;
+    if(Math.abs(window.scrollY - p) > 1) allerAncreJ33(cible, true);
+  }
+  function boucle(t0){
+    if(stop) return;
+    recale();
+    if(Date.now() - t0 < 1800) setTimeout(function(){ boucle(t0); }, 100);
+  }
+  function lancer(){
+    if(!location.hash) return;
+    cible = null; stop = false;
+    boucle(Date.now());
+    if(document.fonts && document.fonts.ready){ document.fonts.ready.then(recale); }
+  }
+  window.addEventListener('load', lancer);
+  /* navigation de fragment (retour navigateur, lien d'une ancre vers une autre) :
+     aucun evenement 'load' n'est emis, il faut donc recaler ici aussi. */
+  window.addEventListener('hashchange', function(){ if(location.hash) lancer(); });
+})();
+
 (function(){
   const reduitMvt = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   if(reduitMvt || typeof Lenis === 'undefined') return;
@@ -1110,7 +1194,7 @@ let lenis = null;
   document.querySelectorAll('a[href^="#"]').forEach(a=>{
     a.addEventListener('click', e=>{
       const cible = document.querySelector(a.getAttribute('href'));
-      if(cible){ e.preventDefault(); lenis.scrollTo(cible, { offset: 0 }); }
+      if(cible){ e.preventDefault(); allerAncreJ33(cible, false); }
     });
   });
 })();
@@ -1134,8 +1218,7 @@ let lenis = null;
       if(document.body.classList.contains('menu-ouvert')) basculerMenu();
       setTimeout(()=>{
         if(!cible) return;
-        if(typeof lenis !== 'undefined' && lenis){ lenis.scrollTo(cible, { offset: 0 }); }
-        else { cible.scrollIntoView({behavior:'smooth'}); }
+        allerAncreJ33(cible, false);
       }, 60);
       return;
     }
