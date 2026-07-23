@@ -400,6 +400,23 @@ footer{padding:90px 28px 40px;max-width:1500px;margin:0 auto;border-top:1px soli
 @keyframes clignote{50%{opacity:0}}
 
 /* ---------- contact : split-screen (image sticky à droite) ---------- */
+/* le bandeau ne doit pas voiler l'image : fond transparent côté droit (colonne photo),
+   burger en crème pour rester lisible sur le visuel. Desktop uniquement : la colonne
+   image est sticky, donc pas besoin de JS ici (cf. page "venir", même principe en miroir). */
+@media(min-width:901px){
+  body.page-contact nav{background:linear-gradient(var(--fond) 60%,transparent);
+    background-size:50% 100%;background-position:left top;background-repeat:no-repeat}
+  body.page-contact nav .burger span{background:var(--creme)}
+  body.page-contact.menu-ouvert nav{background:transparent}
+}
+/* mobile : la photo est en pleine largeur en haut de page et défile normalement (non sticky) ;
+   tant qu'elle est visible sous le bandeau, celui-ci reste transparent et marque + burger passent
+   en crème (classe posée par le JS en bas de page, selon la position réelle de la photo) */
+@media(max-width:900px){
+  body.page-contact.nav-sur-photo nav{background:transparent}
+  body.page-contact.nav-sur-photo nav .marque{color:var(--creme)}
+  body.page-contact.nav-sur-photo .burger span{background:var(--creme)}
+}
 .split{display:grid;grid-template-columns:1fr 1fr;align-items:start;position:relative}
 .split-media{position:sticky;top:0;height:100svh;overflow:hidden;
   background:radial-gradient(circle at 30% 20%, var(--bleu-pale), transparent 65%),radial-gradient(circle at 75% 80%, rgba(181,151,60,.18), transparent 55%),#EDEAE2}
@@ -463,7 +480,7 @@ footer{padding:90px 28px 40px;max-width:1500px;margin:0 auto;border-top:1px soli
 }
 </style>
 </head>
-<body>
+<body class="page-contact">
 
 <nav>
   <a class="marque" href="index.html">J33</a>
@@ -680,6 +697,22 @@ document.addEventListener('keydown', e => {
 /* apparitions au scroll */
 const obs = new IntersectionObserver(es=>{es.forEach(e=>{if(e.isIntersecting){e.target.classList.add('visible');obs.unobserve(e.target);}})},{threshold:0});
 document.querySelectorAll('.reveal').forEach(el=>obs.observe(el));
+
+/* bandeau du menu : reste transparent + crème tant qu'Illustration_1 est visible sous lui
+   (utile en mobile, où la photo défile normalement en haut de page et disparaît sous le bandeau) */
+(function(){
+  const media = document.querySelector('.split-media');
+  const nav = document.querySelector('nav');
+  if(!media || !nav) return;
+  let tick = false;
+  function maj(){
+    tick = false;
+    document.body.classList.toggle('nav-sur-photo', media.getBoundingClientRect().bottom > nav.offsetHeight);
+  }
+  maj();
+  addEventListener('scroll', ()=>{ if(!tick){ tick = true; requestAnimationFrame(maj); } }, {passive:true});
+  addEventListener('resize', maj);
+})();
 
 /* formulaire de contact : compose un e-mail pré-rempli (mailto) */
 (function(){
