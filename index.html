@@ -448,6 +448,27 @@ section{padding:110px 28px;max-width:1500px;margin:0 auto}
   #hph2{top:auto;bottom:6%;left:0;width:40vw}
   #hph3{top:34%;right:0;width:32vw}
 }
+/* ---------- écrans très larges : deux repères distincts, volontairement ----------
+
+   1) CADRE DES IMAGES (1930px). Les couches .hero-images et .gp-images sont en
+      position:absolute inset:0, donc pleine largeur d'écran : leurs % (left:2%,
+      right:4%, --l:82%…) partaient jusqu'aux bords physiques de l'écran.
+      La valeur 1930 n'est pas arbitraire : l'étalement du titre est calculé par le JS
+      à partir de la position de #hph3 (garde-fou « limite = demi*2 »), selon
+      etalement = 0,92 x cadre - 286. 1930px est donc la seule largeur qui rentre les
+      images d'environ 300px tout en laissant « Fais » et « a moi » exactement où ils
+      sont (1490px d'étalement en 2560). Un cadre plus étroit resserre le titre.
+
+   2) COLONNE DE TEXTE (1500px, celle de .infos / section / footer) pour les boutons
+      et la suite du verset, recalés par le JS dans ce repère (voir ajuster()).
+
+   Les deux formules valent 0 sous leur seuil : rien ne change sur portable ni mobile. */
+@media(min-width:1501px){
+  .hero-images,
+  .gp-images{left:max(0px,(100% - 1930px)/2);right:max(0px,(100% - 1930px)/2)}
+  /* repli CSS des boutons (le JS les recale ensuite dans le même repère) */
+  .hero-anime .cta{left:calc((100% - 1500px)/2 - 15px)}
+}
 
 /* ---------- visuels ---------- */
 .bloc-visuel{margin:0 auto;max-width:1500px;padding:0 28px;display:grid;grid-template-columns:1fr 1fr 1fr;gap:18px}
@@ -1542,7 +1563,12 @@ if(cartesAnim.length === 6){
       const hr = (document.querySelector('.hero-anime') || parent).getBoundingClientRect();
       const vr = verset.getBoundingClientRect();
       const hp2 = document.getElementById('hph2');
-      let gaucheX = hr.left + hr.width * 0.06;
+      /* colonne de référence du site (1500px, comme .infos / section / footer) : au-delà,
+         la scène du héros se recentre au lieu de s'étaler jusqu'aux bords de l'écran.
+         En dessous de 1500px, colL/colW valent le héros entier → calcul inchangé. */
+      const colW = Math.min(1500, hr.width);
+      const colL = hr.left + (hr.width - colW) / 2;
+      let gaucheX = colL + colW * 0.06;
       if(hp2){ const r2 = hp2.getBoundingClientRect(); gaucheX = Math.max(gaucheX, r2.right + 24); }
       const dispoW = Math.max(150, (vr.left - 24) - gaucheX);  /* largeur disponible dans le trou */
       suite.style.left = (gaucheX - pr.left) + 'px';
