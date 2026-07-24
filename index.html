@@ -673,6 +673,8 @@ footer{padding:90px 28px 40px;max-width:1500px;margin:0 auto;border-top:1px soli
 </head>
 <body>
 
+<div id="sondeBasEcran" aria-hidden="true" style="position:fixed;bottom:0;left:0;width:0;height:env(safe-area-inset-bottom,0px);visibility:hidden;pointer-events:none"></div>
+
 <nav>
   <a class="marque" href="index.html">J33</a>
   <button class="burger" id="btnBurger" aria-label="Menu" aria-expanded="false" aria-controls="menuOverlay" onclick="basculerMenu()">
@@ -1736,11 +1738,17 @@ if(cartesAnim.length === 6){
   const anims = Array.from(bloc.querySelectorAll('.gpm-img, .texte-bloc'));   /* éléments qui apparaissent en fondu */
   const paral = Array.from(bloc.querySelectorAll('[data-vit]'));              /* éléments avec parallaxe différentiel */
 
-  /* 1) apparition au scroll : fondu (opacité via classe .visible) */
+  /* 1) apparition au scroll : fondu (opacité via classe .visible)
+     déclenchement calé sur la zone RÉELLEMENT visible du bas de l'écran :
+     on retire la hauteur de la "safe area" (barre du bas iOS, mode immersif Android
+     sur certains modèles) + une marge de sécurité fixe, pour ne pas déclencher
+     l'apparition alors que le haut de l'image est encore caché par cette zone. */
   if('IntersectionObserver' in window){
+    const sonde = document.getElementById('sondeBasEcran');
+    const zoneCachee = (sonde ? sonde.getBoundingClientRect().height : 0) + 20;
     const io = new IntersectionObserver((entries)=>{
       entries.forEach(e=>{ if(e.isIntersecting){ e.target.classList.add('visible'); io.unobserve(e.target); } });
-    }, { threshold:0, rootMargin:'0px 0px 0px 0px' });
+    }, { threshold:0, rootMargin:'0px 0px -' + zoneCachee.toFixed(0) + 'px 0px' });
     anims.forEach(el=>io.observe(el));
   } else {
     anims.forEach(el=>el.classList.add('visible'));
