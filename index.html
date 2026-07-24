@@ -334,12 +334,13 @@ body.menu-ouvert .menu-reseaux a:nth-child(3){transition-delay:1.15s}
   .gpm-img{margin:32px 0 0;width:auto;max-width:86%;padding:0}
   .gpm-img.gauche{margin-right:auto;margin-left:0}
   .gpm-img.droite{margin-left:auto;margin-right:0}
+  .gpm-img.centre{margin-left:auto;margin-right:auto}
   /* cadre : ratio conservé (aspect-ratio) ; la largeur est calculée pour que la HAUTEUR
      ne dépasse jamais l'écran utile => image entière, jamais déformée */
   .gpm-cadre{display:block;position:relative;aspect-ratio:4/5;
-    width:min(86vw, (100svh - 96px) * 4 / 5);overflow:hidden;
+    width:min(100%, (100svh - 96px) * 4 / 5);overflow:hidden;
     border-radius:4px;box-shadow:0 24px 54px -28px rgba(16,22,34,.5)}
-  .gpm-img.paysage .gpm-cadre{aspect-ratio:3/2;width:min(86vw, (100svh - 96px) * 3 / 2)}
+  .gpm-img.paysage .gpm-cadre{aspect-ratio:3/2;width:min(100%, (100svh - 96px) * 3 / 2)}
   .gpm-cadre img{position:absolute;left:0;top:-12%;width:100%;height:124%;object-fit:cover;
     will-change:transform}
   /* parallaxe différentiel (déplacement vertical piloté en JS via --ty) sur le FIGURE */
@@ -798,7 +799,7 @@ footer{padding:90px 28px 40px;max-width:1500px;margin:0 auto;border-top:1px soli
     <span class="gpm-or" aria-hidden="true">l'évangile</span>
   </div>
 
-  <figure class="gpm-img gauche" data-vit="-0.08"><span class="gpm-cadre"><img src="images/index/galerie/galerie_1.jpg" alt="" loading="lazy" onerror="this.closest('figure').style.display='none'"></span></figure>
+  <figure class="gpm-img centre" data-vit="-0.08"><span class="gpm-cadre"><img src="images/index/galerie/galerie_1.jpg" alt="" loading="lazy" onerror="this.closest('figure').style.display='none'"></span></figure>
 
   <div class="texte-bloc" data-vit="0.06">
     <p><strong>J33 existe pour annoncer l'Évangile, accompagner chacun sur le chemin de la foi et déverser la Gloire de Dieu.</strong></p>
