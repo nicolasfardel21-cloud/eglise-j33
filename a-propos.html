@@ -681,7 +681,7 @@ h1.ap-titre{position:relative;z-index:1;margin:17px auto 0;width:fit-content;max
    fusion tomberait dans le vide et le titre resterait blanc.
    ================================================================================ */
 #responsables{max-width:none;padding:0;scroll-margin-top:90px}
-.rs-scene{position:relative;height:calc(100svh + 28svh)}
+.rs-scene{position:relative;height:calc(100svh + 45svh)}
 /* toute la scène (titre, texte, miniatures, photo) est épinglée dans un même bloc :
    rien n'est collant individuellement, donc à la fin du palier l'ensemble se libère et
    remonte d'un seul tenant. C'est aussi le contexte d'empilement de référence pour la
@@ -710,11 +710,12 @@ h1.ap-titre{position:relative;z-index:1;margin:17px auto 0;width:fit-content;max
   letter-spacing:.1em;font-size:1.05rem;color:var(--gris);padding-bottom:14px;transition:color .25s}
 .rs-choix-titre.actif{color:var(--or)}
 .rs-vignettes{display:flex;flex-wrap:wrap;gap:20px;margin-top:20px}
-.rs-vignette{background:none;border:0;padding:0;cursor:pointer;display:block;text-align:center;width:132px}
-/* seul réglage d'encombrement : la HAUTEUR de la miniature suit la hauteur d'écran,
+/* miniatures carrées. Seul réglage d'encombrement : leur côté suit la hauteur d'écran,
    pour que « nos pasteurs » tienne toujours dans le bloc épinglé (overflow:hidden).
    Le reste de la colonne garde sa typographie d'origine. */
-.rs-vignette-img{display:block;width:100%;height:clamp(86px,15.5svh,176px);aspect-ratio:auto;
+.rs-vignette{background:none;border:0;padding:0;cursor:pointer;display:block;text-align:center;
+  width:clamp(96px,17svh,168px)}
+.rs-vignette-img{display:block;width:100%;height:auto;aspect-ratio:1/1;
   overflow:hidden;border:1px solid var(--ligne);transition:border-color .3s}
 .rs-vignette-img img{width:100%;height:100%;object-fit:cover;display:block;
   transition:transform .6s cubic-bezier(.65,0,.35,1)}
@@ -730,14 +731,14 @@ h1.ap-titre{position:relative;z-index:1;margin:17px auto 0;width:fit-content;max
 /* photo : toute la hauteur, réduite au tiers haut quand un pasteur est sélectionné */
 .rs-media1{position:absolute;left:0;right:0;top:0;height:100%;overflow:hidden;
   transition:height .6s cubic-bezier(.76,0,.24,1)}
-.rs-split.rs-ouvert .rs-media1{height:33.34svh}
+.rs-split.rs-ouvert .rs-media1{height:50svh}
 .rs-photo{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:50% 28%;
   pointer-events:none;will-change:transform;transform:translateY(var(--rs-y,100%))}
 .rs-ph2{opacity:0;transition:opacity .55s ease}
 .rs-split.rs-ouvert .rs-ph1{opacity:0;transition:opacity .55s ease}
 .rs-split.rs-ouvert .rs-ph2{opacity:1}
 /* descriptif : occupe ce que la photo libère */
-.rs-desc{position:absolute;left:0;right:0;top:33.34svh;bottom:0;background:var(--fond);
+.rs-desc{position:absolute;left:0;right:0;top:50svh;bottom:0;background:var(--fond);
   opacity:0;pointer-events:none;transform:translateY(14px);
   transition:opacity .45s ease .12s,transform .5s cubic-bezier(.76,0,.24,1) .12s}
 .rs-split.rs-ouvert .rs-desc{opacity:1;pointer-events:auto;transform:none}
@@ -763,7 +764,8 @@ h1.ap-titre{position:relative;z-index:1;margin:17px auto 0;width:fit-content;max
   .rs-droite,.rs-colonne{display:block}
   .rs-droite{position:static;height:auto;overflow:visible}
   .rs-colonne{padding:0 28px}
-  .rs-vignette-img{height:auto;aspect-ratio:3/4}
+  .rs-vignette{width:132px}
+  .rs-vignette-img{height:auto;aspect-ratio:1/1}
   .rs-texte{position:static;background:none;padding:0}
   .rs-texte .titre-bloc{font-size:clamp(2.2rem,6vw,3rem)}
   .rs-media{position:static;width:100%;height:100svh;margin:0 0 34px}
@@ -839,10 +841,9 @@ h1.ap-titre{position:relative;z-index:1;margin:17px auto 0;width:fit-content;max
   .rs-split.rs-liste .rs-choix,.rs-scene.rs-calee .rs-split.rs-liste .rs-choix{transform:translateX(0)}
   .rs-split.rs-ouvert .rs-choix,.rs-scene.rs-calee .rs-split.rs-ouvert .rs-choix{transform:translateX(-100%)}
   .rs-choix-onglets{flex:0 0 auto}
-  .rs-vignettes{flex:1 1 auto;min-height:0;overflow-y:auto;align-content:flex-start;
-    gap:22px 20px;margin-top:24px}
+  .rs-vignettes{flex:1 1 auto;min-height:0;overflow-y:auto;overscroll-behavior:contain;
+    align-content:flex-start;gap:22px 20px;margin-top:24px}
   .rs-vignette{width:calc(50% - 10px)}
-  .rs-vignette-img{height:auto;aspect-ratio:3/4}
   .rs-retour-liste{display:inline-flex;align-items:center;gap:11px;flex:0 0 auto;
     align-self:flex-start;margin-top:18px;padding:0;background:none;border:0;cursor:pointer;
     font-family:'Anton',sans-serif;font-weight:400;text-transform:uppercase;letter-spacing:.14em;
@@ -851,18 +852,23 @@ h1.ap-titre{position:relative;z-index:1;margin:17px auto 0;width:fit-content;max
   .rs-retour-liste:hover{gap:16px;color:#9c8232}
 
   /* ---- panneau C : photo sur le tiers haut + descriptif (z-index 4, au-dessus de B) ---- */
-  .rs-media2{display:block;position:absolute;left:0;right:0;top:0;width:auto;margin:0;
-    height:calc(var(--rs-vh,100dvh) * .34);z-index:4;background:var(--noir);
+  /* la photo commence SOUS le bandeau (elle n'est plus voilée par lui) et elle est carrée :
+     largeur = écran, donc hauteur = 100vw */
+  .rs-media2{display:block;position:absolute;left:0;right:0;top:var(--rs-navh,68px);width:auto;margin:0;
+    height:100vw;z-index:4;background:var(--noir);
     transform:translateX(100%);transition:transform .65s cubic-bezier(.76,0,.24,1)}
   .rs-media2 .rs-photo{transform:none;opacity:1}
   .rs-desc{position:absolute;left:0;right:0;bottom:0;height:auto;overflow:visible;z-index:4;
-    top:calc(var(--rs-vh,100dvh) * .34);background:var(--fond);opacity:1;pointer-events:auto;
+    top:calc(var(--rs-navh,68px) + 100vw);background:var(--fond);opacity:1;pointer-events:auto;
     transform:translateX(100%);transition:transform .65s cubic-bezier(.76,0,.24,1)}
   .rs-split.rs-ouvert .rs-media2,.rs-split.rs-ouvert .rs-desc{transform:translateX(0)}
   .rs-desc-inner{height:100%;display:flex;flex-direction:column;min-height:0}
   /* seule zone défilante du panneau C */
+  /* overscroll-behavior:contain — en bout de course le descriptif ne propage plus son
+     défilement au document (data-lenis-prevent laisse passer le tactile natif, qui
+     chaînait ensuite sur la page). */
   .rs-desc-corps{flex:1 1 auto;min-height:0;overflow-y:auto;-webkit-overflow-scrolling:touch;
-    padding:20px 24px 12px;font-size:.95rem}
+    overscroll-behavior:contain;padding:20px 24px 12px;font-size:.95rem}
   .rs-revenir{flex:0 0 auto;margin:0;padding:14px 24px calc(16px + var(--barre-bas));
     border-top:1px solid var(--ligne);background:var(--fond)}
 }
@@ -2443,6 +2449,7 @@ if(cartesAnim.length === 6){
      sur la page connexion). Mise à jour au redimensionnement seulement. */
   function mesurerVh(){
     document.documentElement.style.setProperty('--rs-vh', window.innerHeight + 'px');
+    if(nav) document.documentElement.style.setProperty('--rs-navh', nav.offsetHeight + 'px');
   }
   mesurerVh();
 
