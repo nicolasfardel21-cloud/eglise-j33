@@ -811,7 +811,12 @@ h1.ap-titre{position:relative;z-index:1;margin:17px auto 0;width:fit-content;max
   .rs-media1{position:absolute;left:0;right:0;top:0;height:100%;margin:0;background:var(--fond);
     transition:transform .65s cubic-bezier(.76,0,.24,1)}
   .rs-split.rs-liste .rs-media1,.rs-split.rs-ouvert .rs-media1{height:100%;transform:translateX(-100%)}
-  .rs-media1 .rs-photo{transform:translateY(var(--rs-y,100%))}
+  /* cadrage décalé vers la droite : les hautes lumières de la photo (abat-jour, manche
+     claire) se trouvaient précisément sous le titre et le début des lignes, où le crème
+     tombait à 1,00:1 de contraste. Le tiers droit de l'image est nettement plus sombre :
+     on l'amène sous le texte. Réglage réservé au portrait — en desktop le texte ne passe
+     pas sur la photo, son cadrage reste à 50%. */
+  .rs-media1 .rs-photo{transform:translateY(var(--rs-y,100%));object-position:75% 28%}
   .rs-media1 .rs-ph2{display:none}
 
   .rs-texte{position:absolute;left:0;right:0;top:72px;padding:0 24px;background:none;
