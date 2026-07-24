@@ -1664,38 +1664,44 @@ if(cartesAnim.length === 6){
         cta.style.right = 'auto';
       }
 
-      /* 6) ancrage horizontal de la suite : bord gauche calé sur le bord gauche VISIBLE
-         de « ( Venir nous voir ) », PARENTHÈSE COMPRISE.
-         La « ( » est un pseudo-élément ::before : elle se trouve au début de la boîte de
-         CONTENU du lien, et non au bord de sa zone cliquable. On ajoute donc padding-left
-         + bordure gauche pour viser le glyphe lui-même.
-         Cet ancrage sert AUSSI de référence à la largeur disponible : sinon le bloc,
-         décalé vers la droite, déborderait d'autant sur le verset. */
-      const lienVenir = cta ? cta.querySelector('.lien-paren') : null;
-      let ancreX = gaucheX;
-      if(lienVenir){
-        const cl = getComputedStyle(lienVenir);
-        ancreX = lienVenir.getBoundingClientRect().left
-               + (parseFloat(cl.paddingLeft) || 0)
-               + (parseFloat(cl.borderLeftWidth) || 0);
+      /* 6) ancrage horizontal de la suite : seul le bord DROIT est calé, sur le bord droit
+         VISIBLE de « ( Connexion ) », PARENTHÈSE FERMANTE COMPRISE.
+         Le « ) » est un pseudo-élément ::after : il termine la boîte de CONTENU du dernier
+         lien, on retire donc padding-right + bordure droite pour viser le glyphe lui-même.
+         Le bord gauche reste LIBRE : la largeur est de nouveau calculée pour viser
+         ~3 lignes, et le bloc se déploie vers la gauche depuis cette ancre droite. */
+      const liens = cta ? cta.querySelectorAll('.lien-paren') : null;
+      const lienDernier = (liens && liens.length) ? liens[liens.length - 1] : null;
+      let ancreD = null;
+      if(lienDernier){
+        const cd = getComputedStyle(lienDernier);
+        ancreD = lienDernier.getBoundingClientRect().right
+               - (parseFloat(cd.paddingRight) || 0)
+               - (parseFloat(cd.borderRightWidth) || 0);
       }
+      const bordD = (ancreD !== null) ? ancreD : (vr.left - 24);
 
-      const dispoW = Math.max(150, (vr.left - 24) - ancreX);   /* largeur disponible, mesurée depuis l'ancre */
-      suite.style.left = (ancreX - pr.left) + 'px';
+      /* largeur maxi : depuis l'ancre droite jusqu'au trou disponible à gauche
+         (bord droit de l'illustration 2 + marge), pour ne jamais mordre dessus */
+      const dispoW = Math.max(150, bordD - gaucheX);
       suite.style.right = 'auto';
       suite.style.maxWidth = 'none';
       suite.style.whiteSpace = 'nowrap';
       suite.style.width = 'auto';
-      const pleine = suite.getBoundingClientRect().width;     /* largeur sur une seule ligne */
+      suite.style.left = (gaucheX - pr.left) + 'px';
+      const pleine = suite.getBoundingClientRect().width;      /* largeur sur une seule ligne */
       suite.style.whiteSpace = 'normal';
       const lh = parseFloat(getComputedStyle(suite).lineHeight) || (parseFloat(getComputedStyle(suite).fontSize) * 1.14);
-      let w = Math.min(dispoW, pleine / 2.96);                /* vise ~3 lignes, sans déborder du trou */
+      let w = Math.min(dispoW, pleine / 2.96);                 /* vise ~3 lignes, sans déborder du trou */
       suite.style.width = Math.ceil(w) + 'px';
       for(let k=0; k<12 && Math.round(suite.getBoundingClientRect().height / lh) > 3; k++){
         if(w >= dispoW) break;
         w = Math.min(dispoW, w * 1.05);
         suite.style.width = Math.ceil(w) + 'px';
       }
+      /* placement final : bord droit du bloc posé sur l'ancre (le « ) » de Connexion) */
+      const wFinal = suite.getBoundingClientRect().width;
+      suite.style.left = ((bordD - wFinal) - pr.left) + 'px';
       suite.style.bottom = (pr.bottom - vr.bottom) + 'px';     /* bas de la suite = bas du verset */
       suite.style.top = 'auto';
     }
