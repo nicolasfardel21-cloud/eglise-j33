@@ -38,9 +38,21 @@ a{color:inherit} img{max-width:100%}
 .lien-paren.or{border-color:var(--or);color:var(--or)} .lien-paren.or:hover{background:var(--or);color:#fff}
 
 /* ---------- nav ---------- */
-nav{position:fixed;top:0;left:0;right:0;z-index:100;display:flex;justify-content:space-between;align-items:center;padding:14px 28px;background:linear-gradient(var(--fond) 60%,transparent)}
-body.menu-ouvert nav{background:transparent}
-nav .marque{font-family:'Anton',sans-serif;font-size:2.1rem;line-height:1;letter-spacing:.06em;text-decoration:none;text-transform:uppercase}
+nav{position:fixed;top:0;left:0;right:0;z-index:100;display:flex;justify-content:space-between;align-items:center;padding:14px 28px;background:transparent}
+/* voile blanc scindé en deux (principe repris de « venir ») : ::before couvre la colonne
+   sans photo, ::after la colonne de la photo « nos responsables », bornée à gauche et à
+   droite par --nvg/--nvdr et rognée au pixel par --ch/--cb selon ce qu'il reste de photo
+   dans la bande du bandeau. Par défaut ::before est pleine largeur et ::after nul :
+   le rendu du bandeau est strictement celui d'avant partout ailleurs sur la page. */
+nav::before,nav::after{content:"";position:absolute;top:0;bottom:0;z-index:-1;pointer-events:none;
+  background:linear-gradient(var(--fond) 60%,transparent);transition:opacity .45s ease}
+nav::before{left:0;right:var(--nvd,0px)}
+nav::after{left:var(--nvg,100%);right:var(--nvdr,0px);clip-path:inset(var(--ch,0px) 0 var(--cb,0px) 0)}
+body.menu-ouvert nav::before,body.menu-ouvert nav::after{opacity:0}
+/* photo sous le bandeau : marque et tirets passent en crème, chacun selon ce qu'il a sous lui */
+body.rs-marque-photo nav .marque{color:var(--creme)}
+body.rs-burger-photo .burger span{background:var(--creme)}
+nav .marque{font-family:'Anton',sans-serif;font-size:2.1rem;line-height:1;letter-spacing:.06em;text-decoration:none;text-transform:uppercase;transition:color .45s ease}
 .burger{background:none;border:none;cursor:pointer;padding:10px;display:flex;flex-direction:column;gap:6px;z-index:101;margin-right:-10px}
 .burger span{display:block;width:30px;height:2.5px;background:var(--encre);transition:transform .35s,opacity .25s,background .35s}
 body.menu-ouvert .burger span{background:var(--creme)}
@@ -646,6 +658,192 @@ h1.ap-titre{position:relative;z-index:1;margin:17px auto 0;width:fit-content;max
   .ap-sous{opacity:1;transform:none}
 }
 
+
+/* ================================================================================
+   NOS RESPONSABLES — arrivée de la photo, calage sous le bandeau, bascule
+   --------------------------------------------------------------------------------
+   Desktop (≥901px) : grille 2 colonnes.
+     · colonne gauche : titre + texte figés en haut ; « nos pasteurs » vient dessous.
+     · colonne droite : pasteur_1 monte au défilement puis reste collante sur toute la
+       hauteur d'écran ; au clic sur une miniature elle est remplacée par la photo
+       choisie, réduite au tiers haut, le bas accueillant le descriptif.
+
+   Mobile portrait : scène collante plein écran. Titre et texte figés en haut, la photo
+   monte DERRIÈRE eux (mix-blend-mode:exclusion comme le gros titre de l'accueil ; le
+   doré reste en aplat, hors fusion). Une fois calée, bouton « Nos responsables » ; au
+   clic, le panneau 1 sort à gauche et le panneau 2 (photo sur le tiers haut, descriptif
+   défilant en dessous) entre par la droite.
+
+   Mobile paysage : repli statique (photo, puis titre, texte, miniatures, descriptif).
+
+   Contrainte structurelle : rien entre .rs-split et le titre ne doit créer de contexte
+   d'empilement (ni isolation, ni transform, ni z-index sur .rs-texte), sans quoi la
+   fusion tomberait dans le vide et le titre resterait blanc.
+   ================================================================================ */
+#responsables{max-width:none;padding:0;scroll-margin-top:90px}
+.rs-scene{position:relative;height:calc(100svh + 28svh)}
+/* toute la scène (titre, texte, miniatures, photo) est épinglée dans un même bloc :
+   rien n'est collant individuellement, donc à la fin du palier l'ensemble se libère et
+   remonte d'un seul tenant. C'est aussi le contexte d'empilement de référence pour la
+   fusion du titre en portrait. */
+.rs-split{position:sticky;top:0;height:100svh;overflow:hidden;background:var(--fond);
+  display:grid;grid-template-columns:1fr 1fr;align-items:stretch}
+
+/* ---------------- colonne gauche ---------------- */
+.rs-colonne{grid-column:1;grid-row:1;min-width:0;align-self:stretch;
+  padding:0 56px 0 max(56px,calc(100% - 722px))}
+.rs-texte{padding:72px 0 0}
+.rs-texte .titre-bloc{font-size:clamp(2.2rem,4.4vw,4.2rem)}
+.rs-l1,.rs-l2{display:block}
+.rs-l2{color:var(--or)}
+.rs-intro .texte-bloc{margin-top:30px}
+.rs-x{color:inherit}
+
+/* « nos pasteurs » + miniatures : n'apparaît qu'une fois la photo calée */
+.rs-choix{margin-top:38px;opacity:0;transform:translateY(14px);pointer-events:none;
+  transition:opacity .5s ease,transform .5s cubic-bezier(.76,0,.24,1)}
+.rs-scene.rs-calee .rs-choix{opacity:1;transform:none;pointer-events:auto}
+/* rang d'onglets de catégories : l'onglet actif est en doré. Prévu pour accueillir
+   d'autres entrées à côté (anciens, diacres…) qui resteront en gris tant qu'inactives. */
+.rs-choix-onglets{display:flex;flex-wrap:wrap;gap:0 26px;border-bottom:1px solid var(--ligne)}
+.rs-choix-titre{display:block;font-family:'Anton',sans-serif;font-weight:400;text-transform:uppercase;
+  letter-spacing:.1em;font-size:1.05rem;color:var(--gris);padding-bottom:14px;transition:color .25s}
+.rs-choix-titre.actif{color:var(--or)}
+.rs-vignettes{display:flex;flex-wrap:wrap;gap:20px;margin-top:20px}
+.rs-vignette{background:none;border:0;padding:0;cursor:pointer;display:block;text-align:center;width:132px}
+/* seul réglage d'encombrement : la HAUTEUR de la miniature suit la hauteur d'écran,
+   pour que « nos pasteurs » tienne toujours dans le bloc épinglé (overflow:hidden).
+   Le reste de la colonne garde sa typographie d'origine. */
+.rs-vignette-img{display:block;width:100%;height:clamp(86px,15.5svh,176px);aspect-ratio:auto;
+  overflow:hidden;border:1px solid var(--ligne);transition:border-color .3s}
+.rs-vignette-img img{width:100%;height:100%;object-fit:cover;display:block;
+  transition:transform .6s cubic-bezier(.65,0,.35,1)}
+.rs-vignette:hover .rs-vignette-img img{transform:scale(1.05)}
+.rs-vignette:hover .rs-vignette-img,.rs-vignette[aria-pressed="true"] .rs-vignette-img{border-color:var(--or)}
+.rs-vignette-nom{display:block;margin-top:10px;font-size:.8rem;letter-spacing:.14em;text-transform:uppercase;
+  text-align:center;color:var(--gris);transition:color .25s}
+.rs-vignette:hover .rs-vignette-nom,.rs-vignette[aria-pressed="true"] .rs-vignette-nom{color:var(--or)}
+.rs-vignette:focus-visible{outline:2px solid var(--or);outline-offset:5px}
+
+/* ---------------- colonne droite : photo + descriptif ---------------- */
+.rs-droite{grid-column:2;grid-row:1;position:relative;height:100%;overflow:hidden;background:var(--fond)}
+/* photo : toute la hauteur, réduite au tiers haut quand un pasteur est sélectionné */
+.rs-media1{position:absolute;left:0;right:0;top:0;height:100%;overflow:hidden;
+  transition:height .6s cubic-bezier(.76,0,.24,1)}
+.rs-split.rs-ouvert .rs-media1{height:33.34svh}
+.rs-photo{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:50% 28%;
+  pointer-events:none;will-change:transform;transform:translateY(var(--rs-y,100%))}
+.rs-ph2{opacity:0;transition:opacity .55s ease}
+.rs-split.rs-ouvert .rs-ph1{opacity:0;transition:opacity .55s ease}
+.rs-split.rs-ouvert .rs-ph2{opacity:1}
+/* descriptif : occupe ce que la photo libère */
+.rs-desc{position:absolute;left:0;right:0;top:33.34svh;bottom:0;background:var(--fond);
+  opacity:0;pointer-events:none;transform:translateY(14px);
+  transition:opacity .45s ease .12s,transform .5s cubic-bezier(.76,0,.24,1) .12s}
+.rs-split.rs-ouvert .rs-desc{opacity:1;pointer-events:auto;transform:none}
+.rs-desc-inner{height:100%;display:flex;flex-direction:column;min-height:0}
+.rs-desc-corps{flex:1 1 auto;min-height:0;overflow-y:auto;padding:30px 40px 14px;
+  color:var(--gris);font-size:1.02rem}
+.rs-desc-corps p+p{margin-top:18px}
+.rs-revenir{flex:0 0 auto;margin:0;padding:15px 40px;background:var(--fond);border:0;
+  border-top:1px solid var(--ligne);cursor:pointer;text-align:left;
+  font-family:'Anton',sans-serif;font-weight:400;text-transform:uppercase;letter-spacing:.14em;font-size:.9rem;
+  color:var(--or);display:inline-flex;align-items:center;gap:11px;transition:gap .25s,color .25s}
+.rs-revenir::before{content:"\21A9"}
+.rs-revenir:hover{gap:16px;color:#9c8232}
+.rs-revenir:focus-visible{outline:2px solid var(--or);outline-offset:-4px}
+
+.rs-media2,.rs-btn{display:none}
+
+/* ================= MOBILE — repli statique (sert au paysage) ================= */
+@media(max-width:900px){
+  #responsables{scroll-margin-top:70px;padding:0 0 90px}
+  .rs-scene{height:auto}
+  .rs-split{position:static;height:auto;overflow:visible;display:block}
+  .rs-droite,.rs-colonne{display:block}
+  .rs-droite{position:static;height:auto;overflow:visible}
+  .rs-colonne{padding:0 28px}
+  .rs-vignette-img{height:auto;aspect-ratio:3/4}
+  .rs-texte{position:static;background:none;padding:0}
+  .rs-texte .titre-bloc{font-size:clamp(2.2rem,6vw,3rem)}
+  .rs-media{position:static;width:100%;height:100svh;margin:0 0 34px}
+  .rs-split.rs-ouvert .rs-media1{height:100svh}
+  .rs-photo{transform:none}
+  .rs-desc{position:static;opacity:1;pointer-events:auto;transform:none;
+    height:0;overflow:hidden;transition:height .55s cubic-bezier(.76,0,.24,1)}
+  .rs-split.rs-ouvert .rs-desc{height:auto}
+  .rs-desc-inner{height:auto;display:block}
+  .rs-desc-corps{overflow:visible;padding:26px 28px 0;font-size:1rem}
+  .rs-revenir{padding:20px 28px 0;border-top:0;background:none}
+}
+
+/* ================= MOBILE PORTRAIT — chorégraphie complète ================= */
+@media(max-width:900px) and (orientation:portrait){
+  #responsables{padding:0}
+  /* 100svh de montée + palier de fixation avant que la page reparte */
+  .rs-scene{height:calc(100svh + 62svh)}
+  /* scène collante plein écran : c'est le contexte d'empilement contre lequel le titre
+     se fusionne (fond blanc → exclusion = noir ; sur la photo → inversion) */
+  .rs-split{position:sticky;top:0;height:100svh;overflow:hidden;background:var(--fond);
+    display:block;min-height:0}
+  .rs-droite,.rs-colonne{display:contents}
+
+  /* photo 1 : plein écran, sous le texte. Pas de z-index → pas de contexte d'empilement,
+     l'ordre du DOM suffit (media1 avant .rs-texte). */
+  .rs-media1{position:absolute;left:0;right:0;top:0;height:100%;margin:0;background:var(--fond);
+    transition:transform .65s cubic-bezier(.76,0,.24,1)}
+  .rs-split.rs-ouvert .rs-media1{height:100%;transform:translateX(-100%)}
+  .rs-media1 .rs-photo{transform:translateY(var(--rs-y,100%))}
+  .rs-media1 .rs-ph2{display:none}
+
+  /* titre + intro figés en haut, en fusion sur la photo ; le doré reste en aplat */
+  .rs-texte{position:absolute;left:0;right:0;top:54px;padding:0 24px;background:none;
+    transition:transform .65s cubic-bezier(.76,0,.24,1)}
+  .rs-split.rs-ouvert .rs-texte{transform:translateX(-100%)}
+  .rs-texte .eyebrow{margin-bottom:16px}
+  .rs-texte .titre-bloc{font-size:clamp(1.9rem,8.4vw,2.9rem)}
+  .rs-l1{mix-blend-mode:exclusion;color:#fff}
+  .rs-l2{color:var(--or)}
+  .rs-intro .texte-bloc{margin-top:18px;max-width:none;font-size:.95rem}
+  .rs-x{mix-blend-mode:exclusion;color:#fff}
+  .rs-x strong{color:#fff}
+  .rs-intro .or-txt{color:var(--or)}
+
+  /* bouton « Nos responsables » (même facture que « découvrir en images ») */
+  .rs-choix{display:none}
+  .rs-btn{display:inline-flex;align-items:center;gap:14px;
+    position:absolute;left:50%;bottom:calc(24px + var(--barre-bas));transform:translateX(-50%);
+    background:var(--or);color:var(--noir);border:0;cursor:pointer;padding:14px 28px;
+    font-family:'Anton',sans-serif;font-weight:400;text-transform:uppercase;letter-spacing:.16em;
+    font-size:.8rem;white-space:nowrap;opacity:0;pointer-events:none;
+    transition:opacity .45s ease,background .28s,gap .28s}
+  .rs-btn::after{content:"\2192"}
+  .rs-btn:hover{background:#9c8232;gap:20px}
+  .rs-scene.rs-calee .rs-btn{opacity:1;pointer-events:auto}
+  .rs-split.rs-ouvert .rs-btn{opacity:0;pointer-events:none}
+
+  /* panneau 2 : photo sur le tiers haut (elle passe aussi sous le bandeau), descriptif dessous.
+     z-index:3 → le panneau recouvre le titre, qui reste lui en z-index automatique. */
+  .rs-media2{display:block;position:absolute;left:0;right:0;top:0;height:34svh;width:auto;margin:0;
+    z-index:3;background:var(--noir);
+    transform:translateX(100%);transition:transform .65s cubic-bezier(.76,0,.24,1)}
+  .rs-media2 .rs-photo{transform:none;opacity:1}
+  .rs-desc{position:absolute;left:0;right:0;top:34svh;bottom:0;height:auto;overflow:visible;
+    z-index:3;background:var(--fond);opacity:1;pointer-events:auto;
+    transform:translateX(100%);transition:transform .65s cubic-bezier(.76,0,.24,1)}
+  .rs-split.rs-ouvert .rs-media2,.rs-split.rs-ouvert .rs-desc{transform:translateX(0)}
+  .rs-desc-inner{height:100%;display:flex;flex-direction:column;min-height:0}
+  /* seule zone défilante du panneau 2 */
+  .rs-desc-corps{flex:1 1 auto;min-height:0;overflow-y:auto;-webkit-overflow-scrolling:touch;
+    padding:20px 24px 12px;font-size:.95rem}
+  .rs-revenir{flex:0 0 auto;margin:0;padding:14px 24px calc(16px + var(--barre-bas));
+    border-top:1px solid var(--ligne);background:var(--fond)}
+}
+@media(prefers-reduced-motion:reduce){
+  .rs-media1,.rs-media2,.rs-texte,.rs-desc,.rs-choix,.rs-btn,.rs-photo{transition:none!important}
+  .rs-photo{transform:none!important}
+}
+
 /* ---------- reveal ---------- */
 .reveal{opacity:0;transform:translateY(30px);transition:opacity .8s ease,transform .8s ease}
 .reveal.visible{opacity:1;transform:none}
@@ -1051,14 +1249,60 @@ h1.ap-titre{position:relative;z-index:1;margin:17px auto 0;width:fit-content;max
   </div>
 </section>
 
-<section id="responsables" class="reveal" style="padding-top:0;scroll-margin-top:90px">
-  <span class="eyebrow">nos responsables</span>
-  <h2 class="titre-bloc">Des bergers sous<br><span class="or">le Grand Berger</span></h2>
-  <div class="texte-bloc">
-    <p>Nous valorisons l'accompagnement spirituel et l'enseignement à travers nos pasteurs et responsables. Mais nous rappelons que toute autorité, toute direction et toute protection viennent de Dieu, <strong>le seul Grand Berger</strong> — « Celui qui compte » et qui veille sur chacun <span class="or-txt">(Jérémie 33:12-13)</span>.</p>
+<section id="responsables">
+  <div class="rs-scene" id="rsScene">
+    <div class="rs-split" id="rsSplit">
+
+      <!-- colonne droite : photo (pleine hauteur, puis tiers haut) + descriptif -->
+      <div class="rs-droite" id="rsDroite">
+        <div class="rs-media rs-media1" id="rsMedia1">
+          <img src="images/a-propos/pasteur_1.jpg" alt="Les responsables de l'église J33" class="rs-photo rs-ph1" id="rsPh1">
+          <img src="images/a-propos/pasteur_2.jpg" alt="Nicolas et Ismaris, pasteurs de l'église J33" class="rs-photo rs-ph2" loading="lazy">
+        </div>
+        <div class="rs-desc" id="rsDesc">
+          <div class="rs-desc-inner">
+            <div class="rs-desc-corps" data-lenis-prevent>
+              <p>Nicolas et Ismaris sont mariés depuis 2012 et sont parents de 3 enfants. Ils servent ensemble comme pasteurs de l'Église, avec le désir de voir chacun grandir dans une relation vivante avec Jésus-Christ et d'être un canal pour la gloire de Dieu.</p>
+              <p>Après trois années de formation en école biblique et théologique l'Amandier (église ACBM), Nicolas et Ismaris ont continué à servir l'Église à travers la louange, l'enseignement et l'accompagnement des personnes. Leur ordination pastorale, reconnue par l'équipe pastorale de l'Église ACBM et approuvée par l'assemblée, est venue confirmer un service déjà vécu au quotidien.</p>
+              <p>Nicolas porte une passion particulière pour l'étude approfondie et l'enseignement fidèle de la Parole de Dieu. Il désire voir des disciples enracinés dans les Écritures, grandissant dans une foi authentique, vécue avec intégrité et simplicité.</p>
+              <p>Ismaris manifeste son cœur pastoral à travers l'accompagnement, l'encouragement, la compassion et l'adoration. Elle désire accueillir chacun avec amour et conduire les personnes vers le cœur du Père pour bâtir une relation plus profonde avec le Seigneur.</p>
+              <p>Ensemble, ils désirent être des bergers sous le Grand Berger, prenant soin de l'Église avec amour, fidélité et humilité, afin que toute la gloire revienne à Jésus-Christ.</p>
+            </div>
+            <button class="rs-revenir" type="button" id="rsRevenir">Revenir</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- colonne gauche : titre + texte figés, « nos pasteurs » dessous -->
+      <div class="rs-colonne">
+        <div class="rs-texte" id="rsTexte">
+          <span class="eyebrow">nos responsables</span>
+          <h2 class="titre-bloc"><span class="rs-l1">Des bergers sous</span><span class="rs-l2">le Grand Berger</span></h2>
+          <div class="rs-intro" id="rsIntro">
+            <div class="texte-bloc">
+              <p><span class="rs-x">Nous valorisons l'accompagnement spirituel et l'enseignement à travers nos pasteurs et responsables. Mais nous rappelons que toute autorité, toute direction et toute protection viennent de Dieu, <strong>le seul Grand Berger</strong> — « Celui qui compte » et qui veille sur chacun </span><span class="or-txt">(Jérémie 33:12-13)</span></p>
+            </div>
+          </div>
+        </div>
+        <div class="rs-choix" id="rsChoix">
+          <div class="rs-choix-onglets"><span class="rs-choix-titre actif">nos pasteurs</span></div>
+          <div class="rs-vignettes">
+            <button class="rs-vignette" type="button" id="rsVignette" aria-pressed="false" aria-controls="rsDesc">
+              <span class="rs-vignette-img"><img src="images/a-propos/pasteur_2.jpg" alt="" loading="lazy"></span>
+              <span class="rs-vignette-nom">Nicolas &amp; Ismaris</span>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- panneau 2 en portrait : photo sur le tiers haut de l'écran -->
+      <div class="rs-media rs-media2" id="rsMedia2">
+        <img src="images/a-propos/pasteur_2.jpg" alt="Nicolas et Ismaris, pasteurs de l'église J33" class="rs-photo" loading="lazy">
+      </div>
+
+      <button class="rs-btn" type="button" id="rsBtn">Nos responsables</button>
+    </div>
   </div>
-  <img src="images/a-propos/pasteur_1.jpg" alt="Photo d'un pasteur de l'église J33" class="photo-pasteur" loading="lazy">
-  <p class="texte-bloc" style="font-style:italic">— Présentation de l'équipe pastorale à compléter : noms, photos et parcours de vos responsables. —</p>
 </section>
 
 
@@ -2137,6 +2381,138 @@ if(cartesAnim.length === 6){
   window.addEventListener('resize', function(){
     if(window.innerWidth !== w){ w = window.innerWidth; etatInitial(); }
   });
+})();
+</script>
+<script>
+/* ---------- « nos responsables » : montée de la photo, calage, bascule ----------
+   · --rs-y : translation verticale de la photo, de 100% (hors champ bas) à 0 (calée).
+     Mesure par getBoundingClientRect → insensible au défilement virtuel de Lenis.
+   · rs-calee : la photo est calée en haut → fait apparaître « nos pasteurs » (desktop)
+     ou le bouton (portrait).
+   · voile du bandeau : --nvg/--nvdr délimitent la colonne de la photo, --ch/--cb rognent
+     le voile blanc à ce qu'il reste de fond clair sous le bandeau. */
+(function(){
+  var scene = document.getElementById('rsScene');
+  if(!scene) return;
+  var split   = document.getElementById('rsSplit');
+  var media1  = document.getElementById('rsMedia1');
+  var media2  = document.getElementById('rsMedia2');
+  var ph1     = document.getElementById('rsPh1');
+  var btn     = document.getElementById('rsBtn');
+  var vign    = document.getElementById('rsVignette');
+  var revenir = document.getElementById('rsRevenir');
+  var nav     = document.querySelector('nav');
+  var marque  = nav ? nav.querySelector('.marque') : null;
+  var burger  = document.getElementById('btnBurger');
+  var mqPortrait = window.matchMedia('(max-width:900px) and (orientation:portrait)');
+  var ouvert = false, tic = false;
+
+  function navH(){ return nav ? nav.offsetHeight : 64; }
+
+  function resetNav(){
+    if(!nav) return;
+    nav.style.setProperty('--nvd','0px');
+    nav.style.setProperty('--nvg','100%');
+    nav.style.setProperty('--nvdr','0px');
+    nav.style.setProperty('--ch','0px');
+    nav.style.setProperty('--cb','0px');
+    document.body.classList.remove('rs-marque-photo','rs-burger-photo');
+  }
+
+  function maj(){
+    tic = false;
+    var H = window.innerHeight || 1;
+    var r = scene.getBoundingClientRect();
+
+    /* montée : de l'entrée du haut de la scène dans l'écran jusqu'à son calage en haut */
+    var p = (H - r.top) / H;
+    p = p < 0 ? 0 : (p > 1 ? 1 : p);
+    scene.style.setProperty('--rs-y', ((1 - p) * 100).toFixed(2) + '%');
+
+    var nh = navH();
+    var visible = r.bottom > 0 && r.top < H;
+    scene.classList.toggle('rs-calee', visible && p >= 0.999);
+
+    if(!nav) return;
+    if(!visible){ resetNav(); return; }
+
+    /* bande réellement couverte par la photo (cadre ∩ image translatée).
+       Panneau 2 ouvert en portrait : c'est la photo du haut qui passe sous le bandeau. */
+    var cadre = (ouvert && mqPortrait.matches && media2) ? media2 : media1;
+    var img = (cadre === media1) ? ph1 : cadre.querySelector('.rs-photo');
+    var mb = cadre.getBoundingClientRect();
+    var ib = img.getBoundingClientRect();
+    var haut = Math.max(mb.top, ib.top);
+    var gauche = mb.left, droite = mb.right;
+    if(mb.width <= 0 || mb.height <= 0 || haut >= nh){ resetNav(); return; }
+
+    var vw = document.documentElement.clientWidth;
+    nav.style.setProperty('--nvd',  Math.max(0, vw - gauche) + 'px');
+    nav.style.setProperty('--nvg',  Math.max(0, gauche) + 'px');
+    nav.style.setProperty('--nvdr', Math.max(0, vw - droite) + 'px');
+    /* le voile n'existe qu'au-dessus de la photo : on rogne par le bas ce qu'elle couvre */
+    var hautDansNav = Math.max(0, Math.min(nh, haut));
+    nav.style.setProperty('--ch','0px');
+    nav.style.setProperty('--cb', (nh - hautDansNav) + 'px');
+
+    /* marque et burger : chacun bascule selon ce qui se trouve sous lui */
+    var sousPhoto = haut <= nh * 0.5;
+    function couvert(el){
+      if(!el || !sousPhoto) return false;
+      var b = el.getBoundingClientRect();
+      var cx = b.left + b.width / 2;
+      return cx >= gauche && cx <= droite;
+    }
+    document.body.classList.toggle('rs-marque-photo', couvert(marque));
+    document.body.classList.toggle('rs-burger-photo', couvert(burger));
+  }
+
+  /* pendant la bascule aucun défilement ne survient : on suit la transition en rAF pour
+     que le voile du bandeau reste calé au pixel sur la photo qui se déplace ou se réduit */
+  function suivre(ms){
+    var t0 = performance.now();
+    (function boucle(t){
+      maj();
+      if(t - t0 < ms) requestAnimationFrame(boucle);
+    })(t0);
+  }
+
+  function ouvrir(){
+    if(ouvert) return;
+    ouvert = true;
+    split.classList.add('rs-ouvert');
+    if(vign) vign.setAttribute('aria-pressed','true');
+    /* portrait : le panneau 2 occupe tout l'écran, seul son descriptif défile
+       (data-lenis-prevent laisse passer le défilement natif interne) */
+    if(mqPortrait.matches && window.lenis) window.lenis.stop();
+    suivre(760);
+  }
+  function fermer(){
+    if(!ouvert) return;
+    ouvert = false;
+    split.classList.remove('rs-ouvert');
+    if(vign) vign.setAttribute('aria-pressed','false');
+    if(window.lenis) window.lenis.start();
+    suivre(760);
+  }
+
+  if(btn) btn.addEventListener('click', ouvrir);
+  if(vign) vign.addEventListener('click', function(){ ouvert ? fermer() : ouvrir(); });
+  if(revenir) revenir.addEventListener('click', fermer);
+  document.addEventListener('keydown', function(e){ if(e.key === 'Escape' && ouvert) fermer(); });
+
+  function planifier(){ if(!tic){ tic = true; requestAnimationFrame(maj); } }
+  window.addEventListener('scroll', planifier, {passive:true});
+  if(window.lenis && window.lenis.on) window.lenis.on('scroll', planifier);
+
+  /* changement d'orientation / de largeur : on repart d'un état propre */
+  var w = window.innerWidth;
+  window.addEventListener('resize', function(){
+    if(window.innerWidth !== w){ w = window.innerWidth; fermer(); }
+    maj();
+  });
+  if(document.fonts && document.fonts.ready) document.fonts.ready.then(maj);
+  maj();
 })();
 </script>
 </body>
