@@ -49,6 +49,9 @@ nav::before,nav::after{content:"";position:absolute;top:0;bottom:0;z-index:-1;po
 nav::before{left:0;right:var(--nvd,0px)}
 nav::after{left:var(--nvg,100%);right:var(--nvdr,0px);clip-path:inset(var(--ch,0px) 0 var(--cb,0px) 0)}
 body.menu-ouvert nav::before,body.menu-ouvert nav::after{opacity:0}
+/* photo remontant jusque sous le bandeau sans être voilée : le dégradé blanc disparaît
+   mais la marque et les tirets restent en encre */
+body.rs-sans-voile nav::before,body.rs-sans-voile nav::after{opacity:0}
 /* photo sous le bandeau : marque et tirets passent en crème, chacun selon ce qu'il a sous lui */
 body.rs-marque-photo nav .marque{color:var(--creme)}
 body.rs-burger-photo .burger span{background:var(--creme)}
@@ -852,14 +855,14 @@ h1.ap-titre{position:relative;z-index:1;margin:17px auto 0;width:fit-content;max
   .rs-retour-liste:hover{gap:16px;color:#9c8232}
 
   /* ---- panneau C : photo sur le tiers haut + descriptif (z-index 4, au-dessus de B) ---- */
-  /* la photo commence SOUS le bandeau (elle n'est plus voilée par lui) et elle est carrée :
-     largeur = écran, donc hauteur = 100vw */
-  .rs-media2{display:block;position:absolute;left:0;right:0;top:var(--rs-navh,68px);width:auto;margin:0;
+  /* la photo monte jusqu'en haut, sous le bandeau (qui perd son voile blanc), et elle est
+     carrée : largeur = écran, donc hauteur = 100vw */
+  .rs-media2{display:block;position:absolute;left:0;right:0;top:0;width:auto;margin:0;
     height:100vw;z-index:4;background:var(--noir);
     transform:translateX(100%);transition:transform .65s cubic-bezier(.76,0,.24,1)}
   .rs-media2 .rs-photo{transform:none;opacity:1}
   .rs-desc{position:absolute;left:0;right:0;bottom:0;height:auto;overflow:visible;z-index:4;
-    top:calc(var(--rs-navh,68px) + 100vw);background:var(--fond);opacity:1;pointer-events:auto;
+    top:100vw;background:var(--fond);opacity:1;pointer-events:auto;
     transform:translateX(100%);transition:transform .65s cubic-bezier(.76,0,.24,1)}
   .rs-split.rs-ouvert .rs-media2,.rs-split.rs-ouvert .rs-desc{transform:translateX(0)}
   .rs-desc-inner{height:100%;display:flex;flex-direction:column;min-height:0}
@@ -2453,7 +2456,8 @@ if(cartesAnim.length === 6){
   }
   mesurerVh();
 
-  function resetNav(){
+  function resetNav(sansVoile){
+    document.body.classList.toggle('rs-sans-voile', !!sansVoile);
     if(!nav) return;
     nav.style.setProperty('--nvd','0px');
     nav.style.setProperty('--nvg','100%');
@@ -2485,8 +2489,13 @@ if(cartesAnim.length === 6){
     scene.classList.toggle('rs-calee', visible && p >= 0.999);
 
     if(!nav) return;
-    /* panneaux B et C : le fond redevient clair → bandeau normal, marque et tirets en encre */
-    if(!visible || ((liste || ouvert) && mqPortrait.matches)){ resetNav(); return; }
+    /* Panneau B (vignettes, fond clair) : bandeau normal, voile compris.
+       Panneau C : la photo monte sous le bandeau → voile retiré, mais marque et tirets
+       restent en encre (pas de bascule en crème). */
+    if(!visible || ((liste || ouvert) && mqPortrait.matches)){
+      resetNav(ouvert && mqPortrait.matches);
+      return;
+    }
 
     /* bande réellement couverte par la photo (cadre ∩ image translatée) */
     var mb = media1.getBoundingClientRect();
