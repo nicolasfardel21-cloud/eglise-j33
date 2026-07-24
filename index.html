@@ -1745,6 +1745,12 @@ if(cartesAnim.length === 6){
      l'apparition alors que le haut de l'image est encore caché par cette zone. */
   const sonde = document.getElementById('sondeBasEcran');
   const zoneCachee = (sonde ? sonde.getBoundingClientRect().height : 0) + 20;
+  /* hauteur RÉELLEMENT visible : window.innerHeight est temporairement désynchronisé
+     sur Android pendant la rétractation de la barre d'adresse (donc pendant le tout
+     premier scroll), ce qui décalait le déclenchement de la 1re image vers le haut.
+     visualViewport reporte la zone effectivement affichée, y compris pendant cette
+     transition. Repli sur innerHeight si l'API est absente. */
+  const hauteurVisible = () => (window.visualViewport && window.visualViewport.height) || window.innerHeight;
   const animsVus = new Set();
   function rendreVisible(el){
     if(animsVus.has(el)) return;
@@ -1771,7 +1777,7 @@ if(cartesAnim.length === 6){
   function maj(){
     enCours = false;
     if(!estMobile()) return;
-    const vh = window.innerHeight;
+    const vh = hauteurVisible();
 
     /* parallaxe différentiel : le déplacement démarre à 0 quand l'élément entre par le bas
        du viewport, puis croît/décroît selon la vitesse à mesure qu'il traverse l'écran.
@@ -1807,6 +1813,12 @@ if(cartesAnim.length === 6){
   }
   function surScroll(){ if(!enCours){ enCours = true; requestAnimationFrame(maj); } }
   window.addEventListener('scroll', surScroll, { passive:true });
+  /* la barre d'adresse mobile qui se rétracte ne déclenche pas toujours un 'scroll' :
+     on écoute aussi visualViewport pour recalculer pendant sa transition. */
+  if(window.visualViewport){
+    window.visualViewport.addEventListener('resize', surScroll, { passive:true });
+    window.visualViewport.addEventListener('scroll', surScroll, { passive:true });
+  }
   surRedim(surScroll);
   if(document.fonts && document.fonts.ready) document.fonts.ready.then(maj);
   maj();
