@@ -753,7 +753,7 @@ h1.ap-titre{position:relative;z-index:1;margin:17px auto 0;width:fit-content;max
 .rs-revenir:hover{gap:16px;color:#9c8232}
 .rs-revenir:focus-visible{outline:2px solid var(--or);outline-offset:-4px}
 
-.rs-media2,.rs-btn{display:none}
+.rs-media2,.rs-btn,.rs-retour-liste{display:none}
 
 /* ================= MOBILE — repli statique (sert au paysage) ================= */
 @media(max-width:900px){
@@ -777,29 +777,36 @@ h1.ap-titre{position:relative;z-index:1;margin:17px auto 0;width:fit-content;max
   .rs-revenir{padding:20px 28px 0;border-top:0;background:none}
 }
 
-/* ================= MOBILE PORTRAIT — chorégraphie complète ================= */
+/* ================= MOBILE PORTRAIT — chorégraphie complète =================
+   Déroulé, en trois temps de défilement puis deux panneaux :
+     1. le titre et le texte arrivent et s'épinglent  (100 vh, scène non encore collée)
+     2. pasteur_1 monte alors derrière eux             ( 60 vh de scène épinglée)
+     3. palier, puis la page repart                    ( 28 vh)
+     A → bouton « Nos responsables » → B : panneau des vignettes
+     B → clic sur une vignette        → C : photo sur le tiers haut + descriptif
+   --rs-vh = hauteur réellement visible, mesurée en JS : 100svh vaut la hauteur AVEC la
+   barre d'adresse déployée et laissait donc un vide sous la photo dès qu'elle se rétracte. */
 @media(max-width:900px) and (orientation:portrait){
   #responsables{padding:0}
-  /* 100svh de montée + palier de fixation avant que la page reparte */
-  .rs-scene{height:calc(100svh + 62svh)}
+  .rs-scene{height:calc(var(--rs-vh,100dvh) * 1.88)}
   /* scène collante plein écran : c'est le contexte d'empilement contre lequel le titre
      se fusionne (fond blanc → exclusion = noir ; sur la photo → inversion) */
-  .rs-split{position:sticky;top:0;height:100svh;overflow:hidden;background:var(--fond);
+  .rs-split{position:sticky;top:0;height:var(--rs-vh,100dvh);overflow:hidden;background:var(--fond);
     display:block;min-height:0}
   .rs-droite,.rs-colonne{display:contents}
 
-  /* photo 1 : plein écran, sous le texte. Pas de z-index → pas de contexte d'empilement,
-     l'ordre du DOM suffit (media1 avant .rs-texte). */
+  /* ---- panneau A : photo plein écran + titre figé ----
+     pas de z-index sur la photo ni sur le texte : l'ordre du DOM suffit et évite de
+     créer un contexte d'empilement qui casserait la fusion */
   .rs-media1{position:absolute;left:0;right:0;top:0;height:100%;margin:0;background:var(--fond);
     transition:transform .65s cubic-bezier(.76,0,.24,1)}
-  .rs-split.rs-ouvert .rs-media1{height:100%;transform:translateX(-100%)}
+  .rs-split.rs-liste .rs-media1,.rs-split.rs-ouvert .rs-media1{height:100%;transform:translateX(-100%)}
   .rs-media1 .rs-photo{transform:translateY(var(--rs-y,100%))}
   .rs-media1 .rs-ph2{display:none}
 
-  /* titre + intro figés en haut, en fusion sur la photo ; le doré reste en aplat */
-  .rs-texte{position:absolute;left:0;right:0;top:54px;padding:0 24px;background:none;
+  .rs-texte{position:absolute;left:0;right:0;top:72px;padding:0 24px;background:none;
     transition:transform .65s cubic-bezier(.76,0,.24,1)}
-  .rs-split.rs-ouvert .rs-texte{transform:translateX(-100%)}
+  .rs-split.rs-liste .rs-texte,.rs-split.rs-ouvert .rs-texte{transform:translateX(-100%)}
   .rs-texte .eyebrow{margin-bottom:16px}
   .rs-texte .titre-bloc{font-size:clamp(1.9rem,8.4vw,2.9rem)}
   .rs-l1{mix-blend-mode:exclusion;color:#fff}
@@ -810,7 +817,6 @@ h1.ap-titre{position:relative;z-index:1;margin:17px auto 0;width:fit-content;max
   .rs-intro .or-txt{color:var(--or)}
 
   /* bouton « Nos responsables » (même facture que « découvrir en images ») */
-  .rs-choix{display:none}
   .rs-btn{display:inline-flex;align-items:center;gap:14px;
     position:absolute;left:50%;bottom:calc(24px + var(--barre-bas));transform:translateX(-50%);
     background:var(--or);color:var(--noir);border:0;cursor:pointer;padding:14px 28px;
@@ -820,27 +826,48 @@ h1.ap-titre{position:relative;z-index:1;margin:17px auto 0;width:fit-content;max
   .rs-btn::after{content:"\2192"}
   .rs-btn:hover{background:#9c8232;gap:20px}
   .rs-scene.rs-calee .rs-btn{opacity:1;pointer-events:auto}
-  .rs-split.rs-ouvert .rs-btn{opacity:0;pointer-events:none}
+  .rs-split.rs-liste .rs-btn,.rs-split.rs-ouvert .rs-btn{opacity:0;pointer-events:none}
 
-  /* panneau 2 : photo sur le tiers haut (elle passe aussi sous le bandeau), descriptif dessous.
-     z-index:3 → le panneau recouvre le titre, qui reste lui en z-index automatique. */
-  .rs-media2{display:block;position:absolute;left:0;right:0;top:0;height:34svh;width:auto;margin:0;
-    z-index:3;background:var(--noir);
+  /* ---- panneau B : les vignettes (z-index 3, au-dessus du titre) ----
+     on neutralise ici l'apparition en fondu du desktop : en portrait le panneau est
+     toujours « prêt », c'est sa translation seule qui le montre. */
+  .rs-choix,.rs-scene.rs-calee .rs-choix{display:flex;flex-direction:column;
+    position:absolute;left:0;right:0;top:0;bottom:0;z-index:3;margin:0;
+    background:var(--fond);padding:84px 24px calc(14px + var(--barre-bas));
+    opacity:1;pointer-events:auto;transform:translateX(100%);
+    transition:transform .65s cubic-bezier(.76,0,.24,1)}
+  .rs-split.rs-liste .rs-choix,.rs-scene.rs-calee .rs-split.rs-liste .rs-choix{transform:translateX(0)}
+  .rs-split.rs-ouvert .rs-choix,.rs-scene.rs-calee .rs-split.rs-ouvert .rs-choix{transform:translateX(-100%)}
+  .rs-choix-onglets{flex:0 0 auto}
+  .rs-vignettes{flex:1 1 auto;min-height:0;overflow-y:auto;align-content:flex-start;
+    gap:22px 20px;margin-top:24px}
+  .rs-vignette{width:calc(50% - 10px)}
+  .rs-vignette-img{height:auto;aspect-ratio:3/4}
+  .rs-retour-liste{display:inline-flex;align-items:center;gap:11px;flex:0 0 auto;
+    align-self:flex-start;margin-top:18px;padding:0;background:none;border:0;cursor:pointer;
+    font-family:'Anton',sans-serif;font-weight:400;text-transform:uppercase;letter-spacing:.14em;
+    font-size:.9rem;color:var(--or);transition:gap .25s,color .25s}
+  .rs-retour-liste::before{content:"\21A9"}
+  .rs-retour-liste:hover{gap:16px;color:#9c8232}
+
+  /* ---- panneau C : photo sur le tiers haut + descriptif (z-index 4, au-dessus de B) ---- */
+  .rs-media2{display:block;position:absolute;left:0;right:0;top:0;width:auto;margin:0;
+    height:calc(var(--rs-vh,100dvh) * .34);z-index:4;background:var(--noir);
     transform:translateX(100%);transition:transform .65s cubic-bezier(.76,0,.24,1)}
   .rs-media2 .rs-photo{transform:none;opacity:1}
-  .rs-desc{position:absolute;left:0;right:0;top:34svh;bottom:0;height:auto;overflow:visible;
-    z-index:3;background:var(--fond);opacity:1;pointer-events:auto;
+  .rs-desc{position:absolute;left:0;right:0;bottom:0;height:auto;overflow:visible;z-index:4;
+    top:calc(var(--rs-vh,100dvh) * .34);background:var(--fond);opacity:1;pointer-events:auto;
     transform:translateX(100%);transition:transform .65s cubic-bezier(.76,0,.24,1)}
   .rs-split.rs-ouvert .rs-media2,.rs-split.rs-ouvert .rs-desc{transform:translateX(0)}
   .rs-desc-inner{height:100%;display:flex;flex-direction:column;min-height:0}
-  /* seule zone défilante du panneau 2 */
+  /* seule zone défilante du panneau C */
   .rs-desc-corps{flex:1 1 auto;min-height:0;overflow-y:auto;-webkit-overflow-scrolling:touch;
     padding:20px 24px 12px;font-size:.95rem}
   .rs-revenir{flex:0 0 auto;margin:0;padding:14px 24px calc(16px + var(--barre-bas));
     border-top:1px solid var(--ligne);background:var(--fond)}
 }
 @media(prefers-reduced-motion:reduce){
-  .rs-media1,.rs-media2,.rs-texte,.rs-desc,.rs-choix,.rs-btn,.rs-photo{transition:none!important}
+  .rs-media1,.rs-media2,.rs-texte,.rs-desc,.rs-choix,.rs-btn,.rs-photo,.rs-retour-liste{transition:none!important}
   .rs-photo{transform:none!important}
 }
 
@@ -1292,6 +1319,7 @@ h1.ap-titre{position:relative;z-index:1;margin:17px auto 0;width:fit-content;max
               <span class="rs-vignette-nom">Nicolas &amp; Ismaris</span>
             </button>
           </div>
+          <button class="rs-retour-liste" type="button" id="rsRetourListe">Revenir</button>
         </div>
       </div>
 
@@ -2401,13 +2429,22 @@ if(cartesAnim.length === 6){
   var btn     = document.getElementById('rsBtn');
   var vign    = document.getElementById('rsVignette');
   var revenir = document.getElementById('rsRevenir');
+  var retourL = document.getElementById('rsRetourListe');
   var nav     = document.querySelector('nav');
   var marque  = nav ? nav.querySelector('.marque') : null;
   var burger  = document.getElementById('btnBurger');
   var mqPortrait = window.matchMedia('(max-width:900px) and (orientation:portrait)');
-  var ouvert = false, tic = false;
+  var ouvert = false, liste = false, tic = false;
 
   function navH(){ return nav ? nav.offsetHeight : 64; }
+
+  /* hauteur réellement visible : 100svh vaut la hauteur AVEC la barre d'adresse déployée
+     et laissait un vide sous la photo dès qu'elle se rétracte (même correctif que --dd-vh
+     sur la page connexion). Mise à jour au redimensionnement seulement. */
+  function mesurerVh(){
+    document.documentElement.style.setProperty('--rs-vh', window.innerHeight + 'px');
+  }
+  mesurerVh();
 
   function resetNav(){
     if(!nav) return;
@@ -2424,8 +2461,15 @@ if(cartesAnim.length === 6){
     var H = window.innerHeight || 1;
     var r = scene.getBoundingClientRect();
 
-    /* montée : de l'entrée du haut de la scène dans l'écran jusqu'à son calage en haut */
-    var p = (H - r.top) / H;
+    /* Portrait : le titre et le texte arrivent d'abord et s'épinglent (r.top de H à 0) ;
+       la photo ne commence à monter qu'ensuite, sur les 60 vh de scène épinglée qui suivent.
+       Desktop : la photo monte pendant l'entrée de la section, comme sur « venir ». */
+    var p;
+    if(mqPortrait.matches){
+      p = (-r.top) / (H * 0.60);
+    } else {
+      p = (H - r.top) / H;
+    }
     p = p < 0 ? 0 : (p > 1 ? 1 : p);
     scene.style.setProperty('--rs-y', ((1 - p) * 100).toFixed(2) + '%');
 
@@ -2434,14 +2478,12 @@ if(cartesAnim.length === 6){
     scene.classList.toggle('rs-calee', visible && p >= 0.999);
 
     if(!nav) return;
-    if(!visible){ resetNav(); return; }
+    /* panneaux B et C : le fond redevient clair → bandeau normal, marque et tirets en encre */
+    if(!visible || ((liste || ouvert) && mqPortrait.matches)){ resetNav(); return; }
 
-    /* bande réellement couverte par la photo (cadre ∩ image translatée).
-       Panneau 2 ouvert en portrait : c'est la photo du haut qui passe sous le bandeau. */
-    var cadre = (ouvert && mqPortrait.matches && media2) ? media2 : media1;
-    var img = (cadre === media1) ? ph1 : cadre.querySelector('.rs-photo');
-    var mb = cadre.getBoundingClientRect();
-    var ib = img.getBoundingClientRect();
+    /* bande réellement couverte par la photo (cadre ∩ image translatée) */
+    var mb = media1.getBoundingClientRect();
+    var ib = ph1.getBoundingClientRect();
     var haut = Math.max(mb.top, ib.top);
     var gauche = mb.left, droite = mb.right;
     if(mb.width <= 0 || mb.height <= 0 || haut >= nh){ resetNav(); return; }
@@ -2477,29 +2519,39 @@ if(cartesAnim.length === 6){
     })(t0);
   }
 
-  function ouvrir(){
-    if(ouvert) return;
-    ouvert = true;
-    split.classList.add('rs-ouvert');
-    if(vign) vign.setAttribute('aria-pressed','true');
-    /* portrait : le panneau 2 occupe tout l'écran, seul son descriptif défile
+  /* trois états en portrait : A (photo + titre) → B (.rs-liste, vignettes) → C (.rs-ouvert).
+     En desktop l'état B n'existe pas : les vignettes sont déjà dans la colonne de gauche. */
+  function appliquer(){
+    split.classList.toggle('rs-liste', liste);
+    split.classList.toggle('rs-ouvert', ouvert);
+    if(vign) vign.setAttribute('aria-pressed', ouvert ? 'true' : 'false');
+    /* un panneau plein écran est affiché : la page ne défile plus, seul le descriptif le fait
        (data-lenis-prevent laisse passer le défilement natif interne) */
-    if(mqPortrait.matches && window.lenis) window.lenis.stop();
-    suivre(760);
-  }
-  function fermer(){
-    if(!ouvert) return;
-    ouvert = false;
-    split.classList.remove('rs-ouvert');
-    if(vign) vign.setAttribute('aria-pressed','false');
-    if(window.lenis) window.lenis.start();
+    if(window.lenis){
+      if(mqPortrait.matches && (liste || ouvert)) window.lenis.stop();
+      else window.lenis.start();
+    }
     suivre(760);
   }
 
-  if(btn) btn.addEventListener('click', ouvrir);
-  if(vign) vign.addEventListener('click', function(){ ouvert ? fermer() : ouvrir(); });
-  if(revenir) revenir.addEventListener('click', fermer);
-  document.addEventListener('keydown', function(e){ if(e.key === 'Escape' && ouvert) fermer(); });
+  function ouvrirListe(){ if(liste) return; liste = true; appliquer(); }   /* A → B */
+  function ouvrir(){ if(ouvert) return; ouvert = true; appliquer(); }      /* B → C */
+  function retourListe(){                                                  /* C → B, ou C → A */
+    if(!ouvert) return;
+    ouvert = false;
+    if(!mqPortrait.matches) liste = false;
+    appliquer();
+  }
+  function toutFermer(){ if(!liste && !ouvert) return; liste = false; ouvert = false; appliquer(); }
+
+  if(btn) btn.addEventListener('click', ouvrirListe);
+  if(vign) vign.addEventListener('click', function(){ ouvert ? retourListe() : ouvrir(); });
+  if(revenir) revenir.addEventListener('click', retourListe);
+  if(retourL) retourL.addEventListener('click', toutFermer);
+  document.addEventListener('keydown', function(e){
+    if(e.key !== 'Escape') return;
+    if(ouvert) retourListe(); else if(liste) toutFermer();
+  });
 
   function planifier(){ if(!tic){ tic = true; requestAnimationFrame(maj); } }
   window.addEventListener('scroll', planifier, {passive:true});
@@ -2508,9 +2560,13 @@ if(cartesAnim.length === 6){
   /* changement d'orientation / de largeur : on repart d'un état propre */
   var w = window.innerWidth;
   window.addEventListener('resize', function(){
-    if(window.innerWidth !== w){ w = window.innerWidth; fermer(); }
+    /* la barre d'adresse qui se rétracte ne change que la hauteur : on remesure --rs-vh,
+       mais on ne réinitialise les panneaux que si la LARGEUR change (rotation) */
+    mesurerVh();
+    if(window.innerWidth !== w){ w = window.innerWidth; toutFermer(); }
     maj();
   });
+  window.addEventListener('orientationchange', function(){ mesurerVh(); maj(); });
   if(document.fonts && document.fonts.ready) document.fonts.ready.then(maj);
   maj();
 })();
