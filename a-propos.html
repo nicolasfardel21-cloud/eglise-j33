@@ -840,10 +840,15 @@ h1.ap-titre{position:relative;z-index:1;margin:17px auto 0;width:fit-content;max
      glyphe vient du fond de l'élément, peint SOUS l'ombre — un text-shadow recouvrait donc
      le glyphe (mesuré : crème 239 → 55). drop-shadow s'applique au rendu final et se pose
      derrière : le glyphe reste à 239. Passes serrées empilées pour un halo dense au bord
-     du glyphe, puis une passe large pour l'assise. */
+     du glyphe, puis une passe large pour l'assise.
+     --rs-o, posée en JS, vaut la part du bloc déjà recouverte par la photo : l'ombre monte
+     donc en même temps que le crème. À zéro, le JS remet filter:none, ce qui évite à la
+     fois le halo parasite sur le texte encre et quatre passes de flou pour rien. */
   .rs-texte .eyebrow,.rs-texte .titre-bloc,.rs-intro p{
-    filter:drop-shadow(0 0 1px rgba(12,17,28,1)) drop-shadow(0 0 2px rgba(12,17,28,1))
-           drop-shadow(0 0 4px rgba(12,17,28,1)) drop-shadow(0 0 12px rgba(12,17,28,.75))}
+    filter:drop-shadow(0 0 1px rgba(12,17,28,var(--rs-o,0)))
+           drop-shadow(0 0 2px rgba(12,17,28,var(--rs-o,0)))
+           drop-shadow(0 0 4px rgba(12,17,28,var(--rs-o,0)))
+           drop-shadow(0 0 12px rgba(12,17,28,calc(var(--rs-o,0) * .75)))}
   .rs-texte .titre-bloc,.rs-intro p,.rs-l1,.rs-x,.rs-x strong{
     color:transparent;-webkit-text-fill-color:transparent}
   .rs-x strong{font-weight:600}
@@ -2469,6 +2474,7 @@ if(cartesAnim.length === 6){
   var revenir = document.getElementById('rsRevenir');
   var retourL = document.getElementById('rsRetourListe');
   var degrades = [].slice.call(document.querySelectorAll('.rs-texte .titre-bloc,.rs-intro p'));
+  var ombres   = [].slice.call(document.querySelectorAll('.rs-texte .eyebrow,.rs-texte .titre-bloc,.rs-intro p'));
   var nav     = document.querySelector('nav');
   var marque  = nav ? nav.querySelector('.marque') : null;
   var burger  = document.getElementById('btnBurger');
@@ -2536,6 +2542,22 @@ if(cartesAnim.length === 6){
       } else {
         el.style.removeProperty('--rs-b');
       }
+    }
+    /* l'ombre monte au même rythme : --rs-o = part du bloc déjà recouverte par la photo */
+    for(var j = 0; j < ombres.length; j++){
+      var eo = ombres[j];
+      if(!mqPortrait.matches){
+        eo.style.removeProperty('--rs-o');
+        eo.style.removeProperty('filter');
+        continue;
+      }
+      var bo = eo.getBoundingClientRect();
+      var couv = bo.height > 0 ? (bo.bottom - haut) / bo.height : 0;
+      couv = couv < 0 ? 0 : (couv > 1 ? 1 : couv);
+      eo.style.setProperty('--rs-o', couv.toFixed(3));
+      /* sous le seuil, on coupe franchement le filtre plutôt que de flouter à alpha nul */
+      if(couv < 0.02) eo.style.setProperty('filter','none');
+      else eo.style.removeProperty('filter');
     }
 
     if(!nav) return;
