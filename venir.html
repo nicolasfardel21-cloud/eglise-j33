@@ -37,7 +37,7 @@ a{color:inherit} img{max-width:100%}
 /* ---------- nav ---------- */
 nav{position:fixed;top:0;left:0;right:0;z-index:100;display:flex;justify-content:space-between;align-items:center;padding:14px 28px;background:linear-gradient(var(--fond) 60%,transparent)}
 body.menu-ouvert nav{background:transparent}
-nav .marque{font-family:'Anton',sans-serif;font-size:2.1rem;line-height:1;letter-spacing:.06em;text-decoration:none;text-transform:uppercase}
+nav .marque{font-family:'Anton',sans-serif;font-size:2.1rem;line-height:1;letter-spacing:.06em;text-decoration:none;text-transform:uppercase;transition:color .45s ease}
 .burger{background:none;border:none;cursor:pointer;padding:10px;display:flex;flex-direction:column;gap:6px;z-index:101;margin-right:-10px}
 .burger span{display:block;width:30px;height:2.5px;background:var(--encre);transition:transform .35s,opacity .25s,background .35s}
 body.menu-ouvert .burger span{background:var(--creme)}
@@ -363,6 +363,24 @@ section{padding:110px 28px;max-width:1500px;margin:0 auto}
   body.page-venir nav .marque{color:var(--creme)}
   body.page-venir.menu-ouvert nav{background:transparent}
   body.page-venir.menu-ouvert nav .marque{color:var(--creme)}
+}
+/* mobile : l'image n'occupe que la colonne de droite et remonte derrière le bandeau au défilement.
+   Le voile blanc est donc scindé en deux pseudo-éléments (même principe que la page "contact",
+   mais sur une demi-largeur) : ::before pour la colonne de gauche — voile permanent, le « J33 »
+   reste en encre —, ::after pour la colonne de l'image, rogné au pixel près par --ch/--cb selon
+   ce qu'il reste de photo dans la bande du nav. Marque et burger basculent indépendamment,
+   chacun selon ce qui se trouve sous lui (fondu .45s / .35s). */
+@media(max-width:900px){
+  body.page-venir nav{background:transparent}
+  body.page-venir nav::before,
+  body.page-venir nav::after{content:"";position:absolute;top:0;bottom:0;z-index:-1;pointer-events:none;
+    background:linear-gradient(var(--fond) 60%,transparent);transition:opacity .45s ease}
+  body.page-venir nav::before{left:0;right:var(--vd,50%)}
+  body.page-venir nav::after{left:var(--vg,50%);right:0;clip-path:inset(var(--ch,0px) 0 var(--cb,0px) 0)}
+  body.page-venir.menu-ouvert nav::before,
+  body.page-venir.menu-ouvert nav::after{opacity:0}
+  body.page-venir.marque-sur-photo nav .marque{color:var(--creme)}
+  body.page-venir.burger-sur-photo .burger span{background:var(--creme)}
 }
 .split{display:grid;grid-template-columns:1fr 1fr;align-items:start;position:relative}
 .split-media{position:sticky;top:0;height:100svh;overflow:hidden;
@@ -924,6 +942,58 @@ requestAnimationFrame(()=>requestAnimationFrame(()=>document.querySelector('.her
   addEventListener('scroll', ()=>{ if(!tick){ tick = true; requestAnimationFrame(maj); } }, {passive:true});
   addEventListener('resize', maj);
   maj();
+})();
+
+/* mobile : bandeau du menu au-dessus de la photo (colonne de droite uniquement).
+   Enregistré APRÈS la parallaxe pour mesurer le rect déjà transformé dans la même frame.
+   — largeur : --vg/--vd placent la frontière des deux voiles sur le bord de l'image
+   — hauteur : --ch/--cb rognent le voile de droite au pixel près. Deux phases possibles,
+     jamais simultanées (l'image fait au moins 44svh, soit bien plus que la bande du nav) :
+     le haut de l'image entre dans la bande → on garde le voile au-dessus ;
+     le bas de l'image quitte la bande → on garde le voile en dessous.
+   — couleurs : chaque élément est testé par son centre contre le rect de l'image. */
+(function(){
+  const media  = document.getElementById('vsMedia');
+  const nav    = document.querySelector('nav');
+  if(!media || !nav) return;
+  const marque = nav.querySelector('.marque');
+  const burger = nav.querySelector('.burger');
+  const petitEcran = () => window.matchMedia('(max-width:900px)').matches;
+  let tick = false;
+
+  function sousPhoto(el, r){
+    if(!el) return false;
+    const e = el.getBoundingClientRect();
+    const cx = e.left + e.width / 2, cy = e.top + e.height / 2;
+    return cx > r.left && cx < r.right && cy > r.top && cy < r.bottom;
+  }
+
+  function maj(){
+    tick = false;
+    if(!petitEcran()){
+      ['--vg','--vd','--ch','--cb'].forEach(v => nav.style.removeProperty(v));
+      document.body.classList.remove('marque-sur-photo','burger-sur-photo');
+      return;
+    }
+    const r  = media.getBoundingClientRect();
+    const n  = nav.getBoundingClientRect();
+    const nh = nav.offsetHeight;
+    const g  = Math.max(0, Math.min(n.width, r.left - n.left));
+    nav.style.setProperty('--vg', g + 'px');
+    nav.style.setProperty('--vd', (n.width - g) + 'px');
+
+    const haut = Math.max(0, Math.min(nh, r.top - n.top));
+    const bas  = Math.max(0, Math.min(nh, r.bottom - n.top));
+    if(haut > 0){ nav.style.setProperty('--ch', '0px');      nav.style.setProperty('--cb', (nh - haut) + 'px'); }
+    else        { nav.style.setProperty('--ch', bas + 'px'); nav.style.setProperty('--cb', '0px'); }
+
+    document.body.classList.toggle('marque-sur-photo', sousPhoto(marque, r));
+    document.body.classList.toggle('burger-sur-photo', sousPhoto(burger, r));
+  }
+  maj();
+  addEventListener('scroll', ()=>{ if(!tick){ tick = true; requestAnimationFrame(maj); } }, {passive:true});
+  addEventListener('resize', maj);
+  if(document.fonts && document.fonts.ready) document.fonts.ready.then(maj);
 })();
 
 /* le gros titre remplit toute la largeur de sa colonne, et chaque mot est justifié
