@@ -2543,7 +2543,12 @@ if(cartesAnim.length === 6){
         el.style.removeProperty('--rs-b');
       }
     }
-    /* l'ombre monte au même rythme : --rs-o = part du bloc déjà recouverte par la photo */
+    /* L'ombre n'entre en jeu qu'APRÈS le crème : elle reste nulle tant que le bloc n'est
+       pas intégralement sur la photo (bord de la photo au-dessus du haut du bloc), puis
+       monte progressivement. La course restante sert de normalisation : elle vaut la
+       distance du haut du bloc au haut de l'écran, donc chaque bloc atteint son ombre
+       pleine exactement au moment où la photo finit de se caler. Conséquence : plus
+       aucune auréole sur du texte encre, puisque l'ombre démarre à couverture complète. */
     for(var j = 0; j < ombres.length; j++){
       var eo = ombres[j];
       if(!mqPortrait.matches){
@@ -2552,11 +2557,12 @@ if(cartesAnim.length === 6){
         continue;
       }
       var bo = eo.getBoundingClientRect();
-      var couv = bo.height > 0 ? (bo.bottom - haut) / bo.height : 0;
-      couv = couv < 0 ? 0 : (couv > 1 ? 1 : couv);
-      eo.style.setProperty('--rs-o', couv.toFixed(3));
+      var course = bo.top;
+      var o = course > 1 ? (course - haut) / course : (haut <= 0 ? 1 : 0);
+      o = o < 0 ? 0 : (o > 1 ? 1 : o);
+      eo.style.setProperty('--rs-o', o.toFixed(3));
       /* sous le seuil, on coupe franchement le filtre plutôt que de flouter à alpha nul */
-      if(couv < 0.02) eo.style.setProperty('filter','none');
+      if(o < 0.02) eo.style.setProperty('filter','none');
       else eo.style.removeProperty('filter');
     }
 
