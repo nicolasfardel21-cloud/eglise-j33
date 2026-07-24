@@ -679,9 +679,6 @@ h1.ap-titre{position:relative;z-index:1;margin:17px auto 0;width:fit-content;max
 
    Mobile paysage : repli statique (photo, puis titre, texte, miniatures, descriptif).
 
-   Contrainte structurelle : rien entre .rs-split et le titre ne doit créer de contexte
-   d'empilement (ni isolation, ni transform, ni z-index sur .rs-texte), sans quoi la
-   fusion tomberait dans le vide et le titre resterait blanc.
    ================================================================================ */
 #responsables{max-width:none;padding:0;scroll-margin-top:90px}
 .rs-scene{position:relative;height:calc(100svh + 45svh)}
@@ -729,19 +726,19 @@ h1.ap-titre{position:relative;z-index:1;margin:17px auto 0;width:fit-content;max
 .rs-vignette:hover .rs-vignette-nom,.rs-vignette[aria-pressed="true"] .rs-vignette-nom{color:var(--or)}
 .rs-vignette:focus-visible{outline:2px solid var(--or);outline-offset:5px}
 
-/* ---------------- colonne droite : photo + descriptif ---------------- */
-.rs-droite{grid-column:2;grid-row:1;position:relative;height:100%;overflow:hidden;background:var(--fond)}
-/* photo : toute la hauteur, réduite au tiers haut quand un pasteur est sélectionné */
-.rs-media1{position:absolute;left:0;right:0;top:0;height:100%;overflow:hidden;
-  transition:height .6s cubic-bezier(.76,0,.24,1)}
-.rs-split.rs-ouvert .rs-media1{height:50svh}
+/* ---------------- colonne droite : photo 16:9 + descriptif dessous ----------------
+   colonne en flux vertical : la photo occupe un 16:9 en haut, le descriptif prend
+   exactement ce qui reste. Aucune coordonnée en dur à tenir synchronisée. */
+.rs-droite{grid-column:2;grid-row:1;position:relative;height:100%;overflow:hidden;
+  background:var(--fond);display:flex;flex-direction:column}
+.rs-media1{position:relative;flex:0 0 auto;width:100%;aspect-ratio:16/9;overflow:hidden}
 .rs-photo{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:50% 28%;
   pointer-events:none;will-change:transform;transform:translateY(var(--rs-y,100%))}
 .rs-ph2{opacity:0;transition:opacity .55s ease}
 .rs-split.rs-ouvert .rs-ph1{opacity:0;transition:opacity .55s ease}
 .rs-split.rs-ouvert .rs-ph2{opacity:1}
-/* descriptif : occupe ce que la photo libère */
-.rs-desc{position:absolute;left:0;right:0;top:50svh;bottom:0;background:var(--fond);
+/* descriptif : occupe ce que la photo laisse sous elle */
+.rs-desc{position:relative;flex:1 1 auto;min-height:0;background:var(--fond);
   opacity:0;pointer-events:none;transform:translateY(14px);
   transition:opacity .45s ease .12s,transform .5s cubic-bezier(.76,0,.24,1) .12s}
 .rs-split.rs-ouvert .rs-desc{opacity:1;pointer-events:auto;transform:none}
@@ -771,11 +768,12 @@ h1.ap-titre{position:relative;z-index:1;margin:17px auto 0;width:fit-content;max
   .rs-vignette-img{height:auto;aspect-ratio:1/1}
   .rs-texte{position:static;background:none;padding:0}
   .rs-texte .titre-bloc{font-size:clamp(2.2rem,6vw,3rem)}
-  .rs-media{position:static;width:100%;height:100svh;margin:0 0 34px}
-  .rs-split.rs-ouvert .rs-media1{height:100svh}
+  .rs-droite{display:block}
+  .rs-media{position:static;width:100%;height:100svh;aspect-ratio:auto;margin:0 0 34px}
+  .rs-desc{flex:none}
   .rs-photo{transform:none}
   .rs-desc{position:static;opacity:1;pointer-events:auto;transform:none;
-    height:0;overflow:hidden;transition:height .55s cubic-bezier(.76,0,.24,1)}
+    height:0;min-height:0;overflow:hidden;transition:height .55s cubic-bezier(.76,0,.24,1)}
   .rs-split.rs-ouvert .rs-desc{height:auto}
   .rs-desc-inner{height:auto;display:block}
   .rs-desc-corps{overflow:visible;padding:26px 28px 0;font-size:1rem}
@@ -794,15 +792,13 @@ h1.ap-titre{position:relative;z-index:1;margin:17px auto 0;width:fit-content;max
 @media(max-width:900px) and (orientation:portrait){
   #responsables{padding:0}
   .rs-scene{height:calc(var(--rs-vh,100dvh) * 1.88)}
-  /* scène collante plein écran : c'est le contexte d'empilement contre lequel le titre
-     se fusionne (fond blanc → exclusion = noir ; sur la photo → inversion) */
+  /* scène collante plein écran */
   .rs-split{position:sticky;top:0;height:var(--rs-vh,100dvh);overflow:hidden;background:var(--fond);
     display:block;min-height:0}
   .rs-droite,.rs-colonne{display:contents}
 
   /* ---- panneau A : photo plein écran + titre figé ----
-     pas de z-index sur la photo ni sur le texte : l'ordre du DOM suffit et évite de
-     créer un contexte d'empilement qui casserait la fusion */
+     l'ordre du DOM suffit à superposer le texte à la photo (media1 avant .rs-texte) */
   .rs-media1{position:absolute;left:0;right:0;top:0;height:100%;margin:0;background:var(--fond);
     transition:transform .65s cubic-bezier(.76,0,.24,1)}
   .rs-split.rs-liste .rs-media1,.rs-split.rs-ouvert .rs-media1{height:100%;transform:translateX(-100%)}
@@ -814,12 +810,22 @@ h1.ap-titre{position:relative;z-index:1;margin:17px auto 0;width:fit-content;max
   .rs-split.rs-liste .rs-texte,.rs-split.rs-ouvert .rs-texte{transform:translateX(-100%)}
   .rs-texte .eyebrow{margin-bottom:16px}
   .rs-texte .titre-bloc{font-size:clamp(1.9rem,8.4vw,2.9rem)}
-  .rs-l1{mix-blend-mode:exclusion;color:#fff}
-  .rs-l2{color:var(--or)}
+  /* Le texte est en encre sur le fond blanc et bascule en crème au fur et à mesure que
+     pasteur_1 monte derrière lui : --rs-b, posée en JS sur chaque bloc, situe le haut de
+     la photo dans le repère de l'élément, et le dégradé bascule à cet endroit — donc
+     ligne par ligne, du bas vers le haut, à la vitesse de la photo.
+     Le dégradé est porté par le BLOC (h2, p) et non par un span en ligne, dont le fond se
+     répéterait à chaque fragment de ligne. Les dorés se retirent par -webkit-text-fill-color. */
+  .rs-texte .titre-bloc,.rs-intro p{
+    background-image:linear-gradient(to bottom,
+      var(--encre) 0,var(--encre) var(--rs-b,100%),
+      var(--creme) calc(var(--rs-b,100%) + 20px),var(--creme) 100%);
+    -webkit-background-clip:text;background-clip:text}
+  .rs-texte .titre-bloc,.rs-intro p,.rs-l1,.rs-x,.rs-x strong{
+    color:transparent;-webkit-text-fill-color:transparent}
+  .rs-x strong{font-weight:600}
+  .rs-l2,.rs-intro .or-txt{color:var(--or);-webkit-text-fill-color:var(--or)}
   .rs-intro .texte-bloc{margin-top:18px;max-width:none;font-size:.95rem}
-  .rs-x{mix-blend-mode:exclusion;color:#fff}
-  .rs-x strong{color:#fff}
-  .rs-intro .or-txt{color:var(--or)}
 
   /* bouton « Nos responsables » (même facture que « découvrir en images ») */
   .rs-btn{display:inline-flex;align-items:center;gap:14px;
@@ -2439,6 +2445,7 @@ if(cartesAnim.length === 6){
   var vign    = document.getElementById('rsVignette');
   var revenir = document.getElementById('rsRevenir');
   var retourL = document.getElementById('rsRetourListe');
+  var degrades = [].slice.call(document.querySelectorAll('.rs-texte .titre-bloc,.rs-intro p'));
   var nav     = document.querySelector('nav');
   var marque  = nav ? nav.querySelector('.marque') : null;
   var burger  = document.getElementById('btnBurger');
@@ -2488,6 +2495,23 @@ if(cartesAnim.length === 6){
     var visible = r.bottom > 0 && r.top < H;
     scene.classList.toggle('rs-calee', visible && p >= 0.999);
 
+    /* bande réellement couverte par pasteur_1 (cadre ∩ image translatée) */
+    var mb = media1.getBoundingClientRect();
+    var ib = ph1.getBoundingClientRect();
+    var haut = Math.max(mb.top, ib.top);
+    var gauche = mb.left, droite = mb.right;
+
+    /* portrait : chaque bloc de texte bascule de l'encre au crème à hauteur du bord
+       supérieur de la photo, donc ligne par ligne pendant qu'elle monte */
+    for(var k = 0; k < degrades.length; k++){
+      var el = degrades[k];
+      if(mqPortrait.matches){
+        el.style.setProperty('--rs-b', Math.round(haut - el.getBoundingClientRect().top) + 'px');
+      } else {
+        el.style.removeProperty('--rs-b');
+      }
+    }
+
     if(!nav) return;
     /* Panneau B (vignettes, fond clair) : bandeau normal, voile compris.
        Panneau C : la photo monte sous le bandeau → voile retiré, mais marque et tirets
@@ -2497,11 +2521,6 @@ if(cartesAnim.length === 6){
       return;
     }
 
-    /* bande réellement couverte par la photo (cadre ∩ image translatée) */
-    var mb = media1.getBoundingClientRect();
-    var ib = ph1.getBoundingClientRect();
-    var haut = Math.max(mb.top, ib.top);
-    var gauche = mb.left, droite = mb.right;
     if(mb.width <= 0 || mb.height <= 0 || haut >= nh){ resetNav(); return; }
 
     var vw = document.documentElement.clientWidth;
@@ -2550,7 +2569,18 @@ if(cartesAnim.length === 6){
     suivre(760);
   }
 
-  function ouvrirListe(){ if(liste) return; liste = true; appliquer(); }   /* A → B */
+  /* A → B. On recale d'abord la page sur la zone épinglée : le bouton reste cliquable
+     alors qu'on a continué à défiler et que la scène s'est décrochée vers le haut ;
+     sans ce recalage le panneau s'ouvrirait sur un écran déjà à moitié sorti. */
+  function recaler(){
+    if(!mqPortrait.matches) return;
+    var r = scene.getBoundingClientRect();
+    var cible = Math.round(r.top + window.scrollY + window.innerHeight * 0.60);
+    if(Math.abs(r.top + window.innerHeight * 0.60) < 2) return;
+    if(window.lenis) window.lenis.scrollTo(cible, {immediate:true, force:true});
+    else window.scrollTo(0, cible);
+  }
+  function ouvrirListe(){ if(liste) return; recaler(); liste = true; appliquer(); }   /* A → B */
   function ouvrir(){ if(ouvert) return; ouvert = true; appliquer(); }      /* B → C */
   function retourListe(){                                                  /* C → B, ou C → A */
     if(!ouvert) return;
