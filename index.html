@@ -36,9 +36,21 @@ a{color:inherit} img{max-width:100%}
 .lien-paren.or{border-color:var(--or);color:var(--or)} .lien-paren.or:hover{background:var(--or);color:#fff}
 
 /* ---------- nav ---------- */
-nav{position:fixed;top:0;left:0;right:0;z-index:100;display:flex;justify-content:space-between;align-items:center;padding:14px 28px;background:linear-gradient(var(--fond) 60%,transparent)}
+nav{position:fixed;top:0;left:0;right:0;z-index:100;display:flex;justify-content:space-between;align-items:center;padding:14px 28px;background:transparent}
+/* Le voile blanc du bandeau est porté par ::before, et non plus par le fond du nav, afin de
+   pouvoir être découpé AU PIXEL par la frontière entre la section claire et la bande sombre.
+   --ch / --cb = rognage haut / bas, pilotés au scroll : le voile n'existe QUE là où le fond
+   sous le bandeau est clair. Plus aucun voile résiduel sur le noir, aucune frame de décalage. */
+nav::before{content:"";position:absolute;inset:0;z-index:-1;pointer-events:none;
+  background:linear-gradient(var(--fond) 60%,transparent);
+  clip-path:inset(var(--ch,0px) 0 var(--cb,0px) 0);
+  transition:opacity .45s ease}
+body.menu-ouvert nav::before{opacity:0}
+/* nav au-dessus d'une section sombre : fondu progressif du logo + tirets vers le clair */
+body.nav-sombre nav .marque{color:var(--creme)}
+body.nav-sombre .burger span{background:var(--creme)}
 body.menu-ouvert nav{background:transparent}
-nav .marque{font-family:'Anton',sans-serif;font-size:2.1rem;line-height:1;letter-spacing:.06em;text-decoration:none;text-transform:uppercase}
+nav .marque{font-family:'Anton',sans-serif;font-size:2.1rem;line-height:1;letter-spacing:.06em;text-decoration:none;text-transform:uppercase;transition:color .45s ease}
 .burger{background:none;border:none;cursor:pointer;padding:10px;display:flex;flex-direction:column;gap:6px;z-index:101;margin-right:-10px}
 .burger span{display:block;width:30px;height:2.5px;background:var(--encre);transition:transform .35s,opacity .25s,background .35s}
 body.menu-ouvert .burger span{background:var(--creme)}
@@ -1187,11 +1199,14 @@ if(!reduit){
       });
     }
     if(sectionDesert && !window.matchMedia('(max-width:760px)').matches){
-      const p = progression(sectionDesert), d=(p-.5)*2;
+      const p = progression(sectionDesert);
       lignesEau.forEach(l=>{
         const s = parseFloat(l.dataset.glisse);
-        if(s!==0) l.style.transform = `translateX(${s*d*-9}vw)`;
-        else l.style.transform = `scale(${1+Math.max(0,(1-Math.abs(d)))*.06})`;
+        /* course : 9vw vers l'EXTÉRIEUR à l'entrée (p=0), puis 18vw vers l'INTÉRIEUR
+           une fois en haut (p=1). Le départ est inchangé ; seule la convergence finale
+           est amplifiée, pour rapprocher davantage les lignes du centre en arrivant. */
+        if(s!==0) l.style.transform = `translateX(${s*(9 - 27*p)}vw)`;
+        else l.style.transform = `scale(${1+Math.max(0,(1-Math.abs((p-.5)*2)))*.06})`;
       });
     }
     if(sectionDesert && window.matchMedia('(max-width:760px)').matches){
@@ -1858,6 +1873,37 @@ if(cartesAnim.length === 6){
   }
   surRedim(surScroll);
   if(document.fonts && document.fonts.ready) document.fonts.ready.then(maj);
+  maj();
+})();
+
+/* ---------- nav clair (progressif) quand il passe au-dessus du passage Jérémie (fond foncé) ---------- */
+(function(){
+  const bande = document.querySelector('.verset-geant');
+  if(!bande) return;
+  const apres = document.querySelector('footer');          /* section claire qui suit */
+  const nav = document.querySelector('nav');
+  const navH = () => nav ? nav.offsetHeight : 64;
+  let tick = false;
+  function maj(){
+    const rc = bande.getBoundingClientRect();
+    const re = apres ? apres.getBoundingClientRect() : {top: 1e9};
+    const y = navH() * 0.5;
+    /* clair tant que le fond noir occupe le haut ET que la section claire ne l'a pas recouvert */
+    const sombre = rc.top <= y && re.top > y;
+    document.body.classList.toggle('nav-sombre', sombre);
+    /* découpe du voile : on borne à la boîte du nav le segment sombre [rc.top ; re.top].
+       Tant qu'il n'est pas ancré en haut, il monte par le bas → on rogne par le bas.
+       Une fois ancré en haut, c'est la section claire qui le chasse → on rogne par le haut. */
+    const nh = navH();
+    const hautSombre = Math.max(0, Math.min(nh, rc.top));
+    const basSombre  = Math.max(0, Math.min(nh, re.top));
+    const ch = hautSombre > 0 ? 0 : basSombre;
+    const cb = hautSombre > 0 ? nh - hautSombre : 0;
+    if(nav){ nav.style.setProperty('--ch', ch + 'px'); nav.style.setProperty('--cb', cb + 'px'); }
+    tick = false;
+  }
+  window.addEventListener('scroll', ()=>{ if(!tick){ requestAnimationFrame(maj); tick = true; } }, {passive:true});
+  window.addEventListener('resize', maj);
   maj();
 })();
 </script>
