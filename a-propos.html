@@ -687,7 +687,7 @@ h1.ap-titre{position:relative;z-index:1;margin:17px auto 0;width:fit-content;max
    remonte d'un seul tenant. C'est aussi le contexte d'empilement de référence pour la
    fusion du titre en portrait. */
 .rs-split{position:sticky;top:0;height:100svh;overflow:hidden;background:var(--fond);
-  display:grid;grid-template-columns:1fr auto;align-items:stretch}
+  display:grid;grid-template-columns:2fr 1fr;align-items:stretch}
 
 /* ---------------- colonne gauche ---------------- */
 /* --rs-padg, posée en JS : aligne le bord gauche du texte sur la colonne de 1500px des
@@ -729,14 +729,13 @@ h1.ap-titre{position:relative;z-index:1;margin:17px auto 0;width:fit-content;max
 .rs-vignette:hover .rs-vignette-nom,.rs-vignette[aria-pressed="true"] .rs-vignette-nom{color:var(--or)}
 .rs-vignette:focus-visible{outline:2px solid var(--or);outline-offset:5px}
 
-/* ---------------- colonne droite : bande 9:16 collée au bord droit ----------------
-   sa LARGEUR découle de la hauteur d'écran : pasteur_1 occupe toute la hauteur et la
-   largeur est réduite pour donner le ratio. Colonne en flux vertical, donc quand la
-   photo se réduit à la moitié le descriptif prend exactement le reste, à la même
-   largeur. Aucune coordonnée en dur à tenir synchronisée entre les deux. */
+/* ---------------- colonne droite : un tiers de l'écran, collée au bord droit ----------------
+   la largeur vient de la grille (2fr 1fr), donc un tiers exact sans passer par vw — ce qui
+   éviterait de compter la barre de défilement. Colonne en flux vertical : quand la photo
+   se réduit à la moitié de l'écran, le descriptif prend exactement le reste à la même
+   largeur, sans coordonnée en dur à tenir synchronisée entre les deux. */
 .rs-droite{grid-column:2;grid-row:1;position:relative;height:100%;overflow:hidden;
-  background:var(--fond);display:flex;flex-direction:column;
-  width:calc(100svh * 9 / 16);max-width:56vw}
+  background:var(--fond);display:flex;flex-direction:column}
 .rs-media1{position:relative;flex:0 0 auto;width:100%;height:100%;overflow:hidden;
   transition:height .6s cubic-bezier(.76,0,.24,1)}
 /* pasteur_2 : même largeur, moitié de la hauteur d'écran */
