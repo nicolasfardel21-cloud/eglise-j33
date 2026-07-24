@@ -1664,6 +1664,18 @@ if(cartesAnim.length === 6){
       }
       suite.style.bottom = (pr.bottom - vr.bottom) + 'px';     /* bas de la suite = bas du verset */
       suite.style.top = 'auto';
+      /* 4b) recentrage horizontal : le bloc est CENTRÉ dans le trou (bord droit de
+         l'illustration 2 → bord gauche de « Et je te répondrai »), marges égales de
+         chaque côté. Calculé APRÈS la boucle de largeur, puisqu'il faut la largeur
+         finale. Sans illustration 2, on garde le calage à gauche d'origine. */
+      if(hp2){
+        const trouG = hp2.getBoundingClientRect().right;
+        const trouD = vr.left;
+        const wFinal = suite.getBoundingClientRect().width;
+        let gx = trouG + ((trouD - trouG) - wFinal) / 2;
+        gx = Math.max(gx, trouG);                              /* jamais sur l'illustration */
+        suite.style.left = (gx - pr.left) + 'px';
+      }
       /* 5) boutons : centrés dans le même trou (entre l'illustration 2 et le verset/la référence),
             sous la suite. On peut aller jusqu'au texte de la référence (les boutons sont sous la ligne du verset). */
       const cta = document.getElementById('heroCta');
