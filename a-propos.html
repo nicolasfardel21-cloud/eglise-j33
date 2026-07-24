@@ -835,6 +835,15 @@ h1.ap-titre{position:relative;z-index:1;margin:17px auto 0;width:fit-content;max
       var(--encre) 0,var(--encre) var(--rs-b,100%),
       var(--creme) calc(var(--rs-b,100%) + 20px),var(--creme) 100%);
     -webkit-background-clip:text;background-clip:text}
+  /* Halo sombre pour détacher le texte des hautes lumières de la photo.
+     C'est filter:drop-shadow et NON text-shadow : avec background-clip:text la couleur du
+     glyphe vient du fond de l'élément, peint SOUS l'ombre — un text-shadow recouvrait donc
+     le glyphe (mesuré : crème 239 → 55). drop-shadow s'applique au rendu final et se pose
+     derrière : le glyphe reste à 239. Passes serrées empilées pour un halo dense au bord
+     du glyphe, puis une passe large pour l'assise. */
+  .rs-texte .eyebrow,.rs-texte .titre-bloc,.rs-intro p{
+    filter:drop-shadow(0 0 1px rgba(12,17,28,1)) drop-shadow(0 0 2px rgba(12,17,28,1))
+           drop-shadow(0 0 4px rgba(12,17,28,1)) drop-shadow(0 0 12px rgba(12,17,28,.75))}
   .rs-texte .titre-bloc,.rs-intro p,.rs-l1,.rs-x,.rs-x strong{
     color:transparent;-webkit-text-fill-color:transparent}
   .rs-x strong{font-weight:600}
