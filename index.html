@@ -1743,15 +1743,21 @@ if(cartesAnim.length === 6){
      on retire la hauteur de la "safe area" (barre du bas iOS, mode immersif Android
      sur certains modèles) + une marge de sécurité fixe, pour ne pas déclencher
      l'apparition alors que le haut de l'image est encore caché par cette zone. */
+  const sonde = document.getElementById('sondeBasEcran');
+  const zoneCachee = (sonde ? sonde.getBoundingClientRect().height : 0) + 20;
+  const animsVus = new Set();
+  function rendreVisible(el){
+    if(animsVus.has(el)) return;
+    animsVus.add(el);
+    el.classList.add('visible');
+  }
   if('IntersectionObserver' in window){
-    const sonde = document.getElementById('sondeBasEcran');
-    const zoneCachee = (sonde ? sonde.getBoundingClientRect().height : 0) + 20;
     const io = new IntersectionObserver((entries)=>{
-      entries.forEach(e=>{ if(e.isIntersecting){ e.target.classList.add('visible'); io.unobserve(e.target); } });
+      entries.forEach(e=>{ if(e.isIntersecting){ rendreVisible(e.target); io.unobserve(e.target); } });
     }, { threshold:0, rootMargin:'0px 0px -' + zoneCachee.toFixed(0) + 'px 0px' });
     anims.forEach(el=>io.observe(el));
   } else {
-    anims.forEach(el=>el.classList.add('visible'));
+    anims.forEach(el=>rendreVisible(el));
   }
 
   if(reduit) return;
@@ -1759,6 +1765,7 @@ if(cartesAnim.length === 6){
   /* 2) parallaxe différentiel : chaque élément se translate selon sa vitesse (data-vit).
         vitesse > 0 = plus lent (traîne), vitesse < 0 = plus rapide (devance).
      3) parallaxe interne : l'image glisse dans son cadre. */
+  const animsSet = new Set(anims);
   const imgs = figs.map(f=>f.querySelector('.gpm-cadre img')).filter(Boolean);
   let enCours = false;
   function maj(){
@@ -1771,6 +1778,11 @@ if(cartesAnim.length === 6){
        Ancrage sur "à quel point l'élément a traversé l'écran depuis son entrée". */
     paral.forEach(el=>{
       const r = el.getBoundingClientRect();
+      /* filet de sécurité : re-teste l'apparition avec la géométrie RÉELLE et actuelle
+         de la frame en cours ; immunise le tout premier élément (image 1) contre le
+         redimensionnement de la barre d'adresse mobile pendant le tout premier scroll,
+         qui peut fausser le calcul ponctuel de l'IntersectionObserver. */
+      if(animsSet.has(el) && r.top <= vh - zoneCachee){ rendreVisible(el); }
       if(r.bottom < -200 || r.top > vh + 200) return;
       const vit = parseFloat(el.dataset.vit) || 0;
       /* trajet : 0 lorsque le HAUT de l'élément est en bas de l'écran (il vient d'entrer),
