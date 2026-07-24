@@ -1646,8 +1646,42 @@ if(cartesAnim.length === 6){
       const colL = hr.left + (hr.width - colW) / 2;
       let gaucheX = colL + colW * 0.06;
       if(hp2){ const r2 = hp2.getBoundingClientRect(); gaucheX = Math.max(gaucheX, r2.right + 24); }
-      const dispoW = Math.max(150, (vr.left - 24) - gaucheX);  /* largeur disponible dans le trou */
-      suite.style.left = (gaucheX - pr.left) + 'px';
+      /* 5) boutons : centrés dans le même trou (entre l'illustration 2 et le verset/la référence),
+            sous la suite. On peut aller jusqu'au texte de la référence (les boutons sont sous la ligne du verset).
+            POSITIONNÉS EN PREMIER : la suite s'aligne ensuite sur eux, ils doivent donc
+            déjà être à leur place définitive avant qu'on les mesure. */
+      const cta = document.getElementById('heroCta');
+      if(cta){
+        let droiteX = vr.left;
+        const refEl = document.getElementById('heroRef');
+        if(refEl && refEl.firstChild){
+          const rr = document.createRange(); rr.selectNodeContents(refEl);
+          droiteX = Math.max(droiteX, rr.getBoundingClientRect().left - 16);
+        }
+        const cpr = (cta.offsetParent || parent).getBoundingClientRect();
+        cta.style.left  = (gaucheX - cpr.left) + 'px';
+        cta.style.width = Math.max(240, droiteX - gaucheX) + 'px';
+        cta.style.right = 'auto';
+      }
+
+      /* 6) ancrage horizontal de la suite : bord gauche calé sur le bord gauche VISIBLE
+         de « ( Venir nous voir ) », PARENTHÈSE COMPRISE.
+         La « ( » est un pseudo-élément ::before : elle se trouve au début de la boîte de
+         CONTENU du lien, et non au bord de sa zone cliquable. On ajoute donc padding-left
+         + bordure gauche pour viser le glyphe lui-même.
+         Cet ancrage sert AUSSI de référence à la largeur disponible : sinon le bloc,
+         décalé vers la droite, déborderait d'autant sur le verset. */
+      const lienVenir = cta ? cta.querySelector('.lien-paren') : null;
+      let ancreX = gaucheX;
+      if(lienVenir){
+        const cl = getComputedStyle(lienVenir);
+        ancreX = lienVenir.getBoundingClientRect().left
+               + (parseFloat(cl.paddingLeft) || 0)
+               + (parseFloat(cl.borderLeftWidth) || 0);
+      }
+
+      const dispoW = Math.max(150, (vr.left - 24) - ancreX);   /* largeur disponible, mesurée depuis l'ancre */
+      suite.style.left = (ancreX - pr.left) + 'px';
       suite.style.right = 'auto';
       suite.style.maxWidth = 'none';
       suite.style.whiteSpace = 'nowrap';
@@ -1664,33 +1698,6 @@ if(cartesAnim.length === 6){
       }
       suite.style.bottom = (pr.bottom - vr.bottom) + 'px';     /* bas de la suite = bas du verset */
       suite.style.top = 'auto';
-      /* 4b) recentrage horizontal : le bloc est CENTRÉ dans le trou (bord droit de
-         l'illustration 2 → bord gauche de « Et je te répondrai »), marges égales de
-         chaque côté. Calculé APRÈS la boucle de largeur, puisqu'il faut la largeur
-         finale. Sans illustration 2, on garde le calage à gauche d'origine. */
-      if(hp2){
-        const trouG = hp2.getBoundingClientRect().right;
-        const trouD = vr.left;
-        const wFinal = suite.getBoundingClientRect().width;
-        let gx = trouG + ((trouD - trouG) - wFinal) / 2;
-        gx = Math.max(gx, trouG);                              /* jamais sur l'illustration */
-        suite.style.left = (gx - pr.left) + 'px';
-      }
-      /* 5) boutons : centrés dans le même trou (entre l'illustration 2 et le verset/la référence),
-            sous la suite. On peut aller jusqu'au texte de la référence (les boutons sont sous la ligne du verset). */
-      const cta = document.getElementById('heroCta');
-      if(cta){
-        let droiteX = vr.left;
-        const refEl = document.getElementById('heroRef');
-        if(refEl && refEl.firstChild){
-          const rr = document.createRange(); rr.selectNodeContents(refEl);
-          droiteX = Math.max(droiteX, rr.getBoundingClientRect().left - 16);
-        }
-        const cpr = (cta.offsetParent || parent).getBoundingClientRect();
-        cta.style.left  = (gaucheX - cpr.left) + 'px';
-        cta.style.width = Math.max(240, droiteX - gaucheX) + 'px';
-        cta.style.right = 'auto';
-      }
     }
   }
 
