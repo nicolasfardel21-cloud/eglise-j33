@@ -399,8 +399,14 @@ body.menu-ouvert .menu-reseaux a:nth-child(3){transition-delay:1.15s}
   .hero-scene .hero{height:auto;min-height:100svh}
 }
 @media(max-width:760px){
-  /* mobile : héros ancré en haut → la suite du verset ne pousse que vers le bas */
-  .hero-scene .hero{justify-content:flex-start}
+  /* mobile : héros ancré en haut → la suite du verset ne pousse que vers le bas.
+     Le grand titre est dimensionné en vw (clamp 22vw) : sur une fenêtre large mais
+     BASSE (desktop réduit, ~700x640), le titrage réclame plus que 100svh et débordait
+     sur la section suivante. min-height:100svh garde le plein écran quand il y a la
+     place, height:auto laisse le héros grandir sinon. Le padding-bottom réserve la
+     ligne du 1er bouton, ancré à une hauteur de bouton du bas du héros. */
+  .hero-scene .hero{justify-content:flex-start;height:auto;min-height:100svh;
+    padding-bottom:calc(var(--hb) + 26px)}
 }
 
 /* ---------- marquee ---------- */
@@ -687,7 +693,7 @@ footer{padding:90px 28px 40px;max-width:1500px;margin:0 auto;border-top:1px soli
   /* le hero prend une hauteur naturelle (pas de plein écran forcé qui écrase) */
   .hero-scene{height:auto!important}
   .hero-scene .hero{height:auto!important;min-height:0!important;position:relative!important;
-    padding-top:70px;padding-bottom:30px}
+    padding-top:70px;padding-bottom:calc(var(--hb, 0px) + 30px)}
   /* carrousel d'infos remonté près de « J33 » */
   .hero .infos{margin-top:0!important}
   .hero-titrage{margin-top:14px!important}
