@@ -704,6 +704,28 @@ footer{padding:90px 28px 40px;max-width:1500px;margin:0 auto;border-top:1px soli
   .desert .recit{padding-bottom:0!important}
   .verset-geant{margin-top:0!important}
 }
+/* ===== texture dorée : découpée sur la forme des lettres (background-clip:text) =====
+   Ne s'applique qu'aux TROIS calques dorés indépendants, déjà posés hors fusion et
+   au-dessus d'un texte en visibility:hidden — donc aucun liseré sur les bords.
+   Les petits éléments en var(--or) (parenthèses des boutons, références, labels)
+   restent en aplat : à cette taille une texture ne se lit pas.
+
+   REPORT SUR UNE AUTRE PAGE : copier ce bloc tel quel et ajouter à la liste les
+   sélecteurs des calques dorés de la page.
+
+   Le dégradé est peint SOUS la texture : si le JPG manque, tarde ou échoue, le titre
+   reste doré au lieu de disparaître (color:transparent sans découpe = invisible). */
+:root{
+  --texture-or:url("images/commun/texture_or.jpg");
+  --or-degrade:linear-gradient(115deg,#8A6F22 0%,var(--or) 26%,#E4CE84 46%,var(--or) 62%,#8A6F22 100%);
+}
+@supports ((-webkit-background-clip:text) or (background-clip:text)){
+  .ligne3-or,.gp-or,.gpm-or{
+    background-image:var(--texture-or),var(--or-degrade);
+    background-size:cover;background-position:center;background-repeat:no-repeat;
+    -webkit-background-clip:text;background-clip:text;
+    -webkit-text-fill-color:transparent;color:transparent}
+}
 </style>
 </head>
 <body>
