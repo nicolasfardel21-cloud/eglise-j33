@@ -720,7 +720,19 @@ footer{padding:90px 28px 40px;max-width:1500px;margin:0 auto;border-top:1px soli
   --or-degrade:linear-gradient(115deg,#8A6F22 0%,var(--or) 26%,#E4CE84 46%,var(--or) 62%,#8A6F22 100%);
 }
 @supports ((-webkit-background-clip:text) or (background-clip:text)){
-  .ligne3-or,.gp-or,.gpm-or{
+  /* 1) les trois calques dorés indépendants du héro et de la section évangile */
+  .ligne3-or,.gp-or,.gpm-or,
+  /* 2) les grands textes dorés du reste de la page (Anton, >= 24px) :
+        « dans le désert » (144px), « ensemble » (80px), le verset géant sur fond
+        noir (27px) et la suite du verset du héro (24px).
+        Volontairement PAS étendu aux parenthèses des liens (18px Archivo), aux
+        micro-labels (13px) ni aux surfaces pleines (jauges, bordures, curseur,
+        ::selection) : la texture ne s'y lit pas, et sur une surface il n'y a pas
+        de lettre à découper. */
+  .desert .ligne-eau.l3,
+  #rendezvous .rdv-lien .or,
+  .verset-geant p i,
+  .hero-suite{
     background-image:var(--texture-or),var(--or-degrade);
     background-size:cover;background-position:center;background-repeat:no-repeat;
     -webkit-background-clip:text;background-clip:text;
