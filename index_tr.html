@@ -17,7 +17,7 @@
 :root{
   --fond:#FFFFFF; --encre:#101622; --gris:#5A6068;
   --ligne:rgba(16,22,34,.14); --ligne-l:rgba(16,22,34,.08);
-  --or-rgb:179,129,28; --or:rgb(var(--or-rgb)); --orange:#E8834A; --bleu:#5E97BD; --bleu-pale:#DCEAF3;
+  --or-rgb:189,137,30; --or:rgb(var(--or-rgb)); --orange:#E8834A; --bleu:#5E97BD; --bleu-pale:#DCEAF3;
   --noir:#0C111C; --creme:#F3EFE4; --creme-50:rgba(243,239,228,.55); --creme-15:rgba(243,239,228,.16);
 }
 *{margin:0;padding:0;box-sizing:border-box}
@@ -746,6 +746,13 @@ footer{padding:90px 28px 40px;max-width:1500px;margin:0 auto;border-top:1px soli
      echouait, la valeur deviendrait invalide, background-image tomberait a none,
      et avec color:transparent les titres disparaitraient. */
   --or-degrade:linear-gradient(115deg,#814F01 0%,var(--or) 26%,#EABD4C 46%,var(--or) 62%,#814F01 100%);
+  /* texture bleue de « Car des eaux ». Meme mecanique que la doree ; --tex-taille
+     est partage, il suppose une source de 1536px de large comme texture_or.jpg.
+     Si texture_bleu.jpg a une autre largeur, les paliers sont a recalculer.
+     Repli derive de --bleu, a recaler sur la rampe reelle du fichier une fois
+     celui-ci disponible (comme l'a ete --or-degrade sur texture_or.jpg). */
+  --texture-bleu:url("images/commun/texture_bleu.jpg");
+  --bleu-degrade:linear-gradient(115deg,#3D627B 0%,var(--bleu) 26%,#96BBD4 46%,var(--bleu) 62%,#3D627B 100%);
 }
 @supports ((-webkit-background-clip:text) or (background-clip:text)){
   /* 1) les trois calques dorés indépendants du héro et de la section évangile */
@@ -759,8 +766,10 @@ footer{padding:90px 28px 40px;max-width:1500px;margin:0 auto;border-top:1px soli
         de lettre à découper. */
   .desert .ligne-eau.l3,
   #rendezvous .rdv-lien .or,
-  .hero-suite{
-    background-image:var(--texture-or),var(--or-degrade);
+  .hero-suite,
+  /* 3) « Car des eaux », seul élément à recevoir la texture BLEUE : son image est
+        posée plus bas, tout le reste du traitement est commun. */
+  .desert .ligne-eau.l1{
     background-size:var(--tex-taille) auto,cover;
     background-position:center,center;
     background-repeat:repeat,no-repeat;
@@ -775,6 +784,11 @@ footer{padding:90px 28px 40px;max-width:1500px;margin:0 auto;border-top:1px soli
     padding-bottom:.08em;margin-bottom:-.08em;
     -webkit-background-clip:text;background-clip:text;
     -webkit-text-fill-color:transparent;color:transparent}
+  .ligne3-or,.gp-or,.gpm-or,
+  .desert .ligne-eau.l3,
+  #rendezvous .rdv-lien .or,
+  .hero-suite{background-image:var(--texture-or),var(--or-degrade)}
+  .desert .ligne-eau.l1{background-image:var(--texture-bleu),var(--bleu-degrade)}
   /* box-sizing:border-box plafonne la hauteur de boîte au padding : replié, .hero-suite
      mesurerait 5px au lieu de 0 et pousserait le flux mobile. On neutralise tant qu'elle
      est fermée — invisible à ce moment-là, donc aucun saut visible à l'ouverture. */
