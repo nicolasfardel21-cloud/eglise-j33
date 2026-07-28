@@ -17,7 +17,7 @@
 :root{
   --fond:#FFFFFF; --encre:#101622; --gris:#5A6068;
   --ligne:rgba(16,22,34,.14); --ligne-l:rgba(16,22,34,.08);
-  --or:#9B6F17; --orange:#E8834A; --bleu:#5E97BD; --bleu-pale:#DCEAF3;
+  --or:#B17D17; --orange:#E8834A; --bleu:#5E97BD; --bleu-pale:#DCEAF3;
   --noir:#0C111C; --creme:#F3EFE4; --creme-50:rgba(243,239,228,.55); --creme-15:rgba(243,239,228,.16);
 }
 *{margin:0;padding:0;box-sizing:border-box}
@@ -717,6 +717,16 @@ footer{padding:90px 28px 40px;max-width:1500px;margin:0 auto;border-top:1px soli
    reste doré au lieu de disparaître (color:transparent sans découpe = invisible). */
 :root{
   --texture-or:url("images/commun/texture_or.jpg");
+  /* Taille d'affichage du pave de texture. La source fait 1536px de large : au-dela
+     de 1536/DPR pixels affiches, le navigateur l'agrandit et ca devient flou. D'ou
+     trois paliers, cales sur la densite d'ecran et non sur la mise en page.
+       768px -> desktop DPR<=2  : 768/1536*2 = 1.00, pave de 768x512
+       440px -> mobile DPR 3.5  : 440/1536*3.5 = 1.00, pave de 440x293
+       512px -> desktop DPR 3   : 512/1536*3 = 1.00, pave de 512x341
+     Dans les trois cas le pave reste plus haut que la plus haute boite texturee,
+     donc aucune repetition verticale : seul le raccord horizontal joue, et il est
+     fondu dans le fichier. */
+  --tex-taille:768px;
   --or-degrade:linear-gradient(115deg,#8A6F22 0%,var(--or) 26%,#E4CE84 46%,var(--or) 62%,#8A6F22 100%);
 }
 @supports ((-webkit-background-clip:text) or (background-clip:text)){
@@ -733,7 +743,9 @@ footer{padding:90px 28px 40px;max-width:1500px;margin:0 auto;border-top:1px soli
   #rendezvous .rdv-lien .or,
   .hero-suite{
     background-image:var(--texture-or),var(--or-degrade);
-    background-size:cover;background-position:center;background-repeat:no-repeat;
+    background-size:var(--tex-taille) auto,cover;
+    background-position:center,center;
+    background-repeat:repeat,no-repeat;
     /* l'encre d'un glyphe déborde de sa boîte quand line-height est serré (.98 à 1.12
        ici) : accents des É/é par le haut, jambages par le bas. Avec une couleur le
        débordement est dessiné quand même ; avec background-clip:text il n'y a pas de
@@ -751,6 +763,10 @@ footer{padding:90px 28px 40px;max-width:1500px;margin:0 auto;border-top:1px soli
   @media(max-width:760px){
     .hero-suite:not(.montre){padding-top:0;padding-bottom:0;margin-top:0;margin-bottom:0}
   }
+}
+/* paliers de densite pour la texture (voir --tex-taille) */
+@media(max-width:760px){ :root{--tex-taille:440px} }
+@media (min-resolution:2.5dppx) and (min-width:761px){ :root{--tex-taille:512px} 
 }
 </style>
 </head>
