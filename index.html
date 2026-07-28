@@ -17,7 +17,7 @@
 :root{
   --fond:#FFFFFF; --encre:#101622; --gris:#5A6068;
   --ligne:rgba(16,22,34,.14); --ligne-l:rgba(16,22,34,.08);
-  --or:#B5973C; --orange:#E8834A; --bleu:#5E97BD; --bleu-pale:#DCEAF3;
+  --or-rgb:189,137,30; --or:rgb(var(--or-rgb)); --orange:#E8834A; --bleu:#5E97BD; --bleu-pale:#DCEAF3;
   --noir:#0C111C; --creme:#F3EFE4; --creme-50:rgba(243,239,228,.55); --creme-15:rgba(243,239,228,.16);
 }
 *{margin:0;padding:0;box-sizing:border-box}
@@ -271,14 +271,31 @@ body.menu-ouvert .menu-reseaux a:nth-child(3){transition-delay:1.15s}
   100% {opacity:0;clip-path:inset(0 0 0 100%)}
 }
 .hero-anime .cta{position:absolute;left:-1%;right:auto;bottom:2svh;margin:0;flex-direction:row;flex-wrap:nowrap;justify-content:flex-start;align-items:center;gap:0 14px;z-index:6}
+/* « Qui sommes-nous ? » n'existe dans le CTA du héros qu'en mobile */
+#heroCta .cta-qsn{display:none}
 @media(max-width:760px){
-  /* boutons placés SOUS l'illustration 2 : une seule ligne, centrés, descendus (marge sous l'image ~triiplée) ;
-     taille de police inchangée, espace entre boutons doublé */
-  #heroCta.cta{position:absolute;left:0;right:0;width:100%;top:auto;bottom:0.3%;
+  /* mobile : 3 boutons empilés et centrés — « Qui sommes-nous ? », « Venir nous voir »,
+     « Connexion ». « Contact » est masqué (il reste en desktop).
+     ANCRAGE : le PREMIER bouton conserve exactement la position verticale de l'ancienne
+     rangée (bas du héros, bottom:0.3%). La colonne se déploie donc vers le BAS.
+     hauteur d'un bouton = line-height 1.6 x .95rem + 8px de padding = 32.32px (constante
+     sous 760px, la police étant plafonnée par le clamp) */
+  .hero-scene{--hb:calc(1.6 * .95rem + 8px);--gc:10px;
+    /* les 2 boutons ajoutés sous l'ancienne rangée débordent du héros (height:100svh).
+       On agrandit la scène d'autant : TOUT le flux qui suit descend, plus aucun
+       chevauchement. padding (et non margin) : pas de fusion des marges. */
+    padding-bottom:calc(2 * var(--hb) + 2 * var(--gc))}
+  #heroCta.cta{
+    position:absolute;left:0;right:0;width:100%;top:auto;
+    bottom:calc(0.3% - 2 * var(--hb) - 2 * var(--gc));
     transform:none;margin:0;padding:0 6px;
-    flex-direction:row;flex-wrap:nowrap;align-items:center;justify-content:center;gap:0 6px;text-align:center}
+    flex-direction:column;flex-wrap:nowrap;align-items:center;justify-content:flex-start;
+    gap:var(--gc) 0;text-align:center}
   #heroCta.cta .lien-paren{white-space:nowrap;display:inline-block;max-width:none;padding:4px 1px;
+    line-height:1.6;
     transition:transform .45s cubic-bezier(.76,0,.24,1)}
+  #heroCta.cta .cta-qsn{display:inline-block}
+  #heroCta.cta .cta-contact{display:none}
 }
 /* « Qui nous sommes » : lien discret sous le bloc évangile, comme (more about 2819) */
 .lien-savoir{cursor:pointer;text-decoration:none;transition:color .25s}
@@ -293,7 +310,7 @@ body.menu-ouvert .menu-reseaux a:nth-child(3){transition-delay:1.15s}
 .gp-images{position:absolute;inset:0;z-index:0;pointer-events:none}
 .gpi{position:absolute;top:var(--t);left:var(--l);width:var(--w);aspect-ratio:var(--ar);mix-blend-mode:luminosity;
   margin:0;border-radius:3px;overflow:hidden;will-change:transform;
-  background:radial-gradient(circle at 30% 20%, var(--bleu-pale), transparent 65%),radial-gradient(circle at 75% 80%, rgba(181,151,60,.18), transparent 55%),#EDEAE2;
+  background:radial-gradient(circle at 30% 20%, var(--bleu-pale), transparent 65%),radial-gradient(circle at 75% 80%, rgba(var(--or-rgb),.18), transparent 55%),#EDEAE2;
   box-shadow:0 30px 70px -34px rgba(16,22,34,.42)}
 .gpi img{position:absolute;left:0;top:-12%;width:100%;height:124%;object-fit:cover;will-change:transform}
 /* texte évangile : fusion avec les images comme le gros titre du héro (mix-blend difference) */
@@ -382,8 +399,14 @@ body.menu-ouvert .menu-reseaux a:nth-child(3){transition-delay:1.15s}
   .hero-scene .hero{height:auto;min-height:100svh}
 }
 @media(max-width:760px){
-  /* mobile : héros ancré en haut → la suite du verset ne pousse que vers le bas */
-  .hero-scene .hero{justify-content:flex-start}
+  /* mobile : héros ancré en haut → la suite du verset ne pousse que vers le bas.
+     Le grand titre est dimensionné en vw (clamp 22vw) : sur une fenêtre large mais
+     BASSE (desktop réduit, ~700x640), le titrage réclame plus que 100svh et débordait
+     sur la section suivante. min-height:100svh garde le plein écran quand il y a la
+     place, height:auto laisse le héros grandir sinon. Le padding-bottom réserve la
+     ligne du 1er bouton, ancré à une hauteur de bouton du bas du héros. */
+  .hero-scene .hero{justify-content:flex-start;height:auto;min-height:100svh;
+    padding-bottom:calc(var(--hb) + 26px)}
 }
 
 /* ---------- marquee ---------- */
@@ -418,7 +441,7 @@ section{padding:110px 28px;max-width:1500px;margin:0 auto}
 .rdv::before{content:"";position:absolute;left:0;top:0;bottom:0;width:0;background:var(--or);transition:width .3s}
 .rdv:hover::before{width:4px}
 .rdv h3{font-family:'Anton',sans-serif;font-weight:400;text-transform:uppercase;font-size:clamp(1.4rem,3.4vw,2.4rem);line-height:1}
-.rdv .freq{font-size:.8rem;text-transform:uppercase;letter-spacing:.12em;color:var(--or)}
+.rdv .freq{font-size:.8rem;text-transform:uppercase;letter-spacing:.12em;color:var(--or);font-weight:600}
 .rdv .heure{font-size:1rem;font-weight:600}
 .rdv .heure small{display:block;font-weight:300;color:var(--gris);font-size:.8rem;text-transform:uppercase;letter-spacing:.08em}
 .rdv .lieu{font-size:.9rem;color:var(--gris);text-align:right}
@@ -429,7 +452,7 @@ section{padding:110px 28px;max-width:1500px;margin:0 auto}
 /* ---------- héro façon 2819 : images qui montent derrière le grand titre ---------- */
 .hero-images{position:absolute;inset:0;z-index:1;pointer-events:none;overflow:visible}
 .hph{position:absolute;border-radius:3px;overflow:hidden;mix-blend-mode:luminosity;
-  background:radial-gradient(circle at 30% 20%, var(--bleu-pale), transparent 65%),radial-gradient(circle at 75% 80%, rgba(181,151,60,.18), transparent 55%),#EDEAE2;
+  background:radial-gradient(circle at 30% 20%, var(--bleu-pale), transparent 65%),radial-gradient(circle at 75% 80%, rgba(var(--or-rgb),.18), transparent 55%),#EDEAE2;
   will-change:transform;box-shadow:0 30px 60px -30px rgba(16,22,34,.35)}
 .hph img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
 /* disposition façon 2819 : grande au centre-haut, une bas-gauche, une à droite */
@@ -460,6 +483,19 @@ section{padding:110px 28px;max-width:1500px;margin:0 auto}
   #hph1{top:8%;left:auto;right:0;width:44vw}
   #hph2{top:auto;bottom:6%;left:0;width:40vw}
   #hph3{top:34%;right:0;width:32vw}
+}
+/* Les trois images sont posées en % de la hauteur du héro. Depuis que celui-ci est en
+   height:auto (pour absorber le titrage sur fenêtre basse), l'ouverture du verset le
+   fait grandir et les images suivaient. On les ancre donc sur la hauteur d'écran, qui
+   ne bouge pas. Valeurs strictement équivalentes tant que le héro vaut 100svh.
+   #hph2 était calé par le bas : converti en top, sa hauteur valant width x 4/3
+   (aspect-ratio:3/4), soit 40vw x 4/3 = 53,334vw.
+   Portrait uniquement : en paysage le héro est déjà en hauteur naturelle par ailleurs,
+   et on ne touche pas à ce comportement. */
+@media(max-width:900px) and (orientation:portrait){
+  #hph1{top:8svh}
+  #hph2{top:calc(94svh - 53.334vw);bottom:auto}
+  #hph3{top:34svh}
 }
 /* ---------- écrans très larges : deux repères distincts, volontairement ----------
 
@@ -502,7 +538,7 @@ section{padding:110px 28px;max-width:1500px;margin:0 auto}
 
 /* ---------- visuels ---------- */
 .bloc-visuel{margin:0 auto;max-width:1500px;padding:0 28px;display:grid;grid-template-columns:1fr 1fr 1fr;gap:18px}
-.bloc-visuel .ph{aspect-ratio:3/4;border-radius:4px;position:relative;overflow:hidden;background:radial-gradient(circle at 30% 20%, var(--bleu-pale), transparent 65%),radial-gradient(circle at 75% 80%, rgba(181,151,60,.18), transparent 55%),#EDEAE2}
+.bloc-visuel .ph{aspect-ratio:3/4;border-radius:4px;position:relative;overflow:hidden;background:radial-gradient(circle at 30% 20%, var(--bleu-pale), transparent 65%),radial-gradient(circle at 75% 80%, rgba(var(--or-rgb),.18), transparent 55%),#EDEAE2}
 .bloc-visuel .ph img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;z-index:1}
 .bloc-visuel .ph::before{content:"";position:absolute;inset:auto 0 0 0;height:45%;z-index:2;background:linear-gradient(to top,rgba(20,22,28,.6),transparent);opacity:0;transition:opacity .4s ease}
 .bloc-visuel .ph:hover::before{opacity:1}
@@ -554,7 +590,7 @@ section{padding:110px 28px;max-width:1500px;margin:0 auto}
 .desert cite{display:block;margin-top:34px;font-style:normal;font-size:.8rem;text-align:center;letter-spacing:.24em;text-transform:uppercase;color:var(--gris)}
 .desert .recit{max-width:720px;margin:80px auto 0;padding:0 28px;font-size:var(--tt,.9375rem);color:var(--gris);text-align:center}
 .desert .recit strong{color:var(--encre);font-weight:600}
-.desert .recit .accent{color:var(--or)}
+.desert .recit .accent{color:var(--or);font-weight:600}
 .desert .recit p+p{margin-top:22px}
 .desert .vagues{position:absolute;left:0;right:0;bottom:-2px;height:90px;pointer-events:none}
 
@@ -648,7 +684,7 @@ footer{padding:90px 28px 40px;max-width:1500px;margin:0 auto;border-top:1px soli
 .absorbe.esp{display:inline}
 .graine-pose{position:absolute;z-index:3;transition:opacity .4s}
 .tl{position:absolute;background:#fff;z-index:2;
-  box-shadow:0 0 10px 2px rgba(255,255,255,.95),0 0 18px 5px rgba(181,151,60,.7)}
+  box-shadow:0 0 10px 2px rgba(255,255,255,.95),0 0 18px 5px rgba(var(--or-rgb),.7)}
 .tl-v{top:0;bottom:0;width:2px;transform:scaleY(0);transform-origin:top;transition:transform .7s ease,opacity .35s}
 .tl-h{left:0;right:0;height:2px;transform:scaleX(0);transform-origin:left;transition:transform .6s ease,opacity .35s}
 .graine.fondu{opacity:0}
@@ -670,7 +706,7 @@ footer{padding:90px 28px 40px;max-width:1500px;margin:0 auto;border-top:1px soli
   /* le hero prend une hauteur naturelle (pas de plein écran forcé qui écrase) */
   .hero-scene{height:auto!important}
   .hero-scene .hero{height:auto!important;min-height:0!important;position:relative!important;
-    padding-top:70px;padding-bottom:30px}
+    padding-top:70px;padding-bottom:calc(var(--hb, 0px) + 30px)}
   /* carrousel d'infos remonté près de « J33 » */
   .hero .infos{margin-top:0!important}
   .hero-titrage{margin-top:14px!important}
@@ -680,6 +716,89 @@ footer{padding:90px 28px 40px;max-width:1500px;margin:0 auto;border-top:1px soli
   .desert .int::after{display:none}
   .desert .recit{padding-bottom:0!important}
   .verset-geant{margin-top:0!important}
+}
+/* ===== texture dorée : découpée sur la forme des lettres (background-clip:text) =====
+   Ne s'applique qu'aux TROIS calques dorés indépendants, déjà posés hors fusion et
+   au-dessus d'un texte en visibility:hidden — donc aucun liseré sur les bords.
+   Les petits éléments en var(--or) (parenthèses des boutons, références, labels)
+   restent en aplat : à cette taille une texture ne se lit pas.
+
+   REPORT SUR UNE AUTRE PAGE : copier ce bloc tel quel et ajouter à la liste les
+   sélecteurs des calques dorés de la page.
+
+   Le dégradé est peint SOUS la texture : si le JPG manque, tarde ou échoue, le titre
+   reste doré au lieu de disparaître (color:transparent sans découpe = invisible). */
+:root{
+  --texture-or:url("images/commun/texture_or.jpg");
+  /* Taille d'affichage du pave de texture. La source fait 1536px de large : au-dela
+     de 1536/DPR pixels affiches, le navigateur l'agrandit et ca devient flou. D'ou
+     trois paliers, cales sur la densite d'ecran et non sur la mise en page.
+       768px -> desktop DPR<=2  : 768/1536*2 = 1.00, pave de 768x512
+       440px -> mobile DPR 3.5  : 440/1536*3.5 = 1.00, pave de 440x293
+       512px -> desktop DPR 3   : 512/1536*3 = 1.00, pave de 512x341
+     Dans les trois cas le pave reste plus haut que la plus haute boite texturee,
+     donc aucune repetition verticale : seul le raccord horizontal joue, et il est
+     fondu dans le fichier. */
+  --tex-taille:768px;
+  /* repli peint sous la texture. Extremes cales sur la rampe MESUREE du fichier
+     (percentiles 5 et 95 de sa luminance), pas sur --or : c'est la texture qu'il
+     imite. Volontairement en hex figes et non en color-mix() — si cette fonction
+     echouait, la valeur deviendrait invalide, background-image tomberait a none,
+     et avec color:transparent les titres disparaitraient. */
+  --or-degrade:linear-gradient(115deg,#814F01 0%,var(--or) 26%,#EABD4C 46%,var(--or) 62%,#814F01 100%);
+  /* texture bleue de « Car des eaux ». Meme mecanique que la doree ; --tex-taille
+     est partage, il suppose une source de 1536px de large comme texture_or.jpg.
+     Si texture_bleu.jpg a une autre largeur, les paliers sont a recalculer.
+     Repli derive de --bleu, a recaler sur la rampe reelle du fichier une fois
+     celui-ci disponible (comme l'a ete --or-degrade sur texture_or.jpg). */
+  --texture-bleu:url("images/commun/texture_bleu.jpg");
+  --bleu-degrade:linear-gradient(115deg,#3D627B 0%,var(--bleu) 26%,#96BBD4 46%,var(--bleu) 62%,#3D627B 100%);
+}
+@supports ((-webkit-background-clip:text) or (background-clip:text)){
+  /* 1) les trois calques dorés indépendants du héro et de la section évangile */
+  .ligne3-or,.gp-or,.gpm-or,
+  /* 2) les grands textes dorés du reste de la page (Anton, >= 24px) :
+        « dans le désert » (144px), « ensemble » (80px) et la suite du verset
+        du héro (24px). Le verset géant sur fond noir en est volontairement exclu.
+        Volontairement PAS étendu aux parenthèses des liens (18px Archivo), aux
+        micro-labels (13px) ni aux surfaces pleines (jauges, bordures, curseur,
+        ::selection) : la texture ne s'y lit pas, et sur une surface il n'y a pas
+        de lettre à découper. */
+  .desert .ligne-eau.l3,
+  #rendezvous .rdv-lien .or,
+  .hero-suite,
+  /* 3) « Car des eaux », seul élément à recevoir la texture BLEUE : son image est
+        posée plus bas, tout le reste du traitement est commun. */
+  .desert .ligne-eau.l1{
+    background-size:var(--tex-taille) auto,cover;
+    background-position:center,center;
+    background-repeat:repeat,no-repeat;
+    /* l'encre d'un glyphe déborde de sa boîte quand line-height est serré (.98 à 1.12
+       ici) : accents des É/é par le haut, jambages par le bas. Avec une couleur le
+       débordement est dessiné quand même ; avec background-clip:text il n'y a pas de
+       fond peint là, donc l'accent est tranché. On agrandit la zone de peinture par
+       du padding, annulé par une marge négative égale — la boîte de fond grandit,
+       le texte ne bouge pas. Vertical seulement : plusieurs de ces éléments ont une
+       largeur posée en JS. */
+    padding-top:.22em;margin-top:-.22em;
+    padding-bottom:.08em;margin-bottom:-.08em;
+    -webkit-background-clip:text;background-clip:text;
+    -webkit-text-fill-color:transparent;color:transparent}
+  .ligne3-or,.gp-or,.gpm-or,
+  .desert .ligne-eau.l3,
+  #rendezvous .rdv-lien .or,
+  .hero-suite{background-image:var(--texture-or),var(--or-degrade)}
+  .desert .ligne-eau.l1{background-image:var(--texture-bleu),var(--bleu-degrade)}
+  /* box-sizing:border-box plafonne la hauteur de boîte au padding : replié, .hero-suite
+     mesurerait 5px au lieu de 0 et pousserait le flux mobile. On neutralise tant qu'elle
+     est fermée — invisible à ce moment-là, donc aucun saut visible à l'ouverture. */
+  @media(max-width:760px){
+    .hero-suite:not(.montre){padding-top:0;padding-bottom:0;margin-top:0;margin-bottom:0}
+  }
+}
+/* paliers de densite pour la texture (voir --tex-taille) */
+@media(max-width:760px){ :root{--tex-taille:440px} }
+@media (min-resolution:2.5dppx) and (min-width:761px){ :root{--tex-taille:512px} 
 }
 </style>
 </head>
@@ -769,9 +888,10 @@ footer{padding:90px 28px 40px;max-width:1500px;margin:0 auto;border-top:1px soli
     <div class="hero-ref" id="heroRef">Jérémie 33 : 3</div>
   </div>
   <div class="cta" id="heroCta">
-    <a class="lien-paren plein" href="venir.html">Venir nous voir</a>
-    <a class="lien-paren plein" href="contact.html">Contact</a>
-    <a class="lien-paren plein or" href="connexion.html">Connexion</a>
+    <a class="lien-paren plein cta-qsn" data-r="0.28" href="a-propos.html">Qui sommes-nous ?</a>
+    <a class="lien-paren plein" data-r="0.28" href="venir.html">Venir nous voir</a>
+    <a class="lien-paren plein cta-contact" data-r="0.22" href="contact.html">Contact</a>
+    <a class="lien-paren plein or" data-r="0.16" href="connexion.html">Connexion</a>
   </div>
 </header>
 </div>
@@ -818,8 +938,6 @@ footer{padding:90px 28px 40px;max-width:1500px;margin:0 auto;border-top:1px soli
   <div class="texte-bloc" data-vit="0.06">
     <p><strong>J33 existe pour annoncer l'Évangile, accompagner chacun sur le chemin de la foi et déverser la Gloire de Dieu.</strong></p>
   </div>
-
-  <a class="lien-paren lien-savoir" href="a-propos.html">Qui sommes-nous ?</a>
 
   <figure class="gpm-img droite paysage" data-vit="-0.05"><span class="gpm-cadre"><img src="images/index/galerie/galerie_2.jpg" alt="" loading="lazy" onerror="this.closest('figure').style.display='none'"></span></figure>
   <figure class="gpm-img gauche" data-vit="-0.08"><span class="gpm-cadre"><img src="images/index/galerie/galerie_3.jpg" alt="" loading="lazy" onerror="this.closest('figure').style.display='none'"></span></figure>
@@ -1162,13 +1280,11 @@ if(!reduit){
         heroCta.style.transform = '';
         const liens = heroCta.querySelectorAll('.lien-paren');
         const rBtn = [0.28, 0.22, 0.16];             /* boutons : montée propre, constante */
-        const suiteOuverte = estMobile && heroSuite && heroSuite.classList.contains('montre');
         liens.forEach((a, i)=>{
-          const r = rBtn[i % rBtn.length];
+          /* vitesse lue sur data-r : le lien « Qui sommes-nous ? » (mobile uniquement)
+             s'ajoute en tête sans décaler les vitesses des autres en desktop */
+          const r = parseFloat(a.dataset.r) || rBtn[i % rBtn.length];
           a.style.opacity = 1;
-          /* verset ouvert sur mobile : Contact et Venir nous voir sont gérés par
-             cascadeCta (décalage vers Connexion), on ne touche pas à leur transform ici */
-          if(suiteOuverte && i < 2) return;
           a.style.transform = estMobile ? '' : `translateY(${-r*y}px)`;
         });
       }
