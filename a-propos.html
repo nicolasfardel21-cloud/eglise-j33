@@ -17,7 +17,12 @@
 :root{
   --fond:#FFFFFF; --encre:#101622; --gris:#5A6068;
   --ligne:rgba(16,22,34,.14); --ligne-l:rgba(16,22,34,.08);
-  --or:#B5973C; --orange:#E8834A; --bleu:#5E97BD; --bleu-pale:#DCEAF3;
+  --or-rgb:189,137,30; --or:rgb(var(--or-rgb));
+  /* doré assombri des états de survol : dérivé de --or, il suit donc
+     automatiquement tout changement de teinte. Le facteur 86% reprend le
+     rapport qu'avait la valeur figée précédente avec l'ancien doré. */
+  --or-fonce:color-mix(in srgb, var(--or) 86%, #000);
+  --orange:#E8834A; --bleu:#5E97BD; --bleu-pale:#DCEAF3;
   --noir:#0C111C; --creme:#F3EFE4; --creme-50:rgba(243,239,228,.55); --creme-15:rgba(243,239,228,.16);
   --barre-bas: env(safe-area-inset-bottom, 0px);
 }
@@ -411,7 +416,7 @@ section{padding:110px 28px;max-width:1500px;margin:0 auto}
 .hero{isolation:isolate}
 .hero-images{position:absolute;inset:0;z-index:1;pointer-events:none;overflow:hidden}
 .hph{position:absolute;border-radius:3px;overflow:hidden;
-  background:radial-gradient(circle at 30% 20%, var(--bleu-pale), transparent 65%),radial-gradient(circle at 75% 80%, rgba(181,151,60,.18), transparent 55%),#EDEAE2;
+  background:radial-gradient(circle at 30% 20%, var(--bleu-pale), transparent 65%),radial-gradient(circle at 75% 80%, rgba(var(--or-rgb),.18), transparent 55%),#EDEAE2;
   will-change:transform;box-shadow:0 30px 60px -30px rgba(16,22,34,.35)}
 .hph img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
 /* disposition façon 2819 : grande au centre-haut, une bas-gauche, une à droite */
@@ -443,7 +448,7 @@ section{padding:110px 28px;max-width:1500px;margin:0 auto}
 
 /* ---------- visuels ---------- */
 .bloc-visuel{margin:0 auto;max-width:1500px;padding:0 28px;display:grid;grid-template-columns:1fr 1fr 1fr;gap:18px}
-.bloc-visuel .ph{aspect-ratio:3/4;border-radius:4px;position:relative;overflow:hidden;background:radial-gradient(circle at 30% 20%, var(--bleu-pale), transparent 65%),radial-gradient(circle at 75% 80%, rgba(181,151,60,.18), transparent 55%),#EDEAE2}
+.bloc-visuel .ph{aspect-ratio:3/4;border-radius:4px;position:relative;overflow:hidden;background:radial-gradient(circle at 30% 20%, var(--bleu-pale), transparent 65%),radial-gradient(circle at 75% 80%, rgba(var(--or-rgb),.18), transparent 55%),#EDEAE2}
 .bloc-visuel .ph img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;z-index:1}
 .bloc-visuel .ph::after{content:attr(data-note);position:absolute;inset:auto 0 0 0;padding:14px;font-size:.7rem;text-transform:uppercase;letter-spacing:.14em;color:var(--gris)}
 .bloc-visuel .ph:nth-child(2){transform:translateY(36px)}
@@ -494,7 +499,7 @@ section{padding:110px 28px;max-width:1500px;margin:0 auto}
   .pil-num-corps{display:block;position:absolute;right:0;bottom:0;z-index:0;pointer-events:none;
     line-height:1;text-box:trim-both cap alphabetic;font-size:clamp(4.5rem,8vw,8rem);
     color:rgba(16,22,34,.12);transition:color .35s}          /* gris par défaut */
-  .pil.active .pil-num-corps{color:rgba(181,151,60,.55)}      /* doré quand actif */
+  .pil.active .pil-num-corps{color:rgba(var(--or-rgb),.55)}      /* doré quand actif */
 }
 
 
@@ -595,7 +600,7 @@ footer{padding:90px 28px 40px;max-width:1500px;margin:0 auto;border-top:1px soli
 .absorbe.esp{display:inline}
 .graine-pose{position:absolute;z-index:3;transition:opacity .4s}
 .tl{position:absolute;background:#fff;z-index:2;
-  box-shadow:0 0 10px 2px rgba(255,255,255,.95),0 0 18px 5px rgba(181,151,60,.7)}
+  box-shadow:0 0 10px 2px rgba(255,255,255,.95),0 0 18px 5px rgba(var(--or-rgb),.7)}
 .tl-v{top:0;bottom:0;width:2px;transform:scaleY(0);transform-origin:top;transition:transform .7s ease,opacity .35s}
 .tl-h{left:0;right:0;height:2px;transform:scaleX(0);transform-origin:left;transition:transform .6s ease,opacity .35s}
 .graine.fondu{opacity:0}
@@ -759,7 +764,7 @@ h1.ap-titre{position:relative;z-index:1;margin:17px auto 0;width:fit-content;max
   font-family:'Anton',sans-serif;font-weight:400;text-transform:uppercase;letter-spacing:.14em;font-size:.9rem;
   color:var(--or);display:inline-flex;align-items:center;gap:11px;transition:gap .25s,color .25s}
 .rs-revenir::before{content:"\21A9"}
-.rs-revenir:hover{gap:16px;color:#9c8232}
+.rs-revenir:hover{gap:16px;color:var(--or-fonce)}
 .rs-revenir:focus-visible{outline:2px solid var(--or);outline-offset:-4px}
 
 .rs-media2,.rs-btn,.rs-retour-liste{display:none}
@@ -863,7 +868,7 @@ h1.ap-titre{position:relative;z-index:1;margin:17px auto 0;width:fit-content;max
     font-size:.8rem;white-space:nowrap;opacity:0;pointer-events:none;
     transition:opacity .45s ease,background .28s,gap .28s}
   .rs-btn::after{content:"\2192"}
-  .rs-btn:hover{background:#9c8232;gap:20px}
+  .rs-btn:hover{background:var(--or-fonce);gap:20px}
   .rs-scene.rs-calee .rs-btn{opacity:1;pointer-events:auto}
   .rs-split.rs-liste .rs-btn,.rs-split.rs-ouvert .rs-btn{opacity:0;pointer-events:none}
 
@@ -886,7 +891,7 @@ h1.ap-titre{position:relative;z-index:1;margin:17px auto 0;width:fit-content;max
     font-family:'Anton',sans-serif;font-weight:400;text-transform:uppercase;letter-spacing:.14em;
     font-size:.9rem;color:var(--or);transition:gap .25s,color .25s}
   .rs-retour-liste::before{content:"\21A9"}
-  .rs-retour-liste:hover{gap:16px;color:#9c8232}
+  .rs-retour-liste:hover{gap:16px;color:var(--or-fonce)}
 
   /* ---- panneau C : photo sur le tiers haut + descriptif (z-index 4, au-dessus de B) ---- */
   /* la photo monte jusqu'en haut, sous le bandeau (qui perd son voile blanc), et elle est
