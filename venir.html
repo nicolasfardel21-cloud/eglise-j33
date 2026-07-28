@@ -17,7 +17,12 @@
 :root{
   --fond:#FFFFFF; --encre:#101622; --gris:#5A6068;
   --ligne:rgba(16,22,34,.14); --ligne-l:rgba(16,22,34,.08);
-  --or:#B5973C; --orange:#E8834A; --bleu:#5E97BD; --bleu-pale:#DCEAF3;
+  --or-rgb:189,137,30; --or:rgb(var(--or-rgb));
+  /* doré assombri des états de survol : dérivé de --or, il suit donc
+     automatiquement tout changement de teinte. Le facteur 86% reprend le
+     rapport qu'avait la valeur figée précédente avec l'ancien doré. */
+  --or-fonce:color-mix(in srgb, var(--or) 86%, #000);
+  --orange:#E8834A; --bleu:#5E97BD; --bleu-pale:#DCEAF3;
   --noir:#0C111C; --creme:#F3EFE4; --creme-50:rgba(243,239,228,.55); --creme-15:rgba(243,239,228,.16);
 }
 *{margin:0;padding:0;box-sizing:border-box}
@@ -252,7 +257,7 @@ section{padding:110px 28px;max-width:1500px;margin:0 auto}
 .hero{isolation:isolate}
 .hero-images{position:absolute;inset:0;z-index:1;pointer-events:none;overflow:hidden}
 .hph{position:absolute;border-radius:3px;overflow:hidden;
-  background:radial-gradient(circle at 30% 20%, var(--bleu-pale), transparent 65%),radial-gradient(circle at 75% 80%, rgba(181,151,60,.18), transparent 55%),#EDEAE2;
+  background:radial-gradient(circle at 30% 20%, var(--bleu-pale), transparent 65%),radial-gradient(circle at 75% 80%, rgba(var(--or-rgb),.18), transparent 55%),#EDEAE2;
   will-change:transform;box-shadow:0 30px 60px -30px rgba(16,22,34,.35)}
 .hph img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
 /* disposition façon 2819 : grande au centre-haut, une bas-gauche, une à droite */
@@ -284,7 +289,7 @@ section{padding:110px 28px;max-width:1500px;margin:0 auto}
 
 /* ---------- visuels ---------- */
 .bloc-visuel{margin:0 auto;max-width:1500px;padding:0 28px;display:grid;grid-template-columns:1fr 1fr 1fr;gap:18px}
-.bloc-visuel .ph{aspect-ratio:3/4;border-radius:4px;position:relative;overflow:hidden;background:radial-gradient(circle at 30% 20%, var(--bleu-pale), transparent 65%),radial-gradient(circle at 75% 80%, rgba(181,151,60,.18), transparent 55%),#EDEAE2}
+.bloc-visuel .ph{aspect-ratio:3/4;border-radius:4px;position:relative;overflow:hidden;background:radial-gradient(circle at 30% 20%, var(--bleu-pale), transparent 65%),radial-gradient(circle at 75% 80%, rgba(var(--or-rgb),.18), transparent 55%),#EDEAE2}
 .bloc-visuel .ph img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;z-index:1}
 .bloc-visuel .ph::after{content:attr(data-note);position:absolute;inset:auto 0 0 0;padding:14px;font-size:.7rem;text-transform:uppercase;letter-spacing:.14em;color:var(--gris)}
 .bloc-visuel .ph:nth-child(2){transform:translateY(36px)}
@@ -384,7 +389,7 @@ section{padding:110px 28px;max-width:1500px;margin:0 auto}
 }
 .split{display:grid;grid-template-columns:1fr 1fr;align-items:start;position:relative}
 .split-media{position:sticky;top:0;height:100svh;overflow:hidden;
-  background:radial-gradient(circle at 30% 20%, var(--bleu-pale), transparent 65%),radial-gradient(circle at 75% 80%, rgba(181,151,60,.18), transparent 55%),#EDEAE2}
+  background:radial-gradient(circle at 30% 20%, var(--bleu-pale), transparent 65%),radial-gradient(circle at 75% 80%, rgba(var(--or-rgb),.18), transparent 55%),#EDEAE2}
 .split-media img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:50% 0;opacity:0;
   transform:scale(1.4);will-change:transform,opacity;transition:opacity .9s cubic-bezier(.76,0,.24,1)}
 .split-media img.actif{opacity:1}
@@ -547,7 +552,7 @@ footer{padding:90px 28px 40px;max-width:1500px;margin:0 auto;border-top:1px soli
 .absorbe.esp{display:inline}
 .graine-pose{position:absolute;z-index:3;transition:opacity .4s}
 .tl{position:absolute;background:#fff;z-index:2;
-  box-shadow:0 0 10px 2px rgba(255,255,255,.95),0 0 18px 5px rgba(181,151,60,.7)}
+  box-shadow:0 0 10px 2px rgba(255,255,255,.95),0 0 18px 5px rgba(var(--or-rgb),.7)}
 .tl-v{top:0;bottom:0;width:2px;transform:scaleY(0);transform-origin:top;transition:transform .7s ease,opacity .35s}
 .tl-h{left:0;right:0;height:2px;transform:scaleX(0);transform-origin:left;transition:transform .6s ease,opacity .35s}
 .graine.fondu{opacity:0}
