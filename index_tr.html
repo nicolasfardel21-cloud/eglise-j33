@@ -17,7 +17,7 @@
 :root{
   --fond:#FFFFFF; --encre:#101622; --gris:#5A6068;
   --ligne:rgba(16,22,34,.14); --ligne-l:rgba(16,22,34,.08);
-  --or:#B17D17; --orange:#E8834A; --bleu:#5E97BD; --bleu-pale:#DCEAF3;
+  --or-rgb:179,129,28; --or:rgb(var(--or-rgb)); --orange:#E8834A; --bleu:#5E97BD; --bleu-pale:#DCEAF3;
   --noir:#0C111C; --creme:#F3EFE4; --creme-50:rgba(243,239,228,.55); --creme-15:rgba(243,239,228,.16);
 }
 *{margin:0;padding:0;box-sizing:border-box}
@@ -310,7 +310,7 @@ body.menu-ouvert .menu-reseaux a:nth-child(3){transition-delay:1.15s}
 .gp-images{position:absolute;inset:0;z-index:0;pointer-events:none}
 .gpi{position:absolute;top:var(--t);left:var(--l);width:var(--w);aspect-ratio:var(--ar);mix-blend-mode:luminosity;
   margin:0;border-radius:3px;overflow:hidden;will-change:transform;
-  background:radial-gradient(circle at 30% 20%, var(--bleu-pale), transparent 65%),radial-gradient(circle at 75% 80%, rgba(181,151,60,.18), transparent 55%),#EDEAE2;
+  background:radial-gradient(circle at 30% 20%, var(--bleu-pale), transparent 65%),radial-gradient(circle at 75% 80%, rgba(var(--or-rgb),.18), transparent 55%),#EDEAE2;
   box-shadow:0 30px 70px -34px rgba(16,22,34,.42)}
 .gpi img{position:absolute;left:0;top:-12%;width:100%;height:124%;object-fit:cover;will-change:transform}
 /* texte évangile : fusion avec les images comme le gros titre du héro (mix-blend difference) */
@@ -452,7 +452,7 @@ section{padding:110px 28px;max-width:1500px;margin:0 auto}
 /* ---------- héro façon 2819 : images qui montent derrière le grand titre ---------- */
 .hero-images{position:absolute;inset:0;z-index:1;pointer-events:none;overflow:visible}
 .hph{position:absolute;border-radius:3px;overflow:hidden;mix-blend-mode:luminosity;
-  background:radial-gradient(circle at 30% 20%, var(--bleu-pale), transparent 65%),radial-gradient(circle at 75% 80%, rgba(181,151,60,.18), transparent 55%),#EDEAE2;
+  background:radial-gradient(circle at 30% 20%, var(--bleu-pale), transparent 65%),radial-gradient(circle at 75% 80%, rgba(var(--or-rgb),.18), transparent 55%),#EDEAE2;
   will-change:transform;box-shadow:0 30px 60px -30px rgba(16,22,34,.35)}
 .hph img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
 /* disposition façon 2819 : grande au centre-haut, une bas-gauche, une à droite */
@@ -538,7 +538,7 @@ section{padding:110px 28px;max-width:1500px;margin:0 auto}
 
 /* ---------- visuels ---------- */
 .bloc-visuel{margin:0 auto;max-width:1500px;padding:0 28px;display:grid;grid-template-columns:1fr 1fr 1fr;gap:18px}
-.bloc-visuel .ph{aspect-ratio:3/4;border-radius:4px;position:relative;overflow:hidden;background:radial-gradient(circle at 30% 20%, var(--bleu-pale), transparent 65%),radial-gradient(circle at 75% 80%, rgba(181,151,60,.18), transparent 55%),#EDEAE2}
+.bloc-visuel .ph{aspect-ratio:3/4;border-radius:4px;position:relative;overflow:hidden;background:radial-gradient(circle at 30% 20%, var(--bleu-pale), transparent 65%),radial-gradient(circle at 75% 80%, rgba(var(--or-rgb),.18), transparent 55%),#EDEAE2}
 .bloc-visuel .ph img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;z-index:1}
 .bloc-visuel .ph::before{content:"";position:absolute;inset:auto 0 0 0;height:45%;z-index:2;background:linear-gradient(to top,rgba(20,22,28,.6),transparent);opacity:0;transition:opacity .4s ease}
 .bloc-visuel .ph:hover::before{opacity:1}
@@ -684,7 +684,7 @@ footer{padding:90px 28px 40px;max-width:1500px;margin:0 auto;border-top:1px soli
 .absorbe.esp{display:inline}
 .graine-pose{position:absolute;z-index:3;transition:opacity .4s}
 .tl{position:absolute;background:#fff;z-index:2;
-  box-shadow:0 0 10px 2px rgba(255,255,255,.95),0 0 18px 5px rgba(181,151,60,.7)}
+  box-shadow:0 0 10px 2px rgba(255,255,255,.95),0 0 18px 5px rgba(var(--or-rgb),.7)}
 .tl-v{top:0;bottom:0;width:2px;transform:scaleY(0);transform-origin:top;transition:transform .7s ease,opacity .35s}
 .tl-h{left:0;right:0;height:2px;transform:scaleX(0);transform-origin:left;transition:transform .6s ease,opacity .35s}
 .graine.fondu{opacity:0}
@@ -740,7 +740,12 @@ footer{padding:90px 28px 40px;max-width:1500px;margin:0 auto;border-top:1px soli
      donc aucune repetition verticale : seul le raccord horizontal joue, et il est
      fondu dans le fichier. */
   --tex-taille:768px;
-  --or-degrade:linear-gradient(115deg,#8A6F22 0%,var(--or) 26%,#E4CE84 46%,var(--or) 62%,#8A6F22 100%);
+  /* repli peint sous la texture. Extremes cales sur la rampe MESUREE du fichier
+     (percentiles 5 et 95 de sa luminance), pas sur --or : c'est la texture qu'il
+     imite. Volontairement en hex figes et non en color-mix() — si cette fonction
+     echouait, la valeur deviendrait invalide, background-image tomberait a none,
+     et avec color:transparent les titres disparaitraient. */
+  --or-degrade:linear-gradient(115deg,#814F01 0%,var(--or) 26%,#EABD4C 46%,var(--or) 62%,#814F01 100%);
 }
 @supports ((-webkit-background-clip:text) or (background-clip:text)){
   /* 1) les trois calques dorés indépendants du héro et de la section évangile */
