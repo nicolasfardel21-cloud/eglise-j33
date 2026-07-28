@@ -441,7 +441,7 @@ section{padding:110px 28px;max-width:1500px;margin:0 auto}
 .rdv::before{content:"";position:absolute;left:0;top:0;bottom:0;width:0;background:var(--or);transition:width .3s}
 .rdv:hover::before{width:4px}
 .rdv h3{font-family:'Anton',sans-serif;font-weight:400;text-transform:uppercase;font-size:clamp(1.4rem,3.4vw,2.4rem);line-height:1}
-.rdv .freq{font-size:.8rem;text-transform:uppercase;letter-spacing:.12em;color:var(--or)}
+.rdv .freq{font-size:.8rem;text-transform:uppercase;letter-spacing:.12em;color:var(--or);font-weight:600}
 .rdv .heure{font-size:1rem;font-weight:600}
 .rdv .heure small{display:block;font-weight:300;color:var(--gris);font-size:.8rem;text-transform:uppercase;letter-spacing:.08em}
 .rdv .lieu{font-size:.9rem;color:var(--gris);text-align:right}
@@ -483,6 +483,19 @@ section{padding:110px 28px;max-width:1500px;margin:0 auto}
   #hph1{top:8%;left:auto;right:0;width:44vw}
   #hph2{top:auto;bottom:6%;left:0;width:40vw}
   #hph3{top:34%;right:0;width:32vw}
+}
+/* Les trois images sont posées en % de la hauteur du héro. Depuis que celui-ci est en
+   height:auto (pour absorber le titrage sur fenêtre basse), l'ouverture du verset le
+   fait grandir et les images suivaient. On les ancre donc sur la hauteur d'écran, qui
+   ne bouge pas. Valeurs strictement équivalentes tant que le héro vaut 100svh.
+   #hph2 était calé par le bas : converti en top, sa hauteur valant width x 4/3
+   (aspect-ratio:3/4), soit 40vw x 4/3 = 53,334vw.
+   Portrait uniquement : en paysage le héro est déjà en hauteur naturelle par ailleurs,
+   et on ne touche pas à ce comportement. */
+@media(max-width:900px) and (orientation:portrait){
+  #hph1{top:8svh}
+  #hph2{top:calc(94svh - 53.334vw);bottom:auto}
+  #hph3{top:34svh}
 }
 /* ---------- écrans très larges : deux repères distincts, volontairement ----------
 
@@ -577,7 +590,7 @@ section{padding:110px 28px;max-width:1500px;margin:0 auto}
 .desert cite{display:block;margin-top:34px;font-style:normal;font-size:.8rem;text-align:center;letter-spacing:.24em;text-transform:uppercase;color:var(--gris)}
 .desert .recit{max-width:720px;margin:80px auto 0;padding:0 28px;font-size:var(--tt,.9375rem);color:var(--gris);text-align:center}
 .desert .recit strong{color:var(--encre);font-weight:600}
-.desert .recit .accent{color:var(--or)}
+.desert .recit .accent{color:var(--or);font-weight:600}
 .desert .recit p+p{margin-top:22px}
 .desert .vagues{position:absolute;left:0;right:0;bottom:-2px;height:90px;pointer-events:none}
 
