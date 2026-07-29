@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Diagnostic J33</title>
+<style>
+  *{margin:0;padding:0;box-sizing:border-box}
+  html{-webkit-text-size-adjust:100%; text-size-adjust:100%}
+  body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;
+       background:#101622;color:#F3EFE4;padding:16px;line-height:1.45;font-size:15px}
+  h1{font-size:19px;margin-bottom:4px;color:#BD891E}
+  .sous{font-size:13px;color:#9aa2ad;margin-bottom:16px}
+  .verdict{border:2px solid #BD891E;padding:12px;margin-bottom:16px;font-size:16px}
+  .verdict b{color:#BD891E}
+  table{width:100%;border-collapse:collapse;font-size:13px;margin-bottom:16px}
+  td{padding:5px 4px;border-bottom:1px solid rgba(243,239,228,.14);vertical-align:top}
+  td:first-child{color:#9aa2ad;width:52%}
+  td:last-child{text-align:right;font-variant-numeric:tabular-nums;word-break:break-all}
+  .ko{color:#ff8a7a;font-weight:700}
+  .ok{color:#7fd18b}
+  button{width:100%;padding:14px;font-size:16px;background:#BD891E;color:#101622;
+         border:0;font-weight:700;margin-bottom:10px}
+  textarea{width:100%;height:150px;font-size:11px;background:#0a0e16;color:#F3EFE4;
+           border:1px solid rgba(243,239,228,.2);padding:8px;font-family:monospace}
+  /* sondes de mesure */
+  #sonde16{font-size:16px}
+  #sondeRem{font-size:1rem}
+  #sondeVw{width:10vw;height:1px}
+  #sondeSvh{height:100svh;width:1px}
+  #sondeLvh{height:100lvh;width:1px}
+  #sondeDvh{height:100dvh;width:1px}
+  .sonde{position:absolute;visibility:hidden;left:-9999px;top:0}
+  #para{position:absolute;visibility:hidden;left:-9999px;width:100%;font-size:16px}
+</style>
+</head>
+<body>
+
+<h1>Diagnostic d'affichage</h1>
+<div class="sous">Ouvrir cette page <b>depuis Instagram</b>, puis <b>depuis Chrome</b>, et comparer.</div>
+
+<div class="verdict" id="verdict">Mesure en cours…</div>
+
+<table id="tab"></table>
+
+<button id="copier">Copier tous les résultats</button>
+<textarea id="brut" readonly></textarea>
+
+<span class="sonde" id="sonde16">Mg</span>
+<span class="sonde" id="sondeRem">Mg</span>
+<div class="sonde" id="sondeVw"></div>
+<div class="sonde" id="sondeSvh"></div>
+<div class="sonde" id="sondeLvh"></div>
+<div class="sonde" id="sondeDvh"></div>
+<p id="para">Ce paragraphe est volontairement long afin de déclencher, le cas échéant, l'agrandissement
+automatique du texte que certaines WebView appliquent aux blocs qu'elles considèrent comme le contenu
+principal de la page. Sa taille est fixée à seize pixels. Si la valeur mesurée diffère de seize, un
+facteur d'échelle est appliqué par le navigateur, en dehors de tout contrôle du site.</p>
+
+<script>
+(function(){
+  var px = function(el){ return parseFloat(getComputedStyle(el).fontSize); };
+  var h  = function(el){ return Math.round(el.getBoundingClientRect().height*10)/10; };
+  var vv = window.visualViewport;
+
+  var f16   = px(document.getElementById('sonde16'));
+  var fRem  = px(document.getElementById('sondeRem'));
+  var fPara = px(document.getElementById('para'));
+  var vwMes = document.getElementById('sondeVw').getBoundingClientRect().width;
+  var iw    = window.innerWidth;
+
+  var facteurTexte = f16/16;
+  var facteurVw    = vwMes/(iw/10);
+
+  var lignes = [
+    ['Navigateur', /Instagram/i.test(navigator.userAgent) ? 'Instagram (WebView)'
+                  : /FBAN|FBAV/i.test(navigator.userAgent) ? 'Facebook (WebView)'
+                  : /wv\)/i.test(navigator.userAgent) ? 'WebView Android'
+                  : 'navigateur classique'],
+    ['window.innerWidth', iw + ' px'],
+    ['documentElement.clientWidth', document.documentElement.clientWidth + ' px'],
+    ['screen.width', screen.width + ' px'],
+    ['devicePixelRatio', window.devicePixelRatio],
+    ['visualViewport.width', vv ? Math.round(vv.width) + ' px' : 'indisponible'],
+    ['visualViewport.scale', vv ? vv.scale : 'indisponible'],
+    ['—', '—'],
+    ['texte déclaré à 16px → mesuré', f16 + ' px'],
+    ['texte déclaré à 1rem → mesuré', fRem + ' px'],
+    ['paragraphe long 16px → mesuré', fPara + ' px'],
+    ['<b>facteur d\'échelle du texte</b>', '<b>x' + (Math.round(facteurTexte*1000)/1000) + '</b>'],
+    ['—', '—'],
+    ['10vw mesuré', Math.round(vwMes*10)/10 + ' px'],
+    ['innerWidth / 10', Math.round(iw/10*10)/10 + ' px'],
+    ['<b>facteur d\'échelle vw</b>', '<b>x' + (Math.round(facteurVw*1000)/1000) + '</b>'],
+    ['—', '—'],
+    ['100svh', h(document.getElementById('sondeSvh')) + ' px'],
+    ['100lvh', h(document.getElementById('sondeLvh')) + ' px'],
+    ['100dvh', h(document.getElementById('sondeDvh')) + ' px'],
+    ['window.innerHeight', window.innerHeight + ' px'],
+    ['text-size-adjust appliqué',
+       getComputedStyle(document.documentElement).webkitTextSizeAdjust ||
+       getComputedStyle(document.documentElement).textSizeAdjust || 'non supporté'],
+    ['—', '—'],
+    ['User-Agent', navigator.userAgent]
+  ];
+
+  var html = '';
+  lignes.forEach(function(l){
+    if(l[0]==='—'){ html += '<tr><td colspan="2" style="border:0;height:6px"></td></tr>'; return; }
+    html += '<tr><td>'+l[0]+'</td><td>'+l[1]+'</td></tr>';
+  });
+  document.getElementById('tab').innerHTML = html;
+
+  var v = document.getElementById('verdict');
+  var msgs = [];
+  if(Math.abs(facteurTexte-1) > 0.02)
+    msgs.push('<b class="ko">Le texte est agrandi d\'un facteur '+(Math.round(facteurTexte*100)/100)+'</b> par le navigateur.');
+  if(Math.abs(facteurVw-1) > 0.02)
+    msgs.push('<b class="ko">Les unités vw ne correspondent pas à innerWidth</b> (x'+(Math.round(facteurVw*100)/100)+').');
+  if(vv && Math.abs(vv.scale-1) > 0.02)
+    msgs.push('<b class="ko">La page est zoomée</b> (échelle '+vv.scale+').');
+  if(!msgs.length)
+    msgs.push('<b class="ok">Aucune anomalie d\'échelle détectée</b> sur ce navigateur.');
+  v.innerHTML = msgs.join('<br><br>');
+
+  var brut = lignes.filter(function(l){return l[0]!=='—';})
+    .map(function(l){ return l[0].replace(/<[^>]+>/g,'') + ' : ' + String(l[1]).replace(/<[^>]+>/g,''); })
+    .join('\n');
+  document.getElementById('brut').value = brut;
+
+  document.getElementById('copier').addEventListener('click', function(){
+    var t = document.getElementById('brut');
+    t.select(); t.setSelectionRange(0, 99999);
+    try { document.execCommand('copy'); } catch(e){}
+    if(navigator.clipboard) { navigator.clipboard.writeText(t.value).catch(function(){}); }
+    this.textContent = 'Copié';
+  });
+})();
+</script>
+</body>
+</html>
