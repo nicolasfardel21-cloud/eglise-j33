@@ -23,10 +23,18 @@
      rapport qu'avait la valeur figée précédente avec l'ancien doré. */
   --or-fonce:color-mix(in srgb, var(--or) 86%, #000);
   --orange:#E8834A; --bleu:#5E97BD; --bleu-pale:#DCEAF3;
+  --zc:1;   /* compensation du zoom texte des WebView, mesurée en JS (voir <head>) */
   --noir:#0C111C; --creme:#F3EFE4; --creme-50:rgba(243,239,228,.55); --creme-15:rgba(243,239,228,.16);
 }
 *{margin:0;padding:0;box-sizing:border-box}
 html{scroll-behavior:auto}
+/* Les navigateurs intégrés (Instagram, Facebook, Messenger) reposent sur la WebView
+   Android, qui applique par défaut le « font boosting » : elle gonfle d'elle-même la
+   taille des blocs de texte qu'elle juge principaux. Sur une page dont toute la mise en
+   page est pilotée par la typographie — titres en vw, justification calculée en JS — le
+   résultat ressemble à un zoom général. 100% neutralise ce gonflement tout en laissant
+   l'utilisateur zoomer à la main, contrairement à « none ». */
+html{-webkit-text-size-adjust:100%; text-size-adjust:100%}
 body{background:var(--fond);color:var(--encre);font-family:'Archivo',sans-serif;font-weight:300;line-height:1.6;overflow-x:hidden}
 ::selection{background:var(--or);color:#fff}
 a{color:inherit} img{max-width:100%}
@@ -42,7 +50,7 @@ a{color:inherit} img{max-width:100%}
 /* ---------- nav ---------- */
 nav{position:fixed;top:0;left:0;right:0;z-index:100;display:flex;justify-content:space-between;align-items:center;padding:14px 28px;background:linear-gradient(var(--fond) 60%,transparent)}
 body.menu-ouvert nav{background:transparent}
-nav .marque{font-family:'Anton',sans-serif;font-size:2.1rem;line-height:1;letter-spacing:.06em;text-decoration:none;text-transform:uppercase;transition:color .45s ease}
+nav .marque{font-family:'Anton',sans-serif;font-size:calc((2.1rem) * var(--zc));line-height:1;letter-spacing:.06em;text-decoration:none;text-transform:uppercase;transition:color .45s ease}
 .burger{background:none;border:none;cursor:pointer;padding:10px;display:flex;flex-direction:column;gap:6px;z-index:101;margin-right:-10px}
 .burger span{display:block;width:30px;height:2.5px;background:var(--encre);transition:transform .35s,opacity .25s,background .35s}
 body.menu-ouvert .burger span{background:var(--creme)}
@@ -62,7 +70,7 @@ body.menu-ouvert{overflow:hidden}
 .menu-groupe .menu-fleche{opacity:0;transition:opacity .4s ease}
 body.menu-ouvert .menu-groupe .gros{clip-path:inset(0 0 0% 0)}
 body.menu-ouvert .menu-groupe .menu-fleche{opacity:1}
-.menu-groupe .gros{font-family:'Anton',sans-serif;font-size:clamp(2.1rem,5vw,4.2rem);line-height:1.12;white-space:nowrap;text-transform:uppercase;text-decoration:none;display:flex;align-items:baseline;gap:20px;transition:color .25s,padding-left .3s,clip-path .6s cubic-bezier(.65,0,.35,1)}
+.menu-groupe .gros{font-family:'Anton',sans-serif;font-size:calc((clamp(2.1rem,5vw,4.2rem)) * var(--zc));line-height:1.12;white-space:nowrap;text-transform:uppercase;text-decoration:none;display:flex;align-items:baseline;gap:20px;transition:color .25s,padding-left .3s,clip-path .6s cubic-bezier(.65,0,.35,1)}
 body.menu-ouvert:not(.menu-pret) .menu-groupe:nth-child(1) .gros,body.menu-ouvert:not(.menu-pret) .menu-groupe:nth-child(1) .menu-fleche{transition-delay:.12s}
 body.menu-ouvert:not(.menu-pret) .menu-groupe:nth-child(2) .gros,body.menu-ouvert:not(.menu-pret) .menu-groupe:nth-child(2) .menu-fleche{transition-delay:.20s}
 body.menu-ouvert:not(.menu-pret) .menu-groupe:nth-child(3) .gros,body.menu-ouvert:not(.menu-pret) .menu-groupe:nth-child(3) .menu-fleche{transition-delay:.28s}
@@ -72,7 +80,7 @@ body.menu-ouvert:not(.menu-pret) .menu-groupe:nth-child(4) .gros,body.menu-ouver
 .menu-groupe .gros small{font-family:'Archivo',sans-serif;font-size:.74rem;letter-spacing:.2em;color:var(--or)}
 .menu-sous{display:flex;flex-wrap:wrap;gap:6px 18px;justify-content:flex-end;opacity:0;transform:translateY(16px);pointer-events:none;transition:opacity .35s ease,transform .35s ease}
 .menu-groupe:hover .menu-sous,.menu-groupe:focus-within .menu-sous{opacity:1;transform:none;pointer-events:auto}
-.menu-sous a{font-family:'Anton',sans-serif;text-decoration:none;font-size:1.28rem;text-transform:uppercase;letter-spacing:.02em;color:var(--creme);transition:color .25s;white-space:nowrap}
+.menu-sous a{font-family:'Anton',sans-serif;text-decoration:none;font-size:calc((1.28rem) * var(--zc));text-transform:uppercase;letter-spacing:.02em;color:var(--creme);transition:color .25s;white-space:nowrap}
 .menu-sous a:hover{color:var(--or)}
 .menu-sous a::before{content:"(\00a0";color:var(--or)}
 .menu-sous a::after{content:"\00a0)";color:var(--or)}
@@ -109,7 +117,7 @@ body.menu-ouvert .menu-reseaux a:nth-child(3){transition-delay:1.15s}
     max-height:0;overflow:hidden;opacity:1;transform:none;
     transition:max-height .45s ease,padding .45s ease;padding:0}
   .menu-groupe.ouvert .menu-sous{max-height:400px;padding:10px 0 16px}
-  .menu-sous a{font-family:'Anton',sans-serif;font-size:1.1rem;text-transform:uppercase;
+  .menu-sous a{font-family:'Anton',sans-serif;font-size:calc((1.1rem) * var(--zc));text-transform:uppercase;
     letter-spacing:.02em;color:var(--creme);white-space:nowrap}
   .menu-sous a::before{content:"(\00a0";color:var(--or)}
   .menu-sous a::after{content:"\00a0)";color:var(--or)}
@@ -350,7 +358,7 @@ section{padding:110px 28px;max-width:1500px;margin:0 auto}
 /* ---------- FAQ ---------- */
 .faq details{border-bottom:1px solid var(--ligne)}
 .faq details:first-of-type{border-top:1px solid var(--ligne)}
-.faq summary{cursor:pointer;list-style:none;padding:26px 0;display:flex;justify-content:space-between;align-items:center;gap:20px;font-family:'Anton',sans-serif;font-size:clamp(1.1rem,2.6vw,1.7rem);transition:color .25s}
+.faq summary{cursor:pointer;list-style:none;padding:26px 0;display:flex;justify-content:space-between;align-items:center;gap:20px;font-family:'Anton',sans-serif;font-size:calc((clamp(1.1rem,2.6vw,1.7rem)) * var(--zc));transition:color .25s}
 .faq summary::-webkit-details-marker{display:none}
 .faq summary:hover{color:var(--or)}
 .faq summary::after{content:"+";font-family:'Archivo',sans-serif;font-size:1.6rem;color:var(--or);transition:transform .3s;flex:none}
@@ -397,7 +405,7 @@ section{padding:110px 28px;max-width:1500px;margin:0 auto}
 
 .hero-venir{min-height:0;display:flex;flex-direction:column;justify-content:flex-start;padding:104px 0 30px;margin:0;position:relative}
 .hero-venir h1{font-family:'Anton',sans-serif;font-weight:400;text-transform:uppercase;letter-spacing:.04em;
-  line-height:.94;font-size:clamp(2.4rem,min(6.6vw,13svh),8.4rem);margin:0;align-self:stretch;text-align:left}
+  line-height:.94;font-size:calc((clamp(2.4rem,min(6.6vw,13svh),8.4rem)) * var(--zc));margin:0;align-self:stretch;text-align:left}
 .hero-venir h1 > span{display:block;width:max-content;white-space:nowrap;text-align:left;opacity:0;animation:monter .9s ease forwards}
 .hero-venir h1 > .ligne1{animation-delay:0s}
 .hero-venir h1 > .ligne2{animation-delay:.15s}
@@ -421,7 +429,7 @@ section{padding:110px 28px;max-width:1500px;margin:0 auto}
   .split{grid-template-columns:1fr 1fr;align-items:start;padding-top:78px}
   .split-contenu,.hero-venir{display:contents}
   .split-media{grid-column:2;grid-row:1;position:relative;top:auto;height:auto;align-self:stretch;min-height:44svh;will-change:transform}
-  .hero-venir h1{grid-column:1;grid-row:1;align-self:end;padding:0 0 0 28px;font-size:2.6rem}
+  .hero-venir h1{grid-column:1;grid-row:1;align-self:end;padding:0 0 0 28px;font-size:calc((2.6rem) * var(--zc))}
   /* une seule illustration en mobile */
   .split-media img:nth-of-type(2),.split-media img:nth-of-type(3){display:none}
   .vs-espace{display:none}
@@ -450,14 +458,14 @@ section{padding:110px 28px;max-width:1500px;margin:0 auto}
 /* la dernière fiche suit la FAQ, qui porte déjà une bordure basse : pas de ligne en plus */
 .fiche:last-of-type{border-top:0;border-bottom:0;padding-bottom:0}
 .fiche-label{font-family:'Anton',sans-serif;font-weight:400;text-transform:uppercase;letter-spacing:.04em;
-  line-height:1.1;font-size:clamp(1.25rem,2.6vw,1.8rem);color:var(--or)}
+  line-height:1.1;font-size:calc((clamp(1.25rem,2.6vw,1.8rem)) * var(--zc));color:var(--or)}
 /* horaires : nom à gauche, créneaux à droite séparés par des // dorés */
 .horaires-liste{display:flex;flex-direction:column;gap:18px}
 .hl{display:flex;justify-content:space-between;align-items:baseline;gap:12px 24px;flex-wrap:wrap}
 .hl-nom{font-family:'Anton',sans-serif;font-weight:400;text-transform:uppercase;letter-spacing:.03em;
-  line-height:1.05;font-size:clamp(1.1rem,1.9vw,1.7rem)}
+  line-height:1.05;font-size:calc((clamp(1.1rem,1.9vw,1.7rem)) * var(--zc))}
 .hl-creneaux{font-family:'Anton',sans-serif;font-weight:400;text-transform:uppercase;letter-spacing:.03em;
-  line-height:1.05;font-size:clamp(1.1rem,1.9vw,1.7rem);margin-left:auto;white-space:nowrap}
+  line-height:1.05;font-size:calc((clamp(1.1rem,1.9vw,1.7rem)) * var(--zc));margin-left:auto;white-space:nowrap}
 .hl-creneaux .sep{color:var(--or);padding:0 8px}
 .hl-detail{flex:1 0 100%;font-size:.74rem;text-transform:uppercase;letter-spacing:.12em;color:var(--gris);margin-top:-2px}
 @media(max-width:760px){
@@ -472,7 +480,7 @@ section{padding:110px 28px;max-width:1500px;margin:0 auto}
 .fiche .table-rdv{border-top:none}
 .fiche .rdv:first-child{padding-top:0}
 .fiche .rdv:last-child{border-bottom:none;padding-bottom:0}
-.lieux-grands{font-family:'Anton',sans-serif;font-weight:400;text-transform:uppercase;letter-spacing:.04em;line-height:1.1;font-size:clamp(1.25rem,2.6vw,1.8rem)}
+.lieux-grands{font-family:'Anton',sans-serif;font-weight:400;text-transform:uppercase;letter-spacing:.04em;line-height:1.1;font-size:calc((clamp(1.25rem,2.6vw,1.8rem)) * var(--zc))}
 .lieux-grands .sep{color:var(--or)}
 .fiche .note-table{margin-top:18px}
 .carte-lieu{margin-top:34px;border:1px solid var(--ligne);position:relative}
@@ -480,10 +488,10 @@ section{padding:110px 28px;max-width:1500px;margin:0 auto}
 @media(max-width:760px){.carte-lieu iframe{height:300px}}
 .details-grille{display:grid;grid-template-columns:1fr 1fr;gap:44px}
 @media(max-width:760px){.details-grille{grid-template-columns:1fr}}
-.details-grille h4{font-family:'Anton',sans-serif;font-weight:400;text-transform:uppercase;letter-spacing:.04em;font-size:clamp(1.25rem,2.6vw,1.8rem);margin-bottom:14px}
+.details-grille h4{font-family:'Anton',sans-serif;font-weight:400;text-transform:uppercase;letter-spacing:.04em;font-size:calc((clamp(1.25rem,2.6vw,1.8rem)) * var(--zc));margin-bottom:14px}
 .details-grille p{color:var(--gris);font-size:1.05rem;max-width:52ch}
 .details-grille strong{color:var(--encre);font-weight:600}
-.venue-titre{font-family:'Anton',sans-serif;font-weight:400;text-transform:uppercase;letter-spacing:.04em;line-height:1.1;font-size:clamp(1.25rem,2.6vw,1.8rem);color:var(--encre)}
+.venue-titre{font-family:'Anton',sans-serif;font-weight:400;text-transform:uppercase;letter-spacing:.04em;line-height:1.1;font-size:calc((clamp(1.25rem,2.6vw,1.8rem)) * var(--zc));color:var(--encre)}
 .venue-texte{margin:22px 0 30px;color:var(--gris);font-size:1.05rem;max-width:54ch}
 .venue-texte strong{color:var(--encre);font-weight:600}
 
@@ -493,7 +501,7 @@ section{padding:110px 28px;max-width:1500px;margin:0 auto}
 .champ{margin-bottom:28px}
 .champ:last-of-type{margin-bottom:26px}
 .champ label{display:block;font-family:'Anton',sans-serif;font-weight:400;text-transform:uppercase;
-  letter-spacing:.06em;font-size:clamp(.95rem,1.5vw,1.15rem);margin-bottom:10px}
+  letter-spacing:.06em;font-size:calc((clamp(.95rem,1.5vw,1.15rem)) * var(--zc));margin-bottom:10px}
 .champ input,.champ select{width:100%;font-family:'Archivo',sans-serif;font-size:1rem;color:var(--encre);
   background:#F4F4F2;border:0;border-bottom:2px solid var(--encre);border-radius:0;
   padding:16px 12px;appearance:none;transition:background .25s,border-color .25s}
@@ -507,7 +515,7 @@ section{padding:110px 28px;max-width:1500px;margin:0 auto}
 .champ.erreur input,.champ.erreur select{border-color:#B4332F}
 .form-venue button{width:100%;border:0;cursor:pointer;background:var(--encre);color:var(--fond);
   font-family:'Anton',sans-serif;font-weight:400;text-transform:uppercase;letter-spacing:.1em;
-  font-size:clamp(1rem,1.8vw,1.3rem);padding:20px 24px;border-radius:0;transition:background .25s}
+  font-size:calc((clamp(1rem,1.8vw,1.3rem)) * var(--zc));padding:20px 24px;border-radius:0;transition:background .25s}
 .form-venue button:hover{background:var(--or)}
 .form-note{margin-top:16px;font-size:.78rem;color:var(--gris);text-align:center}
 .form-note b{color:var(--encre);font-weight:600}
@@ -533,7 +541,7 @@ footer{padding:90px 28px 40px;max-width:1500px;margin:0 auto;border-top:1px soli
 .footer-colonnes ul li{padding:5px 0}
 .footer-colonnes ul a{text-decoration:none;font-size:.95rem;transition:color .25s}
 .footer-colonnes ul a:hover{color:var(--or)}
-.j33-geant{font-family:'Anton',sans-serif;font-size:clamp(6rem,24vw,22rem);line-height:.8;letter-spacing:.02em;user-select:none}
+.j33-geant{font-family:'Anton',sans-serif;font-size:calc((clamp(6rem,24vw,22rem)) * var(--zc));line-height:.8;letter-spacing:.02em;user-select:none}
 .footer-bas{display:flex;justify-content:space-between;flex-wrap:wrap;gap:10px;font-size:.75rem;color:var(--gris);margin-top:30px;border-top:1px solid var(--ligne);padding-top:20px}
 .footer-legal a{color:var(--gris);text-decoration:none;transition:color .25s}.footer-legal a:hover{color:var(--or)}
 
@@ -580,7 +588,43 @@ footer{padding:90px 28px 40px;max-width:1500px;margin:0 auto;border-top:1px soli
   .faq .rep{font-size:15px}
 }
 </style>
+<script>
+/* Les navigateurs intégrés (Instagram, Facebook, Messenger) reposent sur la WebView
+   Android, qui applique le facteur de taille de police du système à TOUTES les tailles,
+   y compris celles exprimées en vw — mesuré x1,3 sur un Galaxy réglé en « Grande ».
+   Les largeurs, elles, ne bougent pas : la typographie d'affichage déborde alors d'une
+   composition calibrée pour tenir en un écran. On mesure le facteur ici et on le
+   neutralise sur les seuls titres, via --zc. Le corps de texte et les cibles tactiles
+   gardent l'agrandissement : c'est un réglage d'accessibilité, on ne le reprend que là
+   où il n'apporte aucune lisibilité. Sous 1,02 la variable reste à 1, tout est inerte. */
+(function(){
+  var mesurer = function(){
+    try{
+      var s = document.createElement('span');
+      s.style.cssText = 'position:absolute;left:-9999px;top:0;font-size:16px;line-height:1;font-family:sans-serif';
+      s.textContent = 'M';
+      document.documentElement.appendChild(s);
+      var f = parseFloat(getComputedStyle(s).fontSize) / 16;
+      s.parentNode.removeChild(s);
+      document.documentElement.style.setProperty('--zc', (f > 1.02 ? 1 / f : 1).toFixed(4));
+    }catch(e){ document.documentElement.style.setProperty('--zc','1'); }
+  };
+  mesurer();
+  var t; window.addEventListener('resize', function(){ clearTimeout(t); t=setTimeout(mesurer,200); }, {passive:true});
+})();
+
+/* getComputedStyle renvoie, dans les WebView à zoom texte, la taille DÉJÀ multipliée par
+   le facteur système. La réécrire telle quelle en style en ligne l'applique une seconde
+   fois : c'est ce qui gonflait le calque doré et, par ricochet, tout ce qui se cale sur
+   sa largeur. --zc valant 1/facteur, on repasse ici en taille DÉCLARÉE. Hors WebView
+   --zc vaut 1 et cette fonction est l'identité. */
+window.tailleDeclaree = function(el){
+  var zc = parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--zc')) || 1;
+  return parseFloat(getComputedStyle(el).fontSize) * zc;
+};
+</script>
 </head>
+
 <body class="page-venir">
 
 <nav>
@@ -888,7 +932,7 @@ document.querySelectorAll('.mot-rotatif').forEach(motRotatif=>{
     mots.forEach(m => { motRotatif.textContent = m; max = Math.max(max, h1Rot.offsetWidth); });
     const dispo = (h1Rot.parentElement.clientWidth || window.innerWidth) - 8;
     if(max > dispo){ /* réduire la police pour que le mot le plus large tienne */
-      const fs = parseFloat(getComputedStyle(h1Rot).fontSize);
+      const fs = tailleDeclaree(h1Rot);
       h1Rot.style.fontSize = (fs * dispo / max) + 'px';
       max = 0;
       mots.forEach(m => { motRotatif.textContent = m; max = Math.max(max, h1Rot.offsetWidth); });
@@ -1539,7 +1583,7 @@ if(cartesAnim.length === 6){
       const rl = l3.getBoundingClientRect();
       const rp = h1.offsetParent.getBoundingClientRect();
       const cs = getComputedStyle(l3);
-      or.style.fontSize = cs.fontSize;
+      or.style.fontSize = tailleDeclaree(l3) + 'px';
       or.style.letterSpacing = cs.letterSpacing;
       or.style.left = (rl.left - rp.left) + 'px';
       or.style.top = (rl.top - rp.top + window.scrollY - (h1.offsetParent.offsetTop)) + 'px';
