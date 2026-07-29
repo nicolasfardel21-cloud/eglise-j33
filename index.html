@@ -18,6 +18,7 @@
   --fond:#FFFFFF; --encre:#101622; --gris:#5A6068;
   --ligne:rgba(16,22,34,.14); --ligne-l:rgba(16,22,34,.08);
   --or-rgb:189,137,30; --or:rgb(var(--or-rgb)); --orange:#E8834A; --bleu:#5E97BD; --bleu-pale:#DCEAF3;
+  --zc:1;   /* compensation du zoom texte des WebView, mesurée en JS (voir <head>) */
   --noir:#0C111C; --creme:#F3EFE4; --creme-50:rgba(243,239,228,.55); --creme-15:rgba(243,239,228,.16);
 }
 *{margin:0;padding:0;box-sizing:border-box}
@@ -57,7 +58,7 @@ body.menu-ouvert nav::before{opacity:0}
 body.nav-sombre nav .marque{color:var(--creme)}
 body.nav-sombre .burger span{background:var(--creme)}
 body.menu-ouvert nav{background:transparent}
-nav .marque{font-family:'Anton',sans-serif;font-size:2.1rem;line-height:1;letter-spacing:.06em;text-decoration:none;text-transform:uppercase;transition:color .45s ease}
+nav .marque{font-family:'Anton',sans-serif;font-size:calc((2.1rem) * var(--zc));line-height:1;letter-spacing:.06em;text-decoration:none;text-transform:uppercase;transition:color .45s ease}
 .burger{background:none;border:none;cursor:pointer;padding:10px;display:flex;flex-direction:column;gap:6px;z-index:101;margin-right:-10px}
 .burger span{display:block;width:30px;height:2.5px;background:var(--encre);transition:transform .35s,opacity .25s,background .35s}
 body.menu-ouvert .burger span{background:var(--creme)}
@@ -77,7 +78,7 @@ body.menu-ouvert{overflow:hidden}
 .menu-groupe .menu-fleche{opacity:0;transition:opacity .4s ease}
 body.menu-ouvert .menu-groupe .gros{clip-path:inset(0 0 0% 0)}
 body.menu-ouvert .menu-groupe .menu-fleche{opacity:1}
-.menu-groupe .gros{font-family:'Anton',sans-serif;font-size:clamp(2.1rem,5vw,4.2rem);line-height:1.12;white-space:nowrap;text-transform:uppercase;text-decoration:none;display:flex;align-items:baseline;gap:20px;transition:color .25s,padding-left .3s,clip-path .6s cubic-bezier(.65,0,.35,1)}
+.menu-groupe .gros{font-family:'Anton',sans-serif;font-size:calc((clamp(2.1rem,5vw,4.2rem)) * var(--zc));line-height:1.12;white-space:nowrap;text-transform:uppercase;text-decoration:none;display:flex;align-items:baseline;gap:20px;transition:color .25s,padding-left .3s,clip-path .6s cubic-bezier(.65,0,.35,1)}
 body.menu-ouvert:not(.menu-pret) .menu-groupe:nth-child(1) .gros,body.menu-ouvert:not(.menu-pret) .menu-groupe:nth-child(1) .menu-fleche{transition-delay:.12s}
 body.menu-ouvert:not(.menu-pret) .menu-groupe:nth-child(2) .gros,body.menu-ouvert:not(.menu-pret) .menu-groupe:nth-child(2) .menu-fleche{transition-delay:.20s}
 body.menu-ouvert:not(.menu-pret) .menu-groupe:nth-child(3) .gros,body.menu-ouvert:not(.menu-pret) .menu-groupe:nth-child(3) .menu-fleche{transition-delay:.28s}
@@ -87,7 +88,7 @@ body.menu-ouvert:not(.menu-pret) .menu-groupe:nth-child(4) .gros,body.menu-ouver
 .menu-groupe .gros small{font-family:'Archivo',sans-serif;font-size:.74rem;letter-spacing:.2em;color:var(--or)}
 .menu-sous{display:flex;flex-wrap:wrap;gap:6px 18px;justify-content:flex-end;opacity:0;transform:translateY(16px);pointer-events:none;transition:opacity .35s ease,transform .35s ease}
 .menu-groupe:hover .menu-sous,.menu-groupe:focus-within .menu-sous{opacity:1;transform:none;pointer-events:auto}
-.menu-sous a{font-family:'Anton',sans-serif;text-decoration:none;font-size:1.28rem;text-transform:uppercase;letter-spacing:.02em;color:var(--creme);transition:color .25s;white-space:nowrap}
+.menu-sous a{font-family:'Anton',sans-serif;text-decoration:none;font-size:calc((1.28rem) * var(--zc));text-transform:uppercase;letter-spacing:.02em;color:var(--creme);transition:color .25s;white-space:nowrap}
 .menu-sous a:hover{color:var(--or)}
 .menu-sous a::before{content:"(\00a0";color:var(--or)}
 .menu-sous a::after{content:"\00a0)";color:var(--or)}
@@ -127,7 +128,7 @@ body.menu-ouvert .menu-reseaux a:nth-child(3){transition-delay:1.15s}
     transition:max-height .45s ease,padding .45s ease;padding:0}
   .menu-groupe.ouvert .menu-sous{max-height:400px;padding:10px 0 16px}
   /* sous-liens : dorés, entre parenthèses, taille moyenne (style 2819) */
-  .menu-sous a{font-family:'Anton',sans-serif;font-size:1.1rem;text-transform:uppercase;
+  .menu-sous a{font-family:'Anton',sans-serif;font-size:calc((1.1rem) * var(--zc));text-transform:uppercase;
     letter-spacing:.02em;color:var(--creme);white-space:nowrap}
   .menu-sous a::before{content:"(\00a0";color:var(--or)}
   .menu-sous a::after{content:"\00a0)";color:var(--or)}
@@ -138,9 +139,9 @@ body.menu-ouvert .menu-reseaux a:nth-child(3){transition-delay:1.15s}
 .hero-page{min-height:72svh}
 .hero .infos{display:flex;justify-content:space-between;align-items:baseline;flex-wrap:wrap;gap:8px;text-transform:uppercase;letter-spacing:.14em;font-size:.78rem;font-weight:500;border-top:1px solid var(--ligne);padding-top:16px;max-width:1500px;margin:0 auto;width:100%;mix-blend-mode:exclusion;color:#fff}
 .hero .infos .h{color:#fff}
-.hero h1{font-size:clamp(2rem,min(11.5vw,16svh),12rem);line-height:.98;text-transform:uppercase;letter-spacing:.04em;margin:20px 0 0;align-self:center;display:block}
+.hero h1{font-size:calc((clamp(2rem,min(11.5vw,16svh),12rem)) * var(--zc));line-height:.98;text-transform:uppercase;letter-spacing:.04em;margin:20px 0 0;align-self:center;display:block}
 /* accueil : titre géant agrandi (« Fais appel à moi » plus gros) */
-.hero-anime h1.geant{font-size:clamp(2.8rem,min(16vw,21svh),17rem);margin:0}
+.hero-anime h1.geant{font-size:calc((clamp(2.8rem,min(16vw,21svh),17rem)) * var(--zc));margin:0}
 .hero h1 > span{display:block;white-space:nowrap}
 .hero h1 > .ligne1{text-align:left;animation-delay:0s}
 .hero h1 > .ligne2{text-align:center;animation-delay:.15s}
@@ -236,7 +237,7 @@ body.menu-ouvert .menu-reseaux a:nth-child(3){transition-delay:1.15s}
 .hero-suite{
   position:absolute;left:24%;z-index:6;max-width:min(34ch,33vw);
   font-family:'Anton',sans-serif;font-weight:400;text-transform:uppercase;
-  font-size:clamp(.95rem,1.7vw,1.55rem);line-height:1.14;letter-spacing:.02em;text-align:justify;text-align-last:justify;
+  font-size:calc((clamp(.95rem,1.7vw,1.55rem)) * var(--zc));line-height:1.14;letter-spacing:.02em;text-align:justify;text-align-last:justify;
   color:var(--or);opacity:0;pointer-events:none;
   transition:opacity .4s ease;
 }
@@ -257,9 +258,9 @@ body.menu-ouvert .menu-reseaux a:nth-child(3){transition-delay:1.15s}
   /* mobile : le verset et la référence redeviennent pleine largeur, centrés et lisibles */
   .hero-titrage{margin-top:24px}
   /* le gros titre descend d'une ligne : « Fais » prend la place de l'ancien « appel » */
-  .hero-anime h1.geant{margin-top:.98em;font-size:clamp(3.6rem,22vw,17rem)}
+  .hero-anime h1.geant{margin-top:.98em;font-size:calc((clamp(3.6rem,22vw,17rem)) * var(--zc))}
   .hero-verset{width:auto;margin:.4em auto 0;text-align:center;white-space:normal;
-    font-size:clamp(1.1rem,5.4vw,1.9rem);letter-spacing:.04em}
+    font-size:calc((clamp(1.1rem,5.4vw,1.9rem)) * var(--zc));letter-spacing:.04em}
   .hero-ref{width:auto;margin:.55em auto 0;text-align:center}
   /* infos en colonne, animation séquentielle (effacement/écriture l'une après l'autre) */
   /* infos : un seul texte à la fois, aligné à gauche (au même bord que J33) */
@@ -332,7 +333,7 @@ body.menu-ouvert .menu-reseaux a:nth-child(3){transition-delay:1.15s}
 .gp-texte .titre-bloc .or.invisible{visibility:hidden}
 .gp-or{position:absolute;left:0;right:0;bottom:0;z-index:4;color:var(--or);pointer-events:none;
   font-family:'Anton',sans-serif;font-weight:400;line-height:1.12;text-transform:uppercase;
-  letter-spacing:.04em;font-size:clamp(2.2rem,6vw,5rem)}
+  letter-spacing:.04em;font-size:calc((clamp(2.2rem,6vw,5rem)) * var(--zc))}
 /* le paragraphe fusionne aussi (blanc en difference) */
 .gp-texte .texte-bloc{margin-top:30px;margin-left:auto;margin-right:auto;
   mix-blend-mode:exclusion;color:#fff}
@@ -344,8 +345,8 @@ body.menu-ouvert .menu-reseaux a:nth-child(3){transition-delay:1.15s}
   .gpi{box-shadow:0 18px 40px -22px rgba(16,22,34,.4)}
   /* images évangile plus petites sur mobile pour ne pas noyer le texte */
   .gpi{width:min(var(--w),32vw)!important}
-  .gp-or{font-size:clamp(1.8rem,9vw,3rem)}
-  .gp-texte .titre-bloc{font-size:clamp(1.8rem,9vw,3rem)}
+  .gp-or{font-size:calc((clamp(1.8rem,9vw,3rem)) * var(--zc))}
+  .gp-texte .titre-bloc{font-size:calc((clamp(1.8rem,9vw,3rem)) * var(--zc))}
 }
 
 /* ===== version MOBILE de la scène évangile : flux vertical ordonné (texte + images alternées) ===== */
@@ -355,7 +356,7 @@ body.menu-ouvert .menu-reseaux a:nth-child(3){transition-delay:1.15s}
   .gp-mobile{display:block;position:relative;padding:30px 22px 12px;text-align:center}
   .gpm-titre-wrap{position:relative;z-index:2;display:inline-block;margin-bottom:6px}
   /* titre en couleurs solides (pas de fusion : elle casse avec la transform parallaxe) */
-  .gp-mobile .titre-bloc{color:var(--encre);font-size:clamp(1.9rem,10vw,3rem);line-height:1.06}
+  .gp-mobile .titre-bloc{color:var(--encre);font-size:calc((clamp(1.9rem,10vw,3rem)) * var(--zc));line-height:1.06}
   .gp-mobile .titre-bloc .or.invisible{visibility:hidden}
   .gpm-or{position:absolute;left:0;right:0;bottom:0;color:var(--or);pointer-events:none;
     font-family:'Anton',sans-serif;font-weight:400;line-height:1.06;text-transform:uppercase;
@@ -426,13 +427,13 @@ body.menu-ouvert .menu-reseaux a:nth-child(3){transition-delay:1.15s}
 /* ---------- sections ---------- */
 section{padding:110px 28px;max-width:1500px;margin:0 auto}
 .eyebrow{text-transform:uppercase;letter-spacing:.2em;font-size:.75rem;font-weight:600;color:var(--or);display:block;margin-bottom:28px}
-#rendezvous .rdv-lien{display:inline-block;margin-bottom:28px;font-family:'Anton',sans-serif;font-weight:400;font-size:clamp(2.2rem,6vw,5rem);line-height:1.12;text-transform:uppercase;letter-spacing:.04em;color:var(--encre);text-decoration:none;transition:color .25s}
+#rendezvous .rdv-lien{display:inline-block;margin-bottom:28px;font-family:'Anton',sans-serif;font-weight:400;font-size:calc((clamp(2.2rem,6vw,5rem)) * var(--zc));line-height:1.12;text-transform:uppercase;letter-spacing:.04em;color:var(--encre);text-decoration:none;transition:color .25s}
 #rendezvous .rdv-lien::before,#rendezvous .rdv-lien::after{content:""}
 #rendezvous .rdv-lien .or{color:var(--or)}
 #rendezvous .rdv-lien:hover{color:var(--or)}
 #rendezvous .rdv-lien:hover .or{color:var(--or)}
 .eyebrow::before{content:"( "} .eyebrow::after{content:" )"}
-.titre-bloc{font-family:'Anton',sans-serif;font-weight:400;line-height:1.12;font-size:clamp(2.2rem,6vw,5rem);text-transform:uppercase;letter-spacing:.04em}
+.titre-bloc{font-family:'Anton',sans-serif;font-weight:400;line-height:1.12;font-size:calc((clamp(2.2rem,6vw,5rem)) * var(--zc));text-transform:uppercase;letter-spacing:.04em}
 .titre-bloc .or{color:var(--or)}
 .texte-bloc{max-width:58ch;margin-top:34px;font-size:var(--tt,.9375rem);color:var(--gris)}
 .texte-bloc strong{color:var(--encre);font-weight:600}
@@ -447,7 +448,7 @@ section{padding:110px 28px;max-width:1500px;margin:0 auto}
 .rdv:hover{padding-left:18px}
 .rdv::before{content:"";position:absolute;left:0;top:0;bottom:0;width:0;background:var(--or);transition:width .3s}
 .rdv:hover::before{width:4px}
-.rdv h3{font-family:'Anton',sans-serif;font-weight:400;text-transform:uppercase;font-size:clamp(1.4rem,3.4vw,2.4rem);line-height:1}
+.rdv h3{font-family:'Anton',sans-serif;font-weight:400;text-transform:uppercase;font-size:calc((clamp(1.4rem,3.4vw,2.4rem)) * var(--zc));line-height:1}
 .rdv .freq{font-size:.8rem;text-transform:uppercase;letter-spacing:.12em;color:var(--or);font-weight:600}
 .rdv .heure{font-size:1rem;font-weight:600}
 .rdv .heure small{display:block;font-weight:300;color:var(--gris);font-size:.8rem;text-transform:uppercase;letter-spacing:.08em}
@@ -590,7 +591,7 @@ section{padding:110px 28px;max-width:1500px;margin:0 auto}
 /* ---------- désert ---------- */
 .desert{position:relative;overflow:hidden;padding:60px 0 170px;max-width:none;background:radial-gradient(ellipse 90% 55% at 50% 118%, var(--bleu-pale), transparent 70%),var(--fond)}
 .desert .int{max-width:1500px;margin:0 auto;padding:0 28px}
-.desert .ligne-eau{font-family:'Anton',sans-serif;font-size:clamp(2rem,min(11.5vw,16svh),12rem);line-height:1.04;white-space:nowrap;will-change:transform;text-transform:uppercase;letter-spacing:.12em}
+.desert .ligne-eau{font-family:'Anton',sans-serif;font-size:calc((clamp(2rem,min(11.5vw,16svh),12rem)) * var(--zc));line-height:1.04;white-space:nowrap;will-change:transform;text-transform:uppercase;letter-spacing:.12em}
 .desert .ligne-eau.l1{text-align:left;color:var(--bleu)}
 .desert .ligne-eau.l2{text-align:center;color:var(--encre)}
 .desert .ligne-eau.l3{text-align:right;color:var(--or)}
@@ -611,7 +612,7 @@ section{padding:110px 28px;max-width:1500px;margin:0 auto}
   /* léger fondu du fond en bas du bloc figé */
   .desert .int::after{content:"";position:absolute;left:0;right:0;bottom:-24px;height:24px;
     background:linear-gradient(var(--fond),rgba(255,255,255,0));pointer-events:none}
-  .desert .ligne-eau{font-size:clamp(2.2rem,13vw,4.2rem);letter-spacing:.06em;white-space:normal;
+  .desert .ligne-eau{font-size:calc((clamp(2.2rem,13vw,4.2rem)) * var(--zc));letter-spacing:.06em;white-space:normal;
     line-height:1.02;will-change:transform}
   /* on garde les alignements d'origine pour l'effet d'arrivée (gauche / centre / droite) */
   .desert .ligne-eau.l1{text-align:left}
@@ -630,14 +631,14 @@ section{padding:110px 28px;max-width:1500px;margin:0 auto}
 /* ---------- verset géant ---------- */
 .verset-geant{padding:130px 28px;text-align:center;background:var(--noir);color:var(--creme);border-top:1px solid var(--ligne)}
 @media(max-width:760px){.verset-geant{padding-top:50px;padding-bottom:64px}}
-.verset-geant p{font-family:'Anton',sans-serif;font-size:clamp(2.2rem,7vw,5.6rem);line-height:1.14;max-width:18ch;margin:0 auto}
+.verset-geant p{font-family:'Anton',sans-serif;font-size:calc((clamp(2.2rem,7vw,5.6rem)) * var(--zc));line-height:1.14;max-width:18ch;margin:0 auto}
 .verset-geant p i{font-style:normal;color:var(--or)}
 .verset-geant.verset-long p{font-size:var(--tt,.9375rem);line-height:1.4;max-width:58ch;letter-spacing:.04em;text-transform:none}
 /* desktop : agrandir uniquement les 3 grands paragraphes narratifs (mission, désert, verset long) */
 @media(min-width:900px){
   .texte-bloc{font-size:1.2rem;line-height:1.6}
   .desert .recit{font-size:1.2rem;line-height:1.6}
-  .verset-geant.verset-long p{font-size:clamp(1.25rem,1.9vw,1.7rem);line-height:1.5}
+  .verset-geant.verset-long p{font-size:calc((clamp(1.25rem,1.9vw,1.7rem)) * var(--zc));line-height:1.5}
 }
 .verset-geant cite{display:block;margin-top:30px;font-style:normal;font-size:.8rem;letter-spacing:.24em;text-transform:uppercase;color:var(--creme-50)}
 
@@ -672,7 +673,7 @@ footer{padding:90px 28px 40px;max-width:1500px;margin:0 auto;border-top:1px soli
 .footer-colonnes ul li{padding:5px 0}
 .footer-colonnes ul a{text-decoration:none;font-size:.95rem;transition:color .25s}
 .footer-colonnes ul a:hover{color:var(--or)}
-.j33-geant{font-family:'Anton',sans-serif;font-size:clamp(6rem,24vw,22rem);line-height:.8;letter-spacing:.02em;user-select:none}
+.j33-geant{font-family:'Anton',sans-serif;font-size:calc((clamp(6rem,24vw,22rem)) * var(--zc));line-height:.8;letter-spacing:.02em;user-select:none}
 .footer-bas{display:flex;justify-content:space-between;flex-wrap:wrap;gap:10px;font-size:.75rem;color:var(--gris);margin-top:30px;border-top:1px solid var(--ligne);padding-top:20px}
 .footer-legal a{color:var(--gris);text-decoration:none;transition:color .25s}.footer-legal a:hover{color:var(--or)}
 
@@ -808,7 +809,33 @@ footer{padding:90px 28px 40px;max-width:1500px;margin:0 auto;border-top:1px soli
 @media (min-resolution:2.5dppx) and (min-width:761px){ :root{--tex-taille:512px} 
 }
 </style>
+<script>
+/* Les navigateurs intégrés (Instagram, Facebook, Messenger) reposent sur la WebView
+   Android, qui applique le facteur de taille de police du système à TOUTES les tailles,
+   y compris celles exprimées en vw — mesuré x1,3 sur un Galaxy réglé en « Grande ».
+   Les largeurs, elles, ne bougent pas : la typographie d'affichage déborde alors d'une
+   composition calibrée pour tenir en un écran. On mesure le facteur ici et on le
+   neutralise sur les seuls titres, via --zc. Le corps de texte et les cibles tactiles
+   gardent l'agrandissement : c'est un réglage d'accessibilité, on ne le reprend que là
+   où il n'apporte aucune lisibilité. Sous 1,02 la variable reste à 1, tout est inerte. */
+(function(){
+  var mesurer = function(){
+    try{
+      var s = document.createElement('span');
+      s.style.cssText = 'position:absolute;left:-9999px;top:0;font-size:16px;line-height:1;font-family:sans-serif';
+      s.textContent = 'M';
+      document.documentElement.appendChild(s);
+      var f = parseFloat(getComputedStyle(s).fontSize) / 16;
+      s.parentNode.removeChild(s);
+      document.documentElement.style.setProperty('--zc', (f > 1.02 ? 1 / f : 1).toFixed(4));
+    }catch(e){ document.documentElement.style.setProperty('--zc','1'); }
+  };
+  mesurer();
+  var t; window.addEventListener('resize', function(){ clearTimeout(t); t=setTimeout(mesurer,200); }, {passive:true});
+})();
+</script>
 </head>
+
 <body>
 
 <div id="sondeBasEcran" aria-hidden="true" style="position:fixed;bottom:0;left:0;width:0;height:env(safe-area-inset-bottom,0px);visibility:hidden;pointer-events:none"></div>
