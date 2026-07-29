@@ -145,7 +145,7 @@ body.menu-ouvert .menu-reseaux a:nth-child(3){transition-delay:1.15s}
 /* ---------- héros de page ---------- */
 .hero{min-height:100svh;display:flex;flex-direction:column;justify-content:center;padding:62px 28px 60px;position:relative}
 .hero-page{min-height:72svh}
-.hero .infos{display:flex;justify-content:space-between;align-items:baseline;flex-wrap:wrap;gap:8px;text-transform:uppercase;letter-spacing:.14em;font-size:.78rem;font-weight:500;border-top:1px solid var(--ligne);padding-top:16px;max-width:1500px;margin:0 auto;width:100%}
+.hero .infos{display:flex;justify-content:space-between;align-items:baseline;flex-wrap:wrap;gap:8px;text-transform:uppercase;letter-spacing:.14em;font-size:calc((.78rem) * var(--zc));font-weight:500;border-top:1px solid var(--ligne);padding-top:16px;max-width:1500px;margin:0 auto;width:100%}
 .hero .infos .h{color:var(--or)}
 .hero h1{font-size:calc((clamp(2rem,min(11.5vw,16svh),12rem)) * var(--zc));line-height:.98;text-transform:uppercase;letter-spacing:.04em;margin:20px 0 0;align-self:center;display:block}
 .hero h1 > span{display:block;white-space:nowrap}
@@ -648,7 +648,7 @@ h1.ap-titre{position:relative;z-index:1;margin:17px auto 0;width:fit-content;max
   transition:opacity .7s ease .3s,transform .7s ease .3s}
 .ap-hero.vu .ap-sous{opacity:1;transform:none}
 .ap-sous a{text-decoration:none;text-transform:uppercase;letter-spacing:.04em;
-  font-size:clamp(.9rem,1.4vw,1.12rem);font-weight:700;color:var(--encre);
+  font-size:calc((clamp(.9rem,1.4vw,1.12rem)) * var(--zc));font-weight:700;color:var(--encre);
   transition:color .25s;white-space:nowrap}
 .ap-sous a::before{content:none}
 .ap-sous a:hover{color:var(--or)}
@@ -664,9 +664,9 @@ h1.ap-titre{position:relative;z-index:1;margin:17px auto 0;width:fit-content;max
 /* mobile : 2 colonnes (3 sous-titres par colonne) */
 @media(max-width:560px){
   .ap-sous{grid-template-columns:1fr 1fr;gap:16px 14px;width:100%;justify-items:center}
-  .ap-sous a{font-size:.82rem;letter-spacing:.02em;white-space:nowrap;text-align:center}
+  .ap-sous a{font-size:calc((.82rem) * var(--zc));letter-spacing:.02em;white-space:nowrap;text-align:center}
   /* infos un peu moins collées aux bords, police légèrement réduite */
-  .hero .infos{width:auto;max-width:none;margin-left:0;margin-right:0;padding-left:12px;padding-right:12px;font-size:.66rem}
+  .hero .infos{width:auto;max-width:none;margin-left:0;margin-right:0;padding-left:12px;padding-right:12px;font-size:calc((.66rem) * var(--zc))}
 }
 @media(prefers-reduced-motion: reduce){
   h1.ap-titre{transform:none !important}
