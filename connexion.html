@@ -138,10 +138,10 @@ body.menu-ouvert .menu-reseaux a:nth-child(3){transition-delay:1.15s}
 /* ---------- héros de page ---------- */
 .hero{min-height:100svh;display:flex;flex-direction:column;justify-content:center;padding:62px 28px 60px;position:relative}
 .hero-page{min-height:72svh;justify-content:flex-start}
-.hero .infos{display:flex;justify-content:space-between;align-items:baseline;flex-wrap:wrap;gap:8px;text-transform:uppercase;letter-spacing:.14em;font-size:.78rem;font-weight:500;border-top:1px solid var(--ligne);padding-top:16px;max-width:1500px;margin:0 auto;width:100%}
+.hero .infos{display:flex;justify-content:space-between;align-items:baseline;flex-wrap:wrap;gap:8px;text-transform:uppercase;letter-spacing:.14em;font-size:calc((.78rem) * var(--zc));font-weight:500;border-top:1px solid var(--ligne);padding-top:16px;max-width:1500px;margin:0 auto;width:100%}
 .hero .infos .h{color:var(--or)}
 @media(max-width:560px){
-  .hero .infos{margin-left:-28px;margin-right:-28px;width:auto;max-width:none;padding-left:12px;padding-right:12px;font-size:.66rem}
+  .hero .infos{margin-left:-28px;margin-right:-28px;width:auto;max-width:none;padding-left:12px;padding-right:12px;font-size:calc((.66rem) * var(--zc))}
 }
 .hero h1{font-size:clamp(2rem,min(11.5vw,16svh),12rem);line-height:.98;text-transform:uppercase;letter-spacing:.04em;margin:20px 0 0;align-self:center;display:block}
 .hero h1 > span{display:block;white-space:nowrap}
