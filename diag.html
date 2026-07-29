@@ -26,7 +26,12 @@
   /* sondes de mesure */
   #sonde16{font-size:16px}
   #sondeRem{font-size:1rem}
-  #sondeVw{width:10vw;height:1px}
+  #sondeEm{font-size:16px}
+  #sondeEm span{font-size:1em}
+  #sondeVw{font-size:5vw}
+  #sondeClamp{font-size:clamp(1rem,5vw,3rem)}
+  #sondePt{font-size:12pt}
+  #sondeLargeurVw{width:10vw;height:1px}
   #sondeSvh{height:100svh;width:1px}
   #sondeLvh{height:100lvh;width:1px}
   #sondeDvh{height:100dvh;width:1px}
@@ -47,8 +52,13 @@
 <textarea id="brut" readonly></textarea>
 
 <span class="sonde" id="sonde16">Mg</span>
+<span class="sonde" id="sondeRange" style="position:absolute;visibility:hidden;left:-9999px;top:0;display:inline-block;font-size:16px;font-family:sans-serif;white-space:nowrap">ET JE TE REPONDRAI</span>
 <span class="sonde" id="sondeRem">Mg</span>
-<div class="sonde" id="sondeVw"></div>
+<div class="sonde" id="sondeLargeurVw"></div>
+<span class="sonde" id="sondeEm"><span>Mg</span></span>
+<span class="sonde" id="sondeVw">Mg</span>
+<span class="sonde" id="sondeClamp">Mg</span>
+<span class="sonde" id="sondePt">Mg</span>
 <div class="sonde" id="sondeSvh"></div>
 <div class="sonde" id="sondeLvh"></div>
 <div class="sonde" id="sondeDvh"></div>
@@ -66,11 +76,30 @@ facteur d'échelle est appliqué par le navigateur, en dehors de tout contrôle 
   var f16   = px(document.getElementById('sonde16'));
   var fRem  = px(document.getElementById('sondeRem'));
   var fPara = px(document.getElementById('para'));
-  var vwMes = document.getElementById('sondeVw').getBoundingClientRect().width;
+  var vwMes = document.getElementById('sondeLargeurVw').getBoundingClientRect().width;
   var iw    = window.innerWidth;
+
+  var fEm    = px(document.querySelector('#sondeEm span'));
+  var fVw    = px(document.getElementById('sondeVw'));
+  var fClamp = px(document.getElementById('sondeClamp'));
+  var fPt    = px(document.getElementById('sondePt'));
+  var attVw    = iw*0.05;
+  var attClamp = Math.min(Math.max(16, iw*0.05), 48);
+  var rap = function(a,b){ return Math.round(a/b*1000)/1000; };
 
   var facteurTexte = f16/16;
   var facteurVw    = vwMes/(iw/10);
+  var facteurVwTexte = fVw/attVw;
+
+  /* Le site mesure la largeur de certains titres avec un Range pour les caler les uns
+     sous les autres. Si le Range ignore le zoom texte de la WebView alors que le rendu
+     l'applique, la boucle d'ajustement se trompe d'exactement ce facteur. On compare
+     donc les deux méthodes sur un même texte. */
+  var eR = document.getElementById('sondeRange');
+  var mElem = Math.round(eR.getBoundingClientRect().width*10)/10;
+  var rg = document.createRange(); rg.selectNodeContents(eR);
+  var mRange = Math.round(rg.getBoundingClientRect().width*10)/10;
+  var rapMes = Math.round(mRange/mElem*1000)/1000;
 
   var lignes = [
     ['Navigateur', /Instagram/i.test(navigator.userAgent) ? 'Instagram (WebView)'
@@ -89,7 +118,16 @@ facteur d'échelle est appliqué par le navigateur, en dehors de tout contrôle 
     ['paragraphe long 16px → mesuré', fPara + ' px'],
     ['<b>facteur d\'échelle du texte</b>', '<b>x' + (Math.round(facteurTexte*1000)/1000) + '</b>'],
     ['—', '—'],
-    ['10vw mesuré', Math.round(vwMes*10)/10 + ' px'],
+    ['<b>police 5vw</b> attendue ' + attVw.toFixed(1), '<b>' + fVw + ' px   x' + rap(fVw,attVw) + '</b>'],
+    ['<b>police clamp(1rem,5vw,3rem)</b> att. ' + attClamp.toFixed(1), '<b>' + fClamp + ' px   x' + rap(fClamp,attClamp) + '</b>'],
+    ['police 1em (parent 16px)', fEm + ' px   x' + rap(fEm,16)],
+    ['police 12pt attendue 16', fPt + ' px   x' + rap(fPt,16)],
+    ['—', '—'],
+    ['largeur mesurée par Range', mRange + ' px'],
+    ['largeur mesurée par élément', mElem + ' px'],
+    ['<b>Range / élément</b>', '<b>x' + rapMes + '</b>'],
+    ['—', '—'],
+    ['10vw en LARGEUR mesuré', Math.round(vwMes*10)/10 + ' px'],
     ['innerWidth / 10', Math.round(iw/10*10)/10 + ' px'],
     ['<b>facteur d\'échelle vw</b>', '<b>x' + (Math.round(facteurVw*1000)/1000) + '</b>'],
     ['—', '—'],
@@ -119,6 +157,18 @@ facteur d'échelle est appliqué par le navigateur, en dehors de tout contrôle 
     msgs.push('<b class="ko">Les unités vw ne correspondent pas à innerWidth</b> (x'+(Math.round(facteurVw*100)/100)+').');
   if(vv && Math.abs(vv.scale-1) > 0.02)
     msgs.push('<b class="ko">La page est zoomée</b> (échelle '+vv.scale+').');
+  if(Math.abs(facteurTexte-1) > 0.02 || Math.abs(facteurVwTexte-1) > 0.02){
+    if(Math.abs(facteurVwTexte-1) <= 0.02)
+      msgs.push('Les polices en <b>vw ne sont PAS affectées</b> : le zoom ne touche que px/rem/em. La composition se disloque.');
+    else if(Math.abs(facteurVwTexte-facteurTexte) < 0.02)
+      msgs.push('Les polices en <b>vw sont affectées au même facteur</b> : le zoom est uniforme, tout grossit ensemble.');
+    else
+      msgs.push('vw affecté d\'un facteur différent (x'+(Math.round(facteurVwTexte*100)/100)+') de px/rem (x'+(Math.round(facteurTexte*100)/100)+').');
+  }
+  if(Math.abs(rapMes-1) > 0.02)
+    msgs.push('<b class="ko">Le Range et l\'élément ne mesurent pas pareil</b> (x'+rapMes+') : c\'est ce qui fausse le calage des titres.');
+  else if(Math.abs(facteurTexte-1) > 0.02)
+    msgs.push('Range et élément concordent : la mesure n\'est pas en cause pour le calage des titres.');
   if(!msgs.length)
     msgs.push('<b class="ok">Aucune anomalie d\'échelle détectée</b> sur ce navigateur.');
   v.innerHTML = msgs.join('<br><br>');
