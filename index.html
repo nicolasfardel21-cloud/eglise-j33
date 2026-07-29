@@ -1282,6 +1282,35 @@ if(!reduit){
   const gpImages = gpScene ? Array.from(gpScene.querySelectorAll('.gpi')) : [];
   const sectionDesert = document.getElementById('desert');
   const lignesEau  = document.querySelectorAll('.desert .ligne-eau');
+  /* ---- recentrage au figement (mobile) ----
+     Les trois lignes sont centrees en CSS. Pendant l'entree on ajoute a chaque ligne
+     laterale un decalage qui lui redonne l'aspect cale a gauche (l1) ou a droite (l3) ;
+     ce decalage ne se resorbe que sur les derniers % de la course, pour que le centrage
+     s'acheve EXACTEMENT au moment ou le bloc se fige (top:0), jamais avant.
+     Mesure : largeur de la plus large sous-ligne (le titre peut se replier sur deux
+     lignes), via un Range — insensible au translateX applique. */
+  const PART_RECENTRAGE = 0.28;   /* part finale de la course consacree au recentrage */
+  let ecartsEau = null;
+  function mesurerEcartsEau(){
+    if(!lignesEau.length){ ecartsEau = null; return; }
+    const t = [];
+    lignesEau.forEach(function(l){
+      const s = parseFloat(l.dataset.glisse);
+      if(!s){ t.push(0); return; }
+      const rg = document.createRange();
+      rg.selectNodeContents(l);
+      let large = 0;
+      const rects = rg.getClientRects();
+      for(let i = 0; i < rects.length; i++) large = Math.max(large, rects[i].width);
+      t.push(s * Math.max(0, (l.offsetWidth - large) / 2));
+    });
+    ecartsEau = t;
+  }
+  surRedim(mesurerEcartsEau);
+  mesurerEcartsEau();
+  /* les polices Anton/Archivo arrivent apres le premier calcul : on remesure */
+  if(document.fonts && document.fonts.ready) document.fonts.ready.then(mesurerEcartsEau);
+  window.addEventListener('load', mesurerEcartsEau);
   const versetGeant = document.querySelector('.verset-geant p');
   const heroImages = document.getElementById('heroImages');
   const hph1 = document.getElementById('hph1');
@@ -1381,9 +1410,19 @@ if(!reduit){
       let e = (vh() - r.top) / (vh() * 0.9);
       e = Math.max(0, Math.min(1, e));
       const dec = (1 - e) * 42;   /* décalage en vw, nul une fois arrivé */
-      lignesEau.forEach(l=>{
+      /* f : 0 quand le bloc entre par le bas, 1 exactement quand il se fige (top = 0) */
+      let f = 1 - r.top / vh();
+      f = Math.max(0, Math.min(1, f));
+      /* g : le recentrage n'opère que sur la part finale, adouci par un smoothstep */
+      let g = (f - (1 - PART_RECENTRAGE)) / PART_RECENTRAGE;
+      g = Math.max(0, Math.min(1, g));
+      g = g * g * (3 - 2 * g);
+      lignesEau.forEach((l, i)=>{
         const s = parseFloat(l.dataset.glisse);
-        if(s !== 0) l.style.transform = `translateX(${s * dec}vw)`;
+        if(s !== 0){
+          const ec = (ecartsEau && ecartsEau[i]) ? ecartsEau[i] * (1 - g) : 0;
+          l.style.transform = `translateX(${s * dec}vw) translateX(${ec}px)`;
+        }
         else l.style.transform = 'none';
       });
     }
