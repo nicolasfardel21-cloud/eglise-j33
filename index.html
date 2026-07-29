@@ -833,6 +833,16 @@ footer{padding:90px 28px 40px;max-width:1500px;margin:0 auto;border-top:1px soli
   mesurer();
   var t; window.addEventListener('resize', function(){ clearTimeout(t); t=setTimeout(mesurer,200); }, {passive:true});
 })();
+
+/* getComputedStyle renvoie, dans les WebView à zoom texte, la taille DÉJÀ multipliée par
+   le facteur système. La réécrire telle quelle en style en ligne l'applique une seconde
+   fois : c'est ce qui gonflait le calque doré et, par ricochet, tout ce qui se cale sur
+   sa largeur. --zc valant 1/facteur, on repasse ici en taille DÉCLARÉE. Hors WebView
+   --zc vaut 1 et cette fonction est l'identité. */
+window.tailleDeclaree = function(el){
+  var zc = parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--zc')) || 1;
+  return parseFloat(getComputedStyle(el).fontSize) * zc;
+};
 </script>
 </head>
 
@@ -1219,7 +1229,7 @@ document.querySelectorAll('.mot-rotatif').forEach(motRotatif=>{
     mots.forEach(m => { motRotatif.textContent = m; max = Math.max(max, h1Rot.offsetWidth); });
     const dispo = (h1Rot.parentElement.clientWidth || window.innerWidth) - 8;
     if(max > dispo){ /* réduire la police pour que le mot le plus large tienne */
-      const fs = parseFloat(getComputedStyle(h1Rot).fontSize);
+      const fs = tailleDeclaree(h1Rot);
       h1Rot.style.fontSize = (fs * dispo / max) + 'px';
       max = 0;
       mots.forEach(m => { motRotatif.textContent = m; max = Math.max(max, h1Rot.offsetWidth); });
@@ -1653,7 +1663,7 @@ if(cartesAnim.length === 6){
     sonde.style.fontStyle  = cs.fontStyle;
     sonde.style.letterSpacing = cs.letterSpacing;
     sonde.style.textTransform = cs.textTransform;
-    sonde.style.fontSize = (taillePx ? taillePx + 'px' : cs.fontSize);
+    sonde.style.fontSize = (taillePx ? taillePx + 'px' : tailleDeclaree(refEl) + 'px');
     sonde.textContent = txt;
     return sonde.getBoundingClientRect().width;
   }
@@ -1688,7 +1698,7 @@ if(cartesAnim.length === 6){
       const rl = l3.getBoundingClientRect();
       const rt = titrage.getBoundingClientRect();
       const cs = getComputedStyle(l3);
-      orLayer.style.fontSize = cs.fontSize;
+      orLayer.style.fontSize = tailleDeclaree(l3) + 'px';
       orLayer.style.letterSpacing = cs.letterSpacing;
       orLayer.style.left = (rl.left - rt.left) + 'px';
       orLayer.style.top  = (rl.top  - rt.top)  + 'px';
@@ -1749,7 +1759,7 @@ if(cartesAnim.length === 6){
         suite.style.marginRight = '0px';
         suite.style.width = Math.ceil(amoiInkW) + 'px';
         suite.style.whiteSpace = 'normal';
-        const plafond = parseFloat(getComputedStyle(verset).fontSize) || 16;
+        const plafond = tailleDeclaree(verset) || 16;
         function lignesSuite(t){
           suite.style.fontSize = t + 'px';
           const lh = t * 1.14;
