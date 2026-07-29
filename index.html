@@ -614,10 +614,12 @@ section{padding:110px 28px;max-width:1500px;margin:0 auto}
     background:linear-gradient(var(--fond),rgba(255,255,255,0));pointer-events:none}
   .desert .ligne-eau{font-size:calc((clamp(2.2rem,13vw,4.2rem)) * var(--zc));letter-spacing:.06em;white-space:normal;
     line-height:1.02;will-change:transform}
-  /* on garde les alignements d'origine pour l'effet d'arrivée (gauche / centre / droite) */
-  .desert .ligne-eau.l1{text-align:left}
-  .desert .ligne-eau.l2{text-align:center}
-  .desert .ligne-eau.l3{text-align:right}
+  /* l'effet d'arrivée latéral est porté par le translateX du JS (42vw -> 0) :
+     les trois lignes, et leurs retours à la ligne, se figent centrées.
+     Sélecteurs .lN conservés : même spécificité que les règles desktop plus haut. */
+  .desert .ligne-eau.l1,
+  .desert .ligne-eau.l2,
+  .desert .ligne-eau.l3{text-align:center}
   .desert cite{margin-top:18px}
   /* le récit passe DERRIÈRE le verset figé */
   .desert .recit{position:relative;z-index:1;margin-top:40px;
