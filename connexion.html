@@ -23,10 +23,18 @@
      rapport qu'avait la valeur figée précédente avec l'ancien doré. */
   --or-fonce:color-mix(in srgb, var(--or) 86%, #000);
   --orange:#E8834A; --bleu:#5E97BD; --bleu-pale:#DCEAF3;
+  --zc:1;   /* compensation du zoom texte des WebView, mesurée en JS (voir <head>) */
   --noir:#0C111C; --creme:#F3EFE4; --creme-50:rgba(243,239,228,.55); --creme-15:rgba(243,239,228,.16);
 }
 *{margin:0;padding:0;box-sizing:border-box}
 html{scroll-behavior:auto}
+/* Les navigateurs intégrés (Instagram, Facebook, Messenger) reposent sur la WebView
+   Android, qui applique par défaut le « font boosting » : elle gonfle d'elle-même la
+   taille des blocs de texte qu'elle juge principaux. Sur une page dont toute la mise en
+   page est pilotée par la typographie — titres en vw, justification calculée en JS — le
+   résultat ressemble à un zoom général. 100% neutralise ce gonflement tout en laissant
+   l'utilisateur zoomer à la main, contrairement à « none ». */
+html{-webkit-text-size-adjust:100%; text-size-adjust:100%}
 body{background:var(--fond);color:var(--encre);font-family:'Archivo',sans-serif;font-weight:300;line-height:1.6;overflow-x:hidden}
 ::selection{background:var(--or);color:#fff}
 a{color:inherit} img{max-width:100%}
@@ -53,7 +61,7 @@ body.menu-ouvert nav::before{opacity:0}
 /* nav au-dessus d'une section sombre : fondu progressif du logo + tirets vers le clair */
 body.nav-sombre nav .marque{color:var(--creme)}
 body.nav-sombre .burger span{background:var(--creme)}
-nav .marque{font-family:'Anton',sans-serif;font-size:2.1rem;line-height:1;letter-spacing:.06em;text-decoration:none;text-transform:uppercase;transition:color .45s ease}
+nav .marque{font-family:'Anton',sans-serif;font-size:calc((2.1rem) * var(--zc));line-height:1;letter-spacing:.06em;text-decoration:none;text-transform:uppercase;transition:color .45s ease}
 .burger{background:none;border:none;cursor:pointer;padding:10px;display:flex;flex-direction:column;gap:6px;z-index:101;margin-right:-10px}
 .burger span{display:block;width:30px;height:2.5px;background:var(--encre);transition:transform .35s,opacity .25s,background .35s}
 body.menu-ouvert .burger span{background:var(--creme)}
@@ -73,7 +81,7 @@ body.menu-ouvert{overflow:hidden}
 .menu-groupe .menu-fleche{opacity:0;transition:opacity .4s ease}
 body.menu-ouvert .menu-groupe .gros{clip-path:inset(0 0 0% 0)}
 body.menu-ouvert .menu-groupe .menu-fleche{opacity:1}
-.menu-groupe .gros{font-family:'Anton',sans-serif;font-size:clamp(2.1rem,5vw,4.2rem);line-height:1.12;white-space:nowrap;text-transform:uppercase;text-decoration:none;display:flex;align-items:baseline;gap:20px;transition:color .25s,padding-left .3s,clip-path .6s cubic-bezier(.65,0,.35,1)}
+.menu-groupe .gros{font-family:'Anton',sans-serif;font-size:calc((clamp(2.1rem,5vw,4.2rem)) * var(--zc));line-height:1.12;white-space:nowrap;text-transform:uppercase;text-decoration:none;display:flex;align-items:baseline;gap:20px;transition:color .25s,padding-left .3s,clip-path .6s cubic-bezier(.65,0,.35,1)}
 body.menu-ouvert:not(.menu-pret) .menu-groupe:nth-child(1) .gros,body.menu-ouvert:not(.menu-pret) .menu-groupe:nth-child(1) .menu-fleche{transition-delay:.12s}
 body.menu-ouvert:not(.menu-pret) .menu-groupe:nth-child(2) .gros,body.menu-ouvert:not(.menu-pret) .menu-groupe:nth-child(2) .menu-fleche{transition-delay:.20s}
 body.menu-ouvert:not(.menu-pret) .menu-groupe:nth-child(3) .gros,body.menu-ouvert:not(.menu-pret) .menu-groupe:nth-child(3) .menu-fleche{transition-delay:.28s}
@@ -83,7 +91,7 @@ body.menu-ouvert:not(.menu-pret) .menu-groupe:nth-child(4) .gros,body.menu-ouver
 .menu-groupe .gros small{font-family:'Archivo',sans-serif;font-size:.74rem;letter-spacing:.2em;color:var(--or)}
 .menu-sous{display:flex;flex-wrap:wrap;gap:6px 18px;justify-content:flex-end;opacity:0;transform:translateY(16px);pointer-events:none;transition:opacity .35s ease,transform .35s ease}
 .menu-groupe:hover .menu-sous,.menu-groupe:focus-within .menu-sous{opacity:1;transform:none;pointer-events:auto}
-.menu-sous a{font-family:'Anton',sans-serif;text-decoration:none;font-size:1.28rem;text-transform:uppercase;letter-spacing:.02em;color:var(--creme);transition:color .25s;white-space:nowrap}
+.menu-sous a{font-family:'Anton',sans-serif;text-decoration:none;font-size:calc((1.28rem) * var(--zc));text-transform:uppercase;letter-spacing:.02em;color:var(--creme);transition:color .25s;white-space:nowrap}
 .menu-sous a:hover{color:var(--or)}
 .menu-sous a::before{content:"(\00a0";color:var(--or)}
 .menu-sous a::after{content:"\00a0)";color:var(--or)}
@@ -120,7 +128,7 @@ body.menu-ouvert .menu-reseaux a:nth-child(3){transition-delay:1.15s}
     max-height:0;overflow:hidden;opacity:1;transform:none;
     transition:max-height .45s ease,padding .45s ease;padding:0}
   .menu-groupe.ouvert .menu-sous{max-height:400px;padding:10px 0 16px}
-  .menu-sous a{font-family:'Anton',sans-serif;font-size:1.1rem;text-transform:uppercase;
+  .menu-sous a{font-family:'Anton',sans-serif;font-size:calc((1.1rem) * var(--zc));text-transform:uppercase;
     letter-spacing:.02em;color:var(--creme);white-space:nowrap}
   .menu-sous a::before{content:"(\00a0";color:var(--or)}
   .menu-sous a::after{content:"\00a0)";color:var(--or)}
@@ -242,7 +250,7 @@ body.menu-ouvert .menu-reseaux a:nth-child(3){transition-delay:1.15s}
 section{padding:110px 28px;max-width:1500px;margin:0 auto}
 .eyebrow{text-transform:uppercase;letter-spacing:.2em;font-size:.75rem;font-weight:600;color:var(--or);display:block;margin-bottom:28px}
 .eyebrow::before{content:"( "} .eyebrow::after{content:" )"}
-.titre-bloc{font-family:'Anton',sans-serif;font-weight:400;line-height:1.12;font-size:clamp(2.2rem,6vw,5rem);text-transform:uppercase;letter-spacing:.04em}
+.titre-bloc{font-family:'Anton',sans-serif;font-weight:400;line-height:1.12;font-size:calc((clamp(2.2rem,6vw,5rem)) * var(--zc));text-transform:uppercase;letter-spacing:.04em}
 .titre-bloc .or{color:var(--or)}
 .texte-bloc{max-width:58ch;margin-top:34px;font-size:1.05rem;color:var(--gris)}
 .texte-bloc strong{color:var(--encre);font-weight:600}
@@ -361,7 +369,7 @@ section{padding:110px 28px;max-width:1500px;margin:0 auto}
 /* ---------- FAQ ---------- */
 .faq details{border-bottom:1px solid var(--ligne)}
 .faq details:first-of-type{border-top:1px solid var(--ligne)}
-.faq summary{cursor:pointer;list-style:none;padding:26px 0;display:flex;justify-content:space-between;align-items:center;gap:20px;font-family:'Anton',sans-serif;font-size:clamp(1.1rem,2.6vw,1.7rem);transition:color .25s}
+.faq summary{cursor:pointer;list-style:none;padding:26px 0;display:flex;justify-content:space-between;align-items:center;gap:20px;font-family:'Anton',sans-serif;font-size:calc((clamp(1.1rem,2.6vw,1.7rem)) * var(--zc));transition:color .25s}
 .faq summary::-webkit-details-marker{display:none}
 .faq summary:hover{color:var(--or)}
 .faq summary::after{content:"+";font-family:'Archivo',sans-serif;font-size:1.6rem;color:var(--or);transition:transform .3s;flex:none}
@@ -400,7 +408,7 @@ section{padding:110px 28px;max-width:1500px;margin:0 auto}
 .hc-eyebrow{display:block;font-size:.78rem;font-weight:700;letter-spacing:.2em;text-transform:uppercase;color:var(--or);margin-bottom:22px}
 .hc-titre{font-family:'Anton',sans-serif;font-weight:400;text-transform:uppercase;
   letter-spacing:.01em;line-height:.92;margin:0;
-  font-size:clamp(3rem,min(8.5vw,15svh),8.5rem)}
+  font-size:calc((clamp(3rem,min(8.5vw,15svh),8.5rem)) * var(--zc))}
 .hc-titre span{display:block;text-align:left;white-space:nowrap}
 .hc-titre .l3{color:var(--or)}
 .hc-titre .mot-rotatif{display:inline-block;white-space:nowrap}
@@ -416,7 +424,7 @@ section{padding:110px 28px;max-width:1500px;margin:0 auto}
   .hc-grille{grid-template-columns:1fr;gap:34px;padding-top:82px;padding-bottom:0}
   .hc-media{aspect-ratio:1/1;max-width:340px;order:2}
   .hc-gauche{order:1}
-  .hc-titre{font-size:clamp(2.6rem,13vw,5rem)}
+  .hc-titre{font-size:calc((clamp(2.6rem,13vw,5rem)) * var(--zc))}
   .hc-titre span{white-space:normal}
   /* la FAQ retrouve le rythme des autres sections (padding-haut:0) au lieu d'un double écart */
   #faq{padding-top:0}
@@ -502,7 +510,7 @@ footer{padding:90px 28px 40px;max-width:1500px;margin:0 auto;border-top:1px soli
 .footer-colonnes ul li{padding:5px 0}
 .footer-colonnes ul a{text-decoration:none;font-size:.95rem;transition:color .25s}
 .footer-colonnes ul a:hover{color:var(--or)}
-.j33-geant{font-family:'Anton',sans-serif;font-size:clamp(6rem,24vw,22rem);line-height:.8;letter-spacing:.02em;user-select:none}
+.j33-geant{font-family:'Anton',sans-serif;font-size:calc((clamp(6rem,24vw,22rem)) * var(--zc));line-height:.8;letter-spacing:.02em;user-select:none}
 .footer-bas{display:flex;justify-content:space-between;flex-wrap:wrap;gap:10px;font-size:.75rem;color:var(--gris);margin-top:30px;border-top:1px solid var(--ligne);padding-top:20px}
 .footer-legal a{color:var(--gris);text-decoration:none;transition:color .25s}.footer-legal a:hover{color:var(--or)}
 
@@ -541,7 +549,7 @@ footer{padding:90px 28px 40px;max-width:1500px;margin:0 auto;border-top:1px soli
   background:linear-gradient(90deg,rgba(12,17,28,.94) 0%,rgba(12,17,28,.82) 32%,rgba(12,17,28,.42) 62%,rgba(12,17,28,.20) 100%)}
 .vb-contenu{position:relative;z-index:2;max-width:min(560px,100%)}
 .vb-contenu .eyebrow{margin-bottom:18px}
-.vb-contenu .titre-bloc{color:#fff;font-size:clamp(2.1rem,4.6vw,4.1rem);line-height:1.04}
+.vb-contenu .titre-bloc{color:#fff;font-size:calc((clamp(2.1rem,4.6vw,4.1rem)) * var(--zc));line-height:1.04}
 /* aplat crème (comme le J33) : le blend est retiré ici, sinon la couleur rendue
    dépendrait de la photo sous le mot et ne serait crème que par endroits */
 .vb-contenu .titre-bloc .l-creme{color:var(--creme)}
@@ -586,7 +594,7 @@ footer{padding:90px 28px 40px;max-width:1500px;margin:0 auto;border-top:1px soli
 .tuile-corps{display:flex;flex-direction:column;flex:1;padding:26px 26px 24px}
 .tuile-corps h3{font-family:'Anton',sans-serif;font-weight:400;text-transform:uppercase;
   letter-spacing:.03em;line-height:1.05;margin:0 0 12px;font-size:1.28rem}
-.tuiles-2 .tuile-corps h3{font-size:1.55rem}
+.tuiles-2 .tuile-corps h3{font-size:calc((1.55rem) * var(--zc))}
 .tuile-texte{position:relative;max-height:4.7em;overflow:hidden;color:var(--gris);
   font-size:1.05rem;line-height:1.6;transition:max-height .55s cubic-bezier(.65,0,.35,1)}
 .tuile-texte p{margin:0}
@@ -670,7 +678,43 @@ body.galerie nav::before{opacity:0}
   .marquee .piste{animation:none}
 }
 </style>
+<script>
+/* Les navigateurs intégrés (Instagram, Facebook, Messenger) reposent sur la WebView
+   Android, qui applique le facteur de taille de police du système à TOUTES les tailles,
+   y compris celles exprimées en vw — mesuré x1,3 sur un Galaxy réglé en « Grande ».
+   Les largeurs, elles, ne bougent pas : la typographie d'affichage déborde alors d'une
+   composition calibrée pour tenir en un écran. On mesure le facteur ici et on le
+   neutralise sur les seuls titres, via --zc. Le corps de texte et les cibles tactiles
+   gardent l'agrandissement : c'est un réglage d'accessibilité, on ne le reprend que là
+   où il n'apporte aucune lisibilité. Sous 1,02 la variable reste à 1, tout est inerte. */
+(function(){
+  var mesurer = function(){
+    try{
+      var s = document.createElement('span');
+      s.style.cssText = 'position:absolute;left:-9999px;top:0;font-size:16px;line-height:1;font-family:sans-serif';
+      s.textContent = 'M';
+      document.documentElement.appendChild(s);
+      var f = parseFloat(getComputedStyle(s).fontSize) / 16;
+      s.parentNode.removeChild(s);
+      document.documentElement.style.setProperty('--zc', (f > 1.02 ? 1 / f : 1).toFixed(4));
+    }catch(e){ document.documentElement.style.setProperty('--zc','1'); }
+  };
+  mesurer();
+  var t; window.addEventListener('resize', function(){ clearTimeout(t); t=setTimeout(mesurer,200); }, {passive:true});
+})();
+
+/* getComputedStyle renvoie, dans les WebView à zoom texte, la taille DÉJÀ multipliée par
+   le facteur système. La réécrire telle quelle en style en ligne l'applique une seconde
+   fois : c'est ce qui gonflait le calque doré et, par ricochet, tout ce qui se cale sur
+   sa largeur. --zc valant 1/facteur, on repasse ici en taille DÉCLARÉE. Hors WebView
+   --zc vaut 1 et cette fonction est l'identité. */
+window.tailleDeclaree = function(el){
+  var zc = parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--zc')) || 1;
+  return parseFloat(getComputedStyle(el).fontSize) * zc;
+};
+</script>
 </head>
+
 <body>
 
 <nav>
@@ -1317,7 +1361,7 @@ document.querySelectorAll('.mot-rotatif').forEach(motRotatif=>{
     mots.forEach(m => { motRotatif.textContent = m; max = Math.max(max, h1Rot.offsetWidth); });
     const dispo = (h1Rot.parentElement.clientWidth || window.innerWidth) - 8;
     if(max > dispo){ /* réduire la police pour que le mot le plus large tienne */
-      const fs = parseFloat(getComputedStyle(h1Rot).fontSize);
+      const fs = tailleDeclaree(h1Rot);
       h1Rot.style.fontSize = (fs * dispo / max) + 'px';
       max = 0;
       mots.forEach(m => { motRotatif.textContent = m; max = Math.max(max, h1Rot.offsetWidth); });
@@ -1706,7 +1750,7 @@ if(cartesAnim.length === 6){
       const rl = l3.getBoundingClientRect();
       const rp = h1.offsetParent.getBoundingClientRect();
       const cs = getComputedStyle(l3);
-      or.style.fontSize = cs.fontSize;
+      or.style.fontSize = tailleDeclaree(l3) + 'px';
       or.style.letterSpacing = cs.letterSpacing;
       or.style.left = (rl.left - rp.left) + 'px';
       or.style.top = (rl.top - rp.top + window.scrollY - (h1.offsetParent.offsetTop)) + 'px';
