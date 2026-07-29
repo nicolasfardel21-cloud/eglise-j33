@@ -23,10 +23,18 @@
      rapport qu'avait la valeur figée précédente avec l'ancien doré. */
   --or-fonce:color-mix(in srgb, var(--or) 86%, #000);
   --orange:#E8834A; --bleu:#5E97BD; --bleu-pale:#DCEAF3;
+  --zc:1;   /* compensation du zoom texte des WebView, mesurée en JS (voir <head>) */
   --noir:#0C111C; --creme:#F3EFE4; --creme-50:rgba(243,239,228,.55); --creme-15:rgba(243,239,228,.16);
 }
 *{margin:0;padding:0;box-sizing:border-box}
 html{scroll-behavior:auto}
+/* Les navigateurs intégrés (Instagram, Facebook, Messenger) reposent sur la WebView
+   Android, qui applique par défaut le « font boosting » : elle gonfle d'elle-même la
+   taille des blocs de texte qu'elle juge principaux. Sur une page dont toute la mise en
+   page est pilotée par la typographie — titres en vw, justification calculée en JS — le
+   résultat ressemble à un zoom général. 100% neutralise ce gonflement tout en laissant
+   l'utilisateur zoomer à la main, contrairement à « none ». */
+html{-webkit-text-size-adjust:100%; text-size-adjust:100%}
 body{background:var(--fond);color:var(--encre);font-family:'Archivo',sans-serif;font-weight:300;line-height:1.6;overflow-x:hidden}
 ::selection{background:var(--or);color:#fff}
 a{color:inherit} img{max-width:100%}
@@ -42,7 +50,7 @@ a{color:inherit} img{max-width:100%}
 /* ---------- nav ---------- */
 nav{position:fixed;top:0;left:0;right:0;z-index:100;display:flex;justify-content:space-between;align-items:center;padding:14px 28px;background:linear-gradient(var(--fond) 60%,transparent)}
 body.menu-ouvert nav{background:transparent}
-nav .marque{font-family:'Anton',sans-serif;font-size:2.1rem;line-height:1;letter-spacing:.06em;text-decoration:none;text-transform:uppercase}
+nav .marque{font-family:'Anton',sans-serif;font-size:calc((2.1rem) * var(--zc));line-height:1;letter-spacing:.06em;text-decoration:none;text-transform:uppercase}
 .burger{background:none;border:none;cursor:pointer;padding:10px;display:flex;flex-direction:column;gap:6px;z-index:101;margin-right:-10px}
 .burger span{display:block;width:30px;height:2.5px;background:var(--encre);transition:transform .35s,opacity .25s,background .35s}
 body.menu-ouvert .burger span{background:var(--creme)}
@@ -62,7 +70,7 @@ body.menu-ouvert{overflow:hidden}
 .menu-groupe .menu-fleche{opacity:0;transition:opacity .4s ease}
 body.menu-ouvert .menu-groupe .gros{clip-path:inset(0 0 0% 0)}
 body.menu-ouvert .menu-groupe .menu-fleche{opacity:1}
-.menu-groupe .gros{font-family:'Anton',sans-serif;font-size:clamp(2.1rem,5vw,4.2rem);line-height:1.12;white-space:nowrap;text-transform:uppercase;text-decoration:none;display:flex;align-items:baseline;gap:20px;transition:color .25s,padding-left .3s,clip-path .6s cubic-bezier(.65,0,.35,1)}
+.menu-groupe .gros{font-family:'Anton',sans-serif;font-size:calc((clamp(2.1rem,5vw,4.2rem)) * var(--zc));line-height:1.12;white-space:nowrap;text-transform:uppercase;text-decoration:none;display:flex;align-items:baseline;gap:20px;transition:color .25s,padding-left .3s,clip-path .6s cubic-bezier(.65,0,.35,1)}
 body.menu-ouvert:not(.menu-pret) .menu-groupe:nth-child(1) .gros,body.menu-ouvert:not(.menu-pret) .menu-groupe:nth-child(1) .menu-fleche{transition-delay:.12s}
 body.menu-ouvert:not(.menu-pret) .menu-groupe:nth-child(2) .gros,body.menu-ouvert:not(.menu-pret) .menu-groupe:nth-child(2) .menu-fleche{transition-delay:.20s}
 body.menu-ouvert:not(.menu-pret) .menu-groupe:nth-child(3) .gros,body.menu-ouvert:not(.menu-pret) .menu-groupe:nth-child(3) .menu-fleche{transition-delay:.28s}
@@ -72,7 +80,7 @@ body.menu-ouvert:not(.menu-pret) .menu-groupe:nth-child(4) .gros,body.menu-ouver
 .menu-groupe .gros small{font-family:'Archivo',sans-serif;font-size:.74rem;letter-spacing:.2em;color:var(--or)}
 .menu-sous{display:flex;flex-wrap:wrap;gap:6px 18px;justify-content:flex-end;opacity:0;transform:translateY(16px);pointer-events:none;transition:opacity .35s ease,transform .35s ease}
 .menu-groupe:hover .menu-sous,.menu-groupe:focus-within .menu-sous{opacity:1;transform:none;pointer-events:auto}
-.menu-sous a{font-family:'Anton',sans-serif;text-decoration:none;font-size:1.28rem;text-transform:uppercase;letter-spacing:.02em;color:var(--creme);transition:color .25s;white-space:nowrap}
+.menu-sous a{font-family:'Anton',sans-serif;text-decoration:none;font-size:calc((1.28rem) * var(--zc));text-transform:uppercase;letter-spacing:.02em;color:var(--creme);transition:color .25s;white-space:nowrap}
 .menu-sous a:hover{color:var(--or)}
 .menu-sous a::before{content:"(\00a0";color:var(--or)}
 .menu-sous a::after{content:"\00a0)";color:var(--or)}
@@ -109,7 +117,7 @@ body.menu-ouvert .menu-reseaux a:nth-child(3){transition-delay:1.15s}
     max-height:0;overflow:hidden;opacity:1;transform:none;
     transition:max-height .45s ease,padding .45s ease;padding:0}
   .menu-groupe.ouvert .menu-sous{max-height:400px;padding:10px 0 16px}
-  .menu-sous a{font-family:'Anton',sans-serif;font-size:1.1rem;text-transform:uppercase;
+  .menu-sous a{font-family:'Anton',sans-serif;font-size:calc((1.1rem) * var(--zc));text-transform:uppercase;
     letter-spacing:.02em;color:var(--creme);white-space:nowrap}
   .menu-sous a::before{content:"(\00a0";color:var(--or)}
   .menu-sous a::after{content:"\00a0)";color:var(--or)}
@@ -119,10 +127,10 @@ body.menu-ouvert .menu-reseaux a:nth-child(3){transition-delay:1.15s}
 /* ---------- héros de page ---------- */
 .hero{min-height:100svh;display:flex;flex-direction:column;justify-content:center;padding:62px 28px 60px;position:relative}
 .hero-page{min-height:72svh;justify-content:flex-start}
-.hero .infos{display:flex;justify-content:space-between;align-items:baseline;flex-wrap:wrap;gap:8px;text-transform:uppercase;letter-spacing:.14em;font-size:.78rem;font-weight:500;border-top:1px solid var(--ligne);padding-top:16px;max-width:1500px;margin:0 auto;width:100%}
+.hero .infos{display:flex;justify-content:space-between;align-items:baseline;flex-wrap:wrap;gap:8px;text-transform:uppercase;letter-spacing:.14em;font-size:calc((.78rem) * var(--zc));font-weight:500;border-top:1px solid var(--ligne);padding-top:16px;max-width:1500px;margin:0 auto;width:100%}
 .hero .infos .h{color:var(--or)}
 @media(max-width:560px){
-  .hero .infos{margin-left:-28px;margin-right:-28px;width:auto;max-width:none;padding-left:12px;padding-right:12px;font-size:.66rem}
+  .hero .infos{margin-left:-28px;margin-right:-28px;width:auto;max-width:none;padding-left:12px;padding-right:12px;font-size:calc((.66rem) * var(--zc))}
 }
 .hero h1{font-size:clamp(2rem,min(11.5vw,16svh),12rem);line-height:.98;text-transform:uppercase;letter-spacing:.04em;margin:20px 0 0;align-self:center;display:block}
 .hero h1 > span{display:block;white-space:nowrap}
@@ -378,7 +386,7 @@ footer{padding:90px 28px 40px;max-width:1500px;margin:0 auto;border-top:1px soli
 .footer-colonnes ul li{padding:5px 0}
 .footer-colonnes ul a{text-decoration:none;font-size:.95rem;transition:color .25s}
 .footer-colonnes ul a:hover{color:var(--or)}
-.j33-geant{font-family:'Anton',sans-serif;font-size:clamp(6rem,24vw,22rem);line-height:.8;letter-spacing:.02em;user-select:none}
+.j33-geant{font-family:'Anton',sans-serif;font-size:calc((clamp(6rem,24vw,22rem)) * var(--zc));line-height:.8;letter-spacing:.02em;user-select:none}
 .footer-bas{display:flex;justify-content:space-between;flex-wrap:wrap;gap:10px;font-size:.75rem;color:var(--gris);margin-top:30px;border-top:1px solid var(--ligne);padding-top:20px}
 .footer-legal a{color:var(--gris);text-decoration:none;transition:color .25s}.footer-legal a:hover{color:var(--or)}
 
@@ -470,9 +478,9 @@ footer{padding:90px 28px 40px;max-width:1500px;margin:0 auto;border-top:1px soli
 /* ---------- pages légales ---------- */
 .legal{max-width:820px;margin:0 auto;padding:120px 28px 80px}
 .legal .eyebrow{display:block;font-size:.78rem;font-weight:700;letter-spacing:.2em;text-transform:uppercase;color:var(--or);margin-bottom:20px}
-.legal h1{font-family:'Anton',sans-serif;font-weight:400;text-transform:uppercase;letter-spacing:.01em;line-height:.95;font-size:clamp(2.4rem,7vw,4.6rem);margin:0 0 10px;color:var(--encre)}
+.legal h1{font-family:'Anton',sans-serif;font-weight:400;text-transform:uppercase;letter-spacing:.01em;line-height:.95;font-size:calc((clamp(2.4rem,7vw,4.6rem)) * var(--zc));margin:0 0 10px;color:var(--encre)}
 .legal .maj{color:var(--gris);font-size:.85rem;margin-bottom:50px}
-.legal h2{font-family:'Anton',sans-serif;font-weight:400;text-transform:uppercase;letter-spacing:.02em;font-size:clamp(1.3rem,3.4vw,1.8rem);margin:44px 0 16px;color:var(--encre)}
+.legal h2{font-family:'Anton',sans-serif;font-weight:400;text-transform:uppercase;letter-spacing:.02em;font-size:calc((clamp(1.3rem,3.4vw,1.8rem)) * var(--zc));margin:44px 0 16px;color:var(--encre)}
 .legal p,.legal li{color:var(--gris);font-size:1.05rem;line-height:1.65}
 .legal p{margin:0 0 16px}
 .legal ul{list-style:none;margin:0 0 16px;padding:0}
@@ -485,7 +493,33 @@ footer{padding:90px 28px 40px;max-width:1500px;margin:0 auto;border-top:1px soli
 @media(max-width:760px){.legal{padding:96px 22px 60px}}
 
 </style>
+<script>
+/* Les navigateurs intégrés (Instagram, Facebook, Messenger) reposent sur la WebView
+   Android, qui applique le facteur de taille de police du système à TOUTES les tailles,
+   y compris celles exprimées en vw — mesuré x1,3 sur un Galaxy réglé en « Grande ».
+   Les largeurs, elles, ne bougent pas : la typographie d'affichage déborde alors d'une
+   composition calibrée pour tenir en un écran. On mesure le facteur ici et on le
+   neutralise sur les seuls titres, via --zc. Le corps de texte et les cibles tactiles
+   gardent l'agrandissement : c'est un réglage d'accessibilité, on ne le reprend que là
+   où il n'apporte aucune lisibilité. Sous 1,02 la variable reste à 1, tout est inerte. */
+(function(){
+  var mesurer = function(){
+    try{
+      var s = document.createElement('span');
+      s.style.cssText = 'position:absolute;left:-9999px;top:0;font-size:16px;line-height:1;font-family:sans-serif';
+      s.textContent = 'M';
+      document.documentElement.appendChild(s);
+      var f = parseFloat(getComputedStyle(s).fontSize) / 16;
+      s.parentNode.removeChild(s);
+      document.documentElement.style.setProperty('--zc', (f > 1.02 ? 1 / f : 1).toFixed(4));
+    }catch(e){ document.documentElement.style.setProperty('--zc','1'); }
+  };
+  mesurer();
+  var t; window.addEventListener('resize', function(){ clearTimeout(t); t=setTimeout(mesurer,200); }, {passive:true});
+})();
+</script>
 </head>
+
 <body>
 <body>
 
