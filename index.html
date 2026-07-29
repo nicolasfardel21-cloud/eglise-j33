@@ -137,7 +137,7 @@ body.menu-ouvert .menu-reseaux a:nth-child(3){transition-delay:1.15s}
 /* ---------- héros de page ---------- */
 .hero{min-height:100svh;display:flex;flex-direction:column;justify-content:center;padding:62px 28px 60px;position:relative}
 .hero-page{min-height:72svh}
-.hero .infos{display:flex;justify-content:space-between;align-items:baseline;flex-wrap:wrap;gap:8px;text-transform:uppercase;letter-spacing:.14em;font-size:.78rem;font-weight:500;border-top:1px solid var(--ligne);padding-top:16px;max-width:1500px;margin:0 auto;width:100%;mix-blend-mode:exclusion;color:#fff}
+.hero .infos{display:flex;justify-content:space-between;align-items:baseline;flex-wrap:wrap;gap:8px;text-transform:uppercase;letter-spacing:.14em;font-size:calc((.78rem) * var(--zc));font-weight:500;border-top:1px solid var(--ligne);padding-top:16px;max-width:1500px;margin:0 auto;width:100%;mix-blend-mode:exclusion;color:#fff}
 .hero .infos .h{color:#fff}
 .hero h1{font-size:calc((clamp(2rem,min(11.5vw,16svh),12rem)) * var(--zc));line-height:.98;text-transform:uppercase;letter-spacing:.04em;margin:20px 0 0;align-self:center;display:block}
 /* accueil : titre géant agrandi (« Fais appel à moi » plus gros) */
@@ -360,7 +360,7 @@ body.menu-ouvert .menu-reseaux a:nth-child(3){transition-delay:1.15s}
   .gp-mobile .titre-bloc .or.invisible{visibility:hidden}
   .gpm-or{position:absolute;left:0;right:0;bottom:0;color:var(--or);pointer-events:none;
     font-family:'Anton',sans-serif;font-weight:400;line-height:1.06;text-transform:uppercase;
-    letter-spacing:.04em;font-size:clamp(1.9rem,10vw,3rem)}
+    letter-spacing:.04em;font-size:calc((clamp(1.9rem,10vw,3rem)) * var(--zc))}
   .gp-mobile .texte-bloc{color:var(--encre);margin:26px 0 0;max-width:none}
   .gp-mobile .texte-bloc strong{color:var(--encre)}
   .gp-mobile .lien-savoir{display:block;width:fit-content;margin:22px auto 0;color:var(--encre);
