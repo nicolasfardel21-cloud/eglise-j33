@@ -22,7 +22,14 @@
 }
 *{margin:0;padding:0;box-sizing:border-box}
 html{scroll-behavior:auto}
-html{overflow-x:clip}
+html{overflow-x:clip;
+  /* Les navigateurs intégrés (Instagram, Facebook, Messenger) reposent sur la WebView
+     Android, qui applique par défaut le « font boosting » : elle gonfle d'elle-même la
+     taille des blocs de texte qu'elle juge principaux. Sur une page dont toute la mise
+     en page est pilotée par la typographie — titres en vw, justification calculée en JS
+     — le résultat ressemble à un zoom général. 100% neutralise ce gonflement tout en
+     laissant l'utilisateur zoomer à la main, contrairement à « none ». */
+  -webkit-text-size-adjust:100%; text-size-adjust:100%}
 body{background:transparent;color:var(--encre);font-family:'Archivo',sans-serif;font-weight:300;line-height:1.6;overflow-x:clip}
 ::selection{background:var(--or);color:#fff}
 a{color:inherit} img{max-width:100%}
