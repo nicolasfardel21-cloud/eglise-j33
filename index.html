@@ -1407,16 +1407,17 @@ if(!reduit){
       const intr = document.querySelector('.desert .int');
       const r = (intr||sectionDesert).getBoundingClientRect();
       /* entree : 0 quand le bloc arrive par le bas, 1 quand il est calé en haut */
-      let e = (vh() - r.top) / (vh() * 0.9);
+      let e = (vh() - r.top) / vh();
       e = Math.max(0, Math.min(1, e));
       const dec = (1 - e) * 42;   /* décalage en vw, nul une fois arrivé */
       /* f : 0 quand le bloc entre par le bas, 1 exactement quand il se fige (top = 0) */
       let f = 1 - r.top / vh();
       f = Math.max(0, Math.min(1, f));
-      /* g : le recentrage n'opère que sur la part finale, adouci par un smoothstep */
+      /* g : le recentrage n'opère que sur la part finale, à vitesse constante.
+         Pas d'amorti en sortie : un smoothstep rend les derniers pixels invisibles
+         et le mouvement paraît fini avant que le bloc ne se fige. */
       let g = (f - (1 - PART_RECENTRAGE)) / PART_RECENTRAGE;
       g = Math.max(0, Math.min(1, g));
-      g = g * g * (3 - 2 * g);
       lignesEau.forEach((l, i)=>{
         const s = parseFloat(l.dataset.glisse);
         if(s !== 0){
