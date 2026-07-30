@@ -704,7 +704,7 @@ window.tailleDeclaree = function(el){
     </header>
 
 <section class="visite">
-  <div class="fiche reveal" id="horaires">
+  <div class="fiche reveal" id="horaires" data-j33-evt="lu/venir/horaires">
     <div class="fiche-label">horaires</div>
     <div class="fiche-contenu">
       <div class="horaires-liste">
@@ -722,7 +722,7 @@ window.tailleDeclaree = function(el){
     </div>
   </div>
 
-  <div class="fiche reveal" id="lieux">
+  <div class="fiche reveal" id="lieux" data-j33-evt="lu/venir/lieux">
     <div class="fiche-label">lieux</div>
     <div class="fiche-contenu">
       <div class="lieux-grands">Is-sur-Tille <span class="sep">//</span> Gemeaux</div>
@@ -733,7 +733,7 @@ window.tailleDeclaree = function(el){
     </div>
   </div>
 
-  <div class="fiche reveal" id="premiere">
+  <div class="fiche reveal" id="premiere" data-j33-evt="lu/venir/premiere">
     <div class="fiche-label">infos pratiques</div>
     <div class="fiche-contenu">
       <div class="details-grille">
@@ -749,7 +749,7 @@ window.tailleDeclaree = function(el){
     </div>
   </div>
 
-  <div class="fiche reveal" id="faq">
+  <div class="fiche reveal" id="faq" data-j33-evt="lu/venir/faq">
     <div class="fiche-label">faq</div>
     <div class="fiche-contenu">
       <div class="faq">
@@ -969,6 +969,44 @@ document.querySelectorAll('.mot-rotatif').forEach(motRotatif=>{
 const obs = new IntersectionObserver(es=>{es.forEach(e=>{if(e.isIntersecting){e.target.classList.add('visible');obs.unobserve(e.target);}})},{threshold:0});
 document.querySelectorAll('.reveal').forEach(el=>obs.observe(el));
 
+/* ---------- jalons d'audience (GoatCounter) ----------
+   Evenements anonymes : profondeur de lecture et actions.
+   Aucun contenu de formulaire n'est transmis, seulement le fait qu'il a ete envoye. */
+const j33Evt = (() => {
+  const file = [];
+  let essais = 0;
+  const pret = () => !!(window.goatcounter && typeof window.goatcounter.count === 'function');
+  const vider = () => { while(file.length) window.goatcounter.count({path: file.shift(), event: true}); };
+  /* count.js est charge en async : on met en file d'attente tant qu'il n'est pas pret,
+     et on abandonne au bout de 10 s (script bloque par une extension). */
+  const minuteur = setInterval(() => {
+    if(pret()){ clearInterval(minuteur); vider(); }
+    else if(++essais > 50){ clearInterval(minuteur); file.length = 0; }
+  }, 200);
+  return nom => { if(nom){ file.push(nom); if(pret()) vider(); } };
+})();
+
+/* lecture : declenche quand la section traverse la bande centrale de l'ecran,
+   une seule fois par visite. Convient aux sections plein ecran comme aux courtes. */
+(function(){
+  const cibles = document.querySelectorAll('[data-j33-evt]');
+  if(!cibles.length || !('IntersectionObserver' in window)) return;
+  const obsEvt = new IntersectionObserver(es => es.forEach(e => {
+    if(!e.isIntersecting) return;
+    j33Evt(e.target.getAttribute('data-j33-evt'));
+    obsEvt.unobserve(e.target);
+  }), {rootMargin: '-40% 0px -40% 0px'});
+  cibles.forEach(c => obsEvt.observe(c));
+})();
+
+/* actions : delegation en phase de capture, afin de lire aria-expanded AVANT que
+   le onclick du bouton ne l'inverse — on ne compte que les ouvertures, pas les fermetures. */
+document.addEventListener('click', e => {
+  const el = e.target.closest && e.target.closest('[data-j33-clic]');
+  if(!el || el.getAttribute('aria-expanded') === 'true') return;
+  j33Evt(el.getAttribute('data-j33-clic'));
+}, true);
+
 /* ligne + sous-liens sous le titre : apparition simple au chargement */
 requestAnimationFrame(()=>requestAnimationFrame(()=>document.querySelector('.hero-page')?.classList.add('vu')));
 
@@ -1157,6 +1195,7 @@ requestAnimationFrame(()=>requestAnimationFrame(()=>document.querySelector('.her
       note.hidden = false;
       return;
     }
+    j33Evt('envoi/venir/ma-venue');
     const [p, n, e, pr] = champs.map(c=>c.value.trim());
     const sujet = `Je viens à J33 — ${p} ${n}`;
     const corps =
