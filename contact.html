@@ -631,7 +631,7 @@ footer{padding:90px 28px 40px;max-width:1500px;margin:0 auto;border-top:1px soli
   </div>
 </div>
 
-<div class="suivre" id="reseaux">
+<div class="suivre" id="reseaux" data-j33-evt="lu/contact/reseaux">
   <p>« Venez et <i>voyez</i> »</p>
   <cite>Jean 1 : 39</cite>
 </div>
@@ -745,6 +745,44 @@ document.addEventListener('keydown', e => {
 const obs = new IntersectionObserver(es=>{es.forEach(e=>{if(e.isIntersecting){e.target.classList.add('visible');obs.unobserve(e.target);}})},{threshold:0});
 document.querySelectorAll('.reveal').forEach(el=>obs.observe(el));
 
+/* ---------- jalons d'audience (GoatCounter) ----------
+   Evenements anonymes : profondeur de lecture et actions.
+   Aucun contenu de formulaire n'est transmis, seulement le fait qu'il a ete envoye. */
+const j33Evt = (() => {
+  const file = [];
+  let essais = 0;
+  const pret = () => !!(window.goatcounter && typeof window.goatcounter.count === 'function');
+  const vider = () => { while(file.length) window.goatcounter.count({path: file.shift(), event: true}); };
+  /* count.js est charge en async : on met en file d'attente tant qu'il n'est pas pret,
+     et on abandonne au bout de 10 s (script bloque par une extension). */
+  const minuteur = setInterval(() => {
+    if(pret()){ clearInterval(minuteur); vider(); }
+    else if(++essais > 50){ clearInterval(minuteur); file.length = 0; }
+  }, 200);
+  return nom => { if(nom){ file.push(nom); if(pret()) vider(); } };
+})();
+
+/* lecture : declenche quand la section traverse la bande centrale de l'ecran,
+   une seule fois par visite. Convient aux sections plein ecran comme aux courtes. */
+(function(){
+  const cibles = document.querySelectorAll('[data-j33-evt]');
+  if(!cibles.length || !('IntersectionObserver' in window)) return;
+  const obsEvt = new IntersectionObserver(es => es.forEach(e => {
+    if(!e.isIntersecting) return;
+    j33Evt(e.target.getAttribute('data-j33-evt'));
+    obsEvt.unobserve(e.target);
+  }), {rootMargin: '-40% 0px -40% 0px'});
+  cibles.forEach(c => obsEvt.observe(c));
+})();
+
+/* actions : delegation en phase de capture, afin de lire aria-expanded AVANT que
+   le onclick du bouton ne l'inverse — on ne compte que les ouvertures, pas les fermetures. */
+document.addEventListener('click', e => {
+  const el = e.target.closest && e.target.closest('[data-j33-clic]');
+  if(!el || el.getAttribute('aria-expanded') === 'true') return;
+  j33Evt(el.getAttribute('data-j33-clic'));
+}, true);
+
 /* bandeau du menu (mobile) : voile progressif pendant que la photo défile sous lui — même
    mécanique que la croix sur la page "connexion" (clip-path découpé au pixel selon ce qu'il
    reste de photo dans la bande du nav). Marque + burger ne repassent en clair qu'une fois
@@ -780,6 +818,7 @@ document.querySelectorAll('.reveal').forEach(el=>obs.observe(el));
   form.addEventListener('submit', e=>{
     e.preventDefault();
     if(!form.reportValidity()) return;
+    j33Evt('envoi/contact/formulaire');
     const v = id => (form.querySelector('#'+id)?.value || '').trim();
     const prenom = v('prenom'), nom = v('nom'), email = v('email'),
           raison = v('raison'), message = v('message');
