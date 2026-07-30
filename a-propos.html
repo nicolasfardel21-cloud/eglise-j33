@@ -1131,7 +1131,7 @@ window.tailleDeclaree = function(el){
   </section>
 </header>
 
-<section id="vision" class="reveal" style="padding-top:0;scroll-margin-top:90px">
+<section id="vision" class="reveal" style="padding-top:0;scroll-margin-top:90px" data-j33-evt="lu/a-propos/vision">
   <span class="eyebrow">notre mission</span>
   <h2 class="titre-bloc">Les piliers qui portent<br><span class="or">notre vision</span></h2>
   <div class="piliers-wrap" id="piliersWrap">
@@ -1274,7 +1274,7 @@ window.tailleDeclaree = function(el){
   </div>
 </section>
 
-<section id="croyances" class="reveal" style="padding:0 0 110px">
+<section id="croyances" class="reveal" style="padding:0 0 110px" data-j33-evt="lu/a-propos/croyances">
   <div class="croyances-scroll" id="croyancesScroll">
     <div class="cs-colle">
       <span class="eyebrow cs-eyebrow">nos fondements</span>
@@ -1369,7 +1369,7 @@ window.tailleDeclaree = function(el){
   </div>
 </section>
 
-<section id="responsables">
+<section id="responsables" data-j33-evt="lu/a-propos/responsables">
   <div class="rs-scene" id="rsScene">
     <div class="rs-split" id="rsSplit">
 
@@ -1421,7 +1421,7 @@ window.tailleDeclaree = function(el){
         <img src="images/a-propos/pasteur_2.jpg" alt="Nicolas et Ismaris, pasteurs de l'église J33" class="rs-photo" loading="lazy">
       </div>
 
-      <button class="rs-btn" type="button" id="rsBtn">Nos responsables</button>
+      <button class="rs-btn" type="button" id="rsBtn" data-j33-clic="clic/a-propos/responsables">Nos responsables</button>
     </div>
   </div>
 </section>
@@ -1666,6 +1666,44 @@ document.querySelectorAll('.mot-rotatif').forEach(motRotatif=>{
 /* apparitions */
 const obs = new IntersectionObserver(es=>{es.forEach(e=>{if(e.isIntersecting){e.target.classList.add('visible');obs.unobserve(e.target);}})},{threshold:0});
 document.querySelectorAll('.reveal').forEach(el=>obs.observe(el));
+
+/* ---------- jalons d'audience (GoatCounter) ----------
+   Evenements anonymes : profondeur de lecture et actions.
+   Aucun contenu de formulaire n'est transmis, seulement le fait qu'il a ete envoye. */
+const j33Evt = (() => {
+  const file = [];
+  let essais = 0;
+  const pret = () => !!(window.goatcounter && typeof window.goatcounter.count === 'function');
+  const vider = () => { while(file.length) window.goatcounter.count({path: file.shift(), event: true}); };
+  /* count.js est charge en async : on met en file d'attente tant qu'il n'est pas pret,
+     et on abandonne au bout de 10 s (script bloque par une extension). */
+  const minuteur = setInterval(() => {
+    if(pret()){ clearInterval(minuteur); vider(); }
+    else if(++essais > 50){ clearInterval(minuteur); file.length = 0; }
+  }, 200);
+  return nom => { if(nom){ file.push(nom); if(pret()) vider(); } };
+})();
+
+/* lecture : declenche quand la section traverse la bande centrale de l'ecran,
+   une seule fois par visite. Convient aux sections plein ecran comme aux courtes. */
+(function(){
+  const cibles = document.querySelectorAll('[data-j33-evt]');
+  if(!cibles.length || !('IntersectionObserver' in window)) return;
+  const obsEvt = new IntersectionObserver(es => es.forEach(e => {
+    if(!e.isIntersecting) return;
+    j33Evt(e.target.getAttribute('data-j33-evt'));
+    obsEvt.unobserve(e.target);
+  }), {rootMargin: '-40% 0px -40% 0px'});
+  cibles.forEach(c => obsEvt.observe(c));
+})();
+
+/* actions : delegation en phase de capture, afin de lire aria-expanded AVANT que
+   le onclick du bouton ne l'inverse — on ne compte que les ouvertures, pas les fermetures. */
+document.addEventListener('click', e => {
+  const el = e.target.closest && e.target.closest('[data-j33-clic]');
+  if(!el || el.getAttribute('aria-expanded') === 'true') return;
+  j33Evt(el.getAttribute('data-j33-clic'));
+}, true);
 
 /* interactions au scroll */
 const reduit = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
