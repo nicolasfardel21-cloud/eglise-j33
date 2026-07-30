@@ -946,7 +946,7 @@ window.tailleDeclaree = function(el){
 <!-- ===== scène évangile + images éparpillées (façon 2819) : le texte « L'Évangile / Rien
      de moins » au centre, 9 images de tailles/positions variées qui montent à des vitesses
      différentes tout autour, dès la fin du hero ===== -->
-<div class="gp-scene" id="gpScene">
+<div class="gp-scene" id="gpScene" data-j33-evt="lu/accueil/mission">
     <div class="gp-images" id="gpImages" aria-hidden="true">
       <figure class="gpi" data-vit="0.22" style="--t:-4%; --l:1%;  --w:clamp(170px,21vw,360px); --ar:3/4"><img src="images/index/galerie/galerie_1.jpg" alt="" loading="lazy" onerror="this.style.display='none'"></figure>
       <figure class="gpi" data-vit="0.50" style="--t:-6%; --l:66%; --w:clamp(210px,28vw,480px); --ar:4/3"><img src="images/index/galerie/galerie_2.jpg" alt="" loading="lazy" onerror="this.style.display='none'"></figure>
@@ -1012,7 +1012,7 @@ window.tailleDeclaree = function(el){
 </div>
 
 
-<section id="rendezvous" class="reveal">
+<section id="rendezvous" class="reveal" data-j33-evt="lu/accueil/rendezvous">
   <a class="lien-paren rdv-lien" href="venir.html">nos moments <span class="or">ensemble</span></a>
   <div class="table-rdv">
     <div class="rdv">
@@ -1038,7 +1038,7 @@ window.tailleDeclaree = function(el){
 
 </div><!-- /page : fin zone immersive -->
 
-<section id="desert" class="desert">
+<section id="desert" class="desert" data-j33-evt="lu/accueil/fin">
   <div class="int">
     <div class="ligne-eau l1" data-glisse="-1">Car des eaux</div>
     <div class="ligne-eau l2" data-glisse="0">jailliront</div>
@@ -1267,6 +1267,44 @@ document.querySelectorAll('.mot-rotatif').forEach(motRotatif=>{
 /* apparitions */
 const obs = new IntersectionObserver(es=>{es.forEach(e=>{if(e.isIntersecting){e.target.classList.add('visible');obs.unobserve(e.target);}})},{threshold:0});
 document.querySelectorAll('.reveal').forEach(el=>obs.observe(el));
+
+/* ---------- jalons d'audience (GoatCounter) ----------
+   Evenements anonymes : profondeur de lecture et actions.
+   Aucun contenu de formulaire n'est transmis, seulement le fait qu'il a ete envoye. */
+const j33Evt = (() => {
+  const file = [];
+  let essais = 0;
+  const pret = () => !!(window.goatcounter && typeof window.goatcounter.count === 'function');
+  const vider = () => { while(file.length) window.goatcounter.count({path: file.shift(), event: true}); };
+  /* count.js est charge en async : on met en file d'attente tant qu'il n'est pas pret,
+     et on abandonne au bout de 10 s (script bloque par une extension). */
+  const minuteur = setInterval(() => {
+    if(pret()){ clearInterval(minuteur); vider(); }
+    else if(++essais > 50){ clearInterval(minuteur); file.length = 0; }
+  }, 200);
+  return nom => { if(nom){ file.push(nom); if(pret()) vider(); } };
+})();
+
+/* lecture : declenche quand la section traverse la bande centrale de l'ecran,
+   une seule fois par visite. Convient aux sections plein ecran comme aux courtes. */
+(function(){
+  const cibles = document.querySelectorAll('[data-j33-evt]');
+  if(!cibles.length || !('IntersectionObserver' in window)) return;
+  const obsEvt = new IntersectionObserver(es => es.forEach(e => {
+    if(!e.isIntersecting) return;
+    j33Evt(e.target.getAttribute('data-j33-evt'));
+    obsEvt.unobserve(e.target);
+  }), {rootMargin: '-40% 0px -40% 0px'});
+  cibles.forEach(c => obsEvt.observe(c));
+})();
+
+/* actions : delegation en phase de capture, afin de lire aria-expanded AVANT que
+   le onclick du bouton ne l'inverse — on ne compte que les ouvertures, pas les fermetures. */
+document.addEventListener('click', e => {
+  const el = e.target.closest && e.target.closest('[data-j33-clic]');
+  if(!el || el.getAttribute('aria-expanded') === 'true') return;
+  j33Evt(el.getAttribute('data-j33-clic'));
+}, true);
 
 /* interactions au scroll */
 const reduit = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
