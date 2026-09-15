@@ -820,7 +820,7 @@ body{overflow-x:clip}   /* clip ne cree pas de conteneur de defilement, contrair
     </div>
   </div>
 
-  <div>
+  <div class="reveal">
     <h2>À quoi servent <span>vos dons ?</span></h2>
     <div class="texte-bloc">
       <p><strong>L'Évangile nous est donné gratuitement. Pourtant, la vie concrète d'une Église implique des responsabilités et des charges :</strong></p>
@@ -1034,7 +1034,6 @@ const j33Evt = (() => {
   const nav = document.querySelector('nav');
   const titre = banniere ? banniere.querySelector('.hd-titre') : null;
   const navH = () => nav ? nav.offsetHeight : 64;
-  const petitEcran = window.matchMedia('(max-width:900px)');
 
   function maj(){
     const nh = navH();
@@ -1057,16 +1056,13 @@ const j33Evt = (() => {
       nav.style.setProperty('--cb', cb + 'px');
     }
 
-    /* Parallaxe : le titre monte avec l'image mais moins vite. Desactivee en smartphone :
-       le defilement tactile est gere par le compositeur et la barre d'adresse fait varier
-       la hauteur de fenetre, ce qui produisait un sursaut du titre au chargement. */
-    if(titre && banniere){
-      if(petitEcran.matches){ titre.style.setProperty('--pin', '0px'); }
-      else {
-        const r = banniere.getBoundingClientRect();
-        const s = Math.max(0, Math.min(banniere.offsetHeight, -r.top));
-        titre.style.setProperty('--pin', (s * 0.45).toFixed(1) + 'px');
-      }
+    /* Parallaxe : le titre monte avec l'image mais moins vite. Le decalage est calcule
+       a partir du defilement de la page (scrollY) plutot que de la position du bandeau :
+       sur mobile, la retraction de la barre d'adresse modifie la hauteur de fenetre et
+       faisait sauter le titre au chargement. */
+    if(titre){
+      const s = Math.max(0, Math.min(banniere.offsetHeight, window.scrollY || window.pageYOffset || 0));
+      titre.style.setProperty('--pin', (s * 0.45).toFixed(1) + 'px');
     }
   }
   maj();
