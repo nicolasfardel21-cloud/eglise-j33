@@ -418,15 +418,23 @@ footer{padding:90px 28px 40px;max-width:1500px;margin:0 auto;border-top:1px soli
    burger en crème pour rester lisible sur le visuel. Desktop uniquement : la colonne
    image est sticky, donc pas besoin de JS ici (cf. page "venir", même principe en miroir). */
 @media(min-width:901px){
-  body.page-contact nav{background:linear-gradient(var(--fond) 60%,transparent);
-    background-size:50% 100%;background-position:left top;background-repeat:no-repeat}
-  /* le burger n'est en crème que tant que la colonne photo passe sous le bandeau :
-     la règle était inconditionnelle, il restait donc clair sur fond blanc une fois la
-     photo sortie. Le drapeau .nav-sur-photo est déjà posé au scroll (cf. script en bas). */
+  /* Deux voiles séparés plutôt qu'un fond unique : celui de gauche est permanent (colonne
+     texte, toujours claire), celui de droite est découpé au pixel par --ch, c'est-à-dire
+     par le bas de la photo dans la bande du nav. Il apparaît donc progressivement pendant
+     que la photo sort, au lieu de basculer d'un coup quand elle a disparu — même principe
+     que sur les pages « connexion » et « nous soutenir ». */
+  body.page-contact nav{background:transparent}
+  body.page-contact nav::before,
+  body.page-contact nav::after{content:"";position:absolute;inset:0;z-index:-1;pointer-events:none;
+    background:linear-gradient(var(--fond) 60%,transparent);
+    background-size:50% 100%;background-repeat:no-repeat;transition:opacity .45s ease}
+  body.page-contact nav::before{background-position:left top}
+  body.page-contact nav::after{background-position:right top;clip-path:inset(var(--ch,0px) 0 0 0)}
+  /* le burger n'est en crème que tant que la photo passe sous le bandeau : la règle était
+     inconditionnelle, il restait donc clair sur fond blanc une fois la photo sortie */
   body.page-contact.nav-sur-photo nav .burger span{background:var(--creme)}
-  /* photo sortie : le voile reprend toute la largeur du bandeau */
-  body.page-contact:not(.nav-sur-photo) nav{background-size:100% 100%}
-  body.page-contact.menu-ouvert nav{background:transparent}
+  body.page-contact.menu-ouvert nav::before,
+  body.page-contact.menu-ouvert nav::after{opacity:0}
 }
 /* mobile : la photo est en pleine largeur en haut de page et défile normalement (non sticky).
    Même mécanique que la croix sur la page "connexion" : le voile blanc du bandeau est porté par
