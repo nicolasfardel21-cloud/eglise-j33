@@ -493,6 +493,29 @@ footer{padding:90px 28px 40px;max-width:1500px;margin:0 auto;border-top:1px soli
 .legal .note-rempl{font-style:italic;font-size:.9rem;color:var(--bleu)}
 @media(max-width:760px){.legal{padding:96px 22px 60px}}
 
+
+/* ---------- « Nous soutenir » : 5e entrée du menu ----------
+   La cascade d'ouverture s'arrêtait à la 4e entrée, d'où le délai ajouté. Le bas du menu
+   (mentions + verset) remonte directement sous le filet de « Contact » au lieu d'être
+   repoussé en pied de fenêtre, et l'icône Instagram rejoint la ligne « Contact » elle-même,
+   sans cercle, pour que les deux axes verticaux coïncident. Avec cinq entrées le menu peut
+   dépasser la hauteur de fenêtre : il reste défilable, barre masquée. */
+body.menu-ouvert:not(.menu-pret) .menu-groupe:nth-child(5) .gros,
+body.menu-ouvert:not(.menu-pret) .menu-groupe:nth-child(5) .menu-fleche{transition-delay:.44s}
+.menu-groupes{flex:0 0 auto}
+.menu-pied{border-top:0;padding-top:18px}
+.menu-groupe--simple{grid-template-columns:1fr auto}
+.menu-reseaux{margin:0;justify-content:flex-end}
+.menu-reseaux a{width:auto;height:auto;border:0;border-radius:0}
+.menu-reseaux svg{width:34px;height:34px}
+@media(max-width:560px){.menu-reseaux svg{width:28px;height:28px}}
+.menu-overlay{scrollbar-width:none;-ms-overflow-style:none}
+.menu-overlay::-webkit-scrollbar{width:0;height:0;display:none}
+/* smartphone : le bas du menu est centré et calé en bas de l'écran */
+@media(max-width:760px){
+  .menu-pied{margin-top:auto;justify-content:center;text-align:center;gap:6px 14px;padding-top:26px}
+  .menu-pied .verset-pied{width:100%}
+}
 </style>
 <script>
 /* Les navigateurs intégrés (Instagram, Facebook, Messenger) reposent sur la WebView
@@ -521,7 +544,6 @@ footer{padding:90px 28px 40px;max-width:1500px;margin:0 auto;border-top:1px soli
 </script>
 </head>
 
-<body>
 <body>
 
 <nav>
@@ -563,13 +585,16 @@ footer{padding:90px 28px 40px;max-width:1500px;margin:0 auto;border-top:1px soli
         </div>
       </div>
       <div class="menu-groupe menu-groupe--simple">
-        <a class="gros" href="contact.html">Contact</a>
+        <a class="gros" href="soutenir.html">Nous soutenir</a>
       </div>
-    </div>
-    <div class="menu-reseaux">
-        <!-- <a href="#" target="_blank" rel="noopener" aria-label="YouTube"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="5.5" width="20" height="13" rx="4"/><polygon points="10,9.3 16,12 10,14.7" fill="currentColor" stroke="none"/></svg></a> -->
-        <a href="https://www.instagram.com/eglise_j33/" target="_blank" rel="noopener" aria-label="Instagram"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2.5" y="2.5" width="19" height="19" rx="5"/><circle cx="12" cy="12" r="4.2"/><circle cx="17.4" cy="6.6" r="1.1" fill="currentColor" stroke="none"/></svg></a>
-        <!-- <a href="#" target="_blank" rel="noopener" aria-label="Facebook"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15.5 3h-2.2A4.3 4.3 0 0 0 9 7.3V10H6.5v3.5H9V21h3.6v-7.5h2.7l.5-3.5h-3.2V7.6c0-1 .3-1.7 1.7-1.7h1.9z"/></svg></a> -->
+      <div class="menu-groupe menu-groupe--simple">
+        <a class="gros" href="contact.html">Contact</a>
+        <div class="menu-reseaux">
+          <!-- <a href="#" target="_blank" rel="noopener" aria-label="YouTube"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="5.5" width="20" height="13" rx="4"/><polygon points="10,9.3 16,12 10,14.7" fill="currentColor" stroke="none"/></svg></a> -->
+          <a href="https://www.instagram.com/eglise_j33/" target="_blank" rel="noopener" aria-label="Instagram"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2.5" y="2.5" width="19" height="19" rx="5"/><circle cx="12" cy="12" r="4.2"/><circle cx="17.4" cy="6.6" r="1.1" fill="currentColor" stroke="none"/></svg></a>
+          <!-- <a href="#" target="_blank" rel="noopener" aria-label="Facebook"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15.5 3h-2.2A4.3 4.3 0 0 0 9 7.3V10H6.5v3.5H9V21h3.6v-7.5h2.7l.5-3.5h-3.2V7.6c0-1 .3-1.7 1.7-1.7h1.9z"/></svg></a> -->
+        </div>
+      </div>
     </div>
 
     <div class="menu-pied">
@@ -630,6 +655,7 @@ footer{padding:90px 28px 40px;max-width:1500px;margin:0 auto;border-top:1px soli
         <li><a href="a-propos.html">À propos de J33</a></li>
         <li><a href="venir.html">Venir nous voir</a></li>
         <li><a href="connexion.html">Connexion</a></li>
+        <li><a href="soutenir.html">Nous soutenir</a></li>
         <li><a href="contact.html">Contact</a></li>
       </ul>
     </div>
