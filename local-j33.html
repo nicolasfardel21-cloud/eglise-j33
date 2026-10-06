@@ -715,6 +715,46 @@ body{overflow-x:clip}   /* clip ne cree pas de conteneur de defilement, contrair
   .actu-medias.duo .m:nth-child(2){margin-top:46px}
 }
 
+/* ---------- panorama : défilement horizontal piloté par le scroll vertical ----------
+   Le cadre (.lc-pano) est allongé en JS de la course horizontale de l'image : tant qu'on
+   le parcourt, la bande reste épinglée (sticky, géré par le compositeur, donc sans
+   tremblement) et l'image glisse vers la gauche au même rythme que le défilement. */
+.lc-pano{position:relative;height:100svh}
+.pano-colle{position:sticky;top:0;height:100svh;overflow:hidden;display:flex;flex-direction:column;justify-content:center;gap:22px}
+.pano-titre{margin:0;padding:0 28px;text-align:center}
+.pano-bande{position:relative;height:clamp(260px,60svh,700px);overflow:hidden;
+  background:radial-gradient(circle at 30% 20%, var(--bleu-pale), transparent 65%),#EDEAE2}
+.pano-bande img{position:absolute;left:0;top:0;height:100%;width:auto;max-width:none;will-change:transform}
+.pano-prog{margin:0 auto;width:min(320px,60vw);height:2px;background:var(--ligne)}
+.pano-prog span{display:block;height:100%;width:100%;background:var(--or);transform:scaleX(0);transform-origin:left}
+@media(max-width:900px){.pano-bande{height:45svh}}
+/* mouvement réduit : pas d'épinglage, la bande se fait défiler au doigt / à la molette */
+@media(prefers-reduced-motion: reduce){
+  .lc-pano{height:auto !important}
+  .pano-colle{position:static;height:auto;padding:80px 0}
+  .pano-bande{overflow-x:auto}
+  .pano-bande img{position:static;transform:none !important}
+  .pano-prog{display:none}
+}
+
+/* ---------- avant / après : deux photos superposées, curseur qui découpe celle du dessus ---------- */
+.aa{--pos:50%;position:relative;margin-top:26px;width:min(100%,880px);aspect-ratio:4/3;overflow:hidden;border-radius:3px;
+  background:#EDEAE2;touch-action:pan-y;user-select:none;-webkit-user-select:none;cursor:ew-resize}
+.aa img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;pointer-events:none;-webkit-user-drag:none}
+.aa .aa-avant{clip-path:inset(0 calc(100% - var(--pos)) 0 0)}
+.aa-lbl{position:absolute;top:16px;z-index:2;mix-blend-mode:difference;color:#fff;pointer-events:none;
+  font-family:'Anton',sans-serif;text-transform:uppercase;letter-spacing:.06em;font-size:clamp(1.3rem,3vw,2.2rem);line-height:1}
+.aa-lbl.g{left:18px} .aa-lbl.d{right:18px}
+.aa-poignee{position:absolute;top:0;bottom:0;left:var(--pos);width:0;z-index:3;outline:none}
+.aa-poignee::before{content:"";position:absolute;top:0;bottom:0;left:-1px;width:2px;background:#fff;box-shadow:0 0 0 1px rgba(16,22,34,.25)}
+.aa-poignee b{position:absolute;top:50%;left:0;transform:translate(-50%,-50%);width:54px;height:54px;border-radius:50%;
+  background:var(--or);color:#fff;display:flex;align-items:center;justify-content:center;gap:10px;font-weight:400;
+  font-family:'Anton',sans-serif;font-size:1.05rem;box-shadow:0 8px 24px -8px rgba(16,22,34,.5);transition:transform .2s}
+.aa-poignee:focus-visible b,.aa.actif .aa-poignee b{transform:translate(-50%,-50%) scale(1.1)}
+.aa-poignee:focus-visible b{outline:2px solid #fff;outline-offset:3px}
+.actu:nth-of-type(odd) .aa{margin-left:auto}
+@media(max-width:900px){.aa{aspect-ratio:1/1}.aa-poignee b{width:46px;height:46px}}
+
 /* ---------- visionneuse photo ---------- */
 .lb{position:fixed;inset:0;z-index:200;background:rgba(12,17,28,.96);display:flex;align-items:center;justify-content:center;
   opacity:0;pointer-events:none;transition:opacity .35s ease}
@@ -868,6 +908,17 @@ body{overflow-x:clip}   /* clip ne cree pas de conteneur de defilement, contrair
     <span class="repli">La jauge ne s'affiche pas ? <a href="https://www.helloasso.com/associations/jeremie-33/collectes/eglise-j33-notre-nouveau-local-prend-vie-soutenez-le-projet" target="_blank" rel="noopener">Voir la collecte</a></span>
   </div>
 </section>
+
+<div class="lc-pano" id="panorama" data-j33-evt="lu/local/panorama">
+  <div class="pano-colle">
+    <span class="eyebrow pano-titre">Le chantier d'un seul regard</span>
+    <div class="pano-bande">
+      <img src="images/local/Illustration_3.jpg" alt="Panorama du futur local de l'église J33" width="7680" height="1000" decoding="async"
+           onerror="this.closest('.lc-pano').remove()">
+    </div>
+    <div class="pano-prog" aria-hidden="true"><span></span></div>
+  </div>
+</div>
 
 <section class="lc-journal" id="actus" data-j33-evt="lu/local/journal">
   <div class="lc-journal-tete reveal">
@@ -1203,22 +1254,64 @@ document.addEventListener('click', e => {
           '<img src="' + esc(p) + '" alt="' + esc((a.titre || 'Chantier') + ' — photo ' + (k + 1)) + '" loading="lazy" decoding="async">' +
           (k === 0 ? '<span class="m-num" aria-hidden="true">N°' + n + '</span>' : '') +
         '</figure>').join('') + '</div>' : '';
+      const ap = a.avantApres && a.avantApres.avant && a.avantApres.apres ?
+        '<div class="aa">' +
+          '<img class="aa-apres" src="' + esc(a.avantApres.apres) + '" alt="Après" loading="lazy" decoding="async">' +
+          '<img class="aa-avant" src="' + esc(a.avantApres.avant) + '" alt="Avant" loading="lazy" decoding="async">' +
+          '<span class="aa-lbl g" aria-hidden="true">Avant</span><span class="aa-lbl d" aria-hidden="true">Après</span>' +
+          '<div class="aa-poignee" role="slider" tabindex="0" aria-label="Comparer avant et après" aria-valuemin="0" aria-valuemax="100" aria-valuenow="50"><b>‹ ›</b></div>' +
+        '</div>' : '';
       const src = videoEmbed(a.video);
       const video = src ? '<div class="actu-video"><iframe src="' + esc(src) + '" title="Vidéo — ' + esc(a.titre) + '" loading="lazy" allow="accelerometer; encrypted-media; picture-in-picture; fullscreen" allowfullscreen></iframe></div>' : '';
       return '<article class="actu reveal" id="actu-' + esc(a.id) + '">' +
         '<div class="actu-date"><span class="jour">' + dp.jour + '</span><span class="mois">' + esc(dp.mois) + '</span><span class="num">Nouvelle N°' + n + '</span></div>' +
         '<div class="actu-corps"><h3>' + esc(a.titre) + '</h3>' +
           (a.texte ? '<div class="actu-texte">' + enParagraphes(a.texte) + '</div>' : '') +
-          medias + video +
+          medias + ap + video +
         '</div></article>';
     }).join('');
     fil.querySelectorAll('.reveal').forEach(el => obs.observe(el));
+    fil.querySelectorAll('.aa').forEach(comparateur);
     if(typeof lenis !== 'undefined' && lenis) lenis.resize();
     /* lien direct vers une actu (#actu-…) : on y descend une fois le fil construit */
     if(location.hash.startsWith('#actu-')){
       const cible = document.querySelector(location.hash);
       if(cible) setTimeout(() => { cible.classList.add('visible'); cible.scrollIntoView(); }, 80);
     }
+  }
+
+  /* ---------- avant / après ----------
+     pointer events : souris et doigt. touch-action:pan-y laisse le défilement vertical au
+     navigateur, seuls les glissés horizontaux déplacent le curseur. Clavier : flèches,
+     Début / Fin. */
+  function comparateur(el){
+    const poignee = el.querySelector('.aa-poignee');
+    let pos = 50, actif = false;
+    const poser = v => {
+      pos = Math.max(0, Math.min(100, v));
+      el.style.setProperty('--pos', pos + '%');
+      poignee.setAttribute('aria-valuenow', Math.round(pos));
+    };
+    const depuis = x => { const r = el.getBoundingClientRect(); poser((x - r.left) / r.width * 100); };
+    el.addEventListener('pointerdown', e => {
+      if(e.button !== 0) return;
+      actif = true; el.classList.add('actif');
+      el.setPointerCapture(e.pointerId); depuis(e.clientX);
+    });
+    el.addEventListener('pointermove', e => { if(actif) depuis(e.clientX); });
+    const fin = () => { actif = false; el.classList.remove('actif'); };
+    el.addEventListener('pointerup', fin); el.addEventListener('pointercancel', fin);
+    poignee.addEventListener('keydown', e => {
+      const pas = e.shiftKey ? 20 : 5;
+      if(e.key === 'ArrowLeft'){ poser(pos - pas); e.preventDefault(); }
+      else if(e.key === 'ArrowRight'){ poser(pos + pas); e.preventDefault(); }
+      else if(e.key === 'Home'){ poser(0); e.preventDefault(); }
+      else if(e.key === 'End'){ poser(100); e.preventDefault(); }
+    });
+    /* cadre calé sur les proportions réelles de la photo « avant » (paysage ou portrait) */
+    const img = el.querySelector('.aa-avant');
+    const caler = () => { if(img.naturalWidth) el.style.aspectRatio = img.naturalWidth + ' / ' + img.naturalHeight; };
+    img.complete ? caler() : img.addEventListener('load', caler, {once:true});
   }
 
   fetch('actus-local.json?v=' + Date.now(), {cache:'no-store'})
@@ -1271,6 +1364,39 @@ document.addEventListener('click', e => {
     const dx = e.changedTouches[0].clientX - x0; x0 = null;
     if(Math.abs(dx) > 50){ k += dx < 0 ? 1 : -1; afficher(); }
   }, {passive:true});
+})();
+
+/* ---------- panorama : l'image glisse vers la gauche au fil du défilement ----------
+   Course horizontale = largeur rendue de l'image − largeur de la fenêtre. Le cadre est
+   allongé d'autant : 1 px de défilement vertical = 1 px de glissement horizontal. Une fois
+   le bord droit atteint, la bande se décolle et la page reprend normalement. */
+(function(){
+  const cadre = document.getElementById('panorama');
+  if(!cadre || window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+  const colle = cadre.querySelector('.pano-colle');
+  const bande = cadre.querySelector('.pano-bande');
+  const img = bande.querySelector('img');
+  const barre = cadre.querySelector('.pano-prog span');
+  let course = 0, tick = false;
+
+  function mesurer(){
+    if(!cadre.isConnected) return;
+    const ratio = img.naturalWidth ? img.naturalWidth / img.naturalHeight : 7680 / 1000;
+    course = Math.max(0, Math.round(bande.offsetHeight * ratio - bande.offsetWidth));
+    cadre.style.height = (colle.offsetHeight + course) + 'px';
+    if(typeof lenis !== 'undefined' && lenis) lenis.resize();
+    maj();
+  }
+  function maj(){
+    tick = false;
+    const p = course ? Math.max(0, Math.min(1, -cadre.getBoundingClientRect().top / course)) : 0;
+    img.style.transform = 'translate3d(' + (-p * course).toFixed(1) + 'px,0,0)';
+    barre.style.transform = 'scaleX(' + p.toFixed(4) + ')';
+  }
+  mesurer();
+  if(!img.complete) img.addEventListener('load', mesurer, {once:true});
+  window.addEventListener('scroll', () => { if(!tick){ tick = true; requestAnimationFrame(maj); } }, {passive:true});
+  let t; window.addEventListener('resize', () => { clearTimeout(t); t = setTimeout(mesurer, 150); }, {passive:true});
 })();
 </script>
 <!-- mesure d'audience GoatCounter : sans cookie, sans empreinte de navigateur,
