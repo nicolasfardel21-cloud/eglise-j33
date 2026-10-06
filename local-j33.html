@@ -720,18 +720,17 @@ body{overflow-x:clip}   /* clip ne cree pas de conteneur de defilement, contrair
    le parcourt, la bande reste épinglée (sticky, géré par le compositeur, donc sans
    tremblement) et l'image glisse vers la gauche au même rythme que le défilement. */
 .lc-pano{position:relative;height:100svh}
-.pano-colle{position:sticky;top:0;height:100svh;overflow:hidden;display:flex;flex-direction:column;justify-content:center;gap:22px}
-.pano-titre{margin:0;padding:0 28px;text-align:center}
-.pano-bande{position:relative;height:clamp(260px,60svh,700px);overflow:hidden;
+.pano-colle{position:sticky;top:0;height:100svh;overflow:hidden}
+.pano-bande{position:absolute;inset:0;overflow:hidden;
   background:radial-gradient(circle at 30% 20%, var(--bleu-pale), transparent 65%),#EDEAE2}
 .pano-bande img{position:absolute;left:0;top:0;height:100%;width:auto;max-width:none;will-change:transform}
-.pano-prog{margin:0 auto;width:min(320px,60vw);height:2px;background:var(--ligne)}
+/* jauge de progression : dorée, au premier plan, sans fusion */
+.pano-prog{position:absolute;left:50%;bottom:28px;z-index:2;transform:translateX(-50%);width:min(320px,60vw);height:3px;background:rgba(255,255,255,.45)}
 .pano-prog span{display:block;height:100%;width:100%;background:var(--or);transform:scaleX(0);transform-origin:left}
-@media(max-width:900px){.pano-bande{height:45svh}}
 /* mouvement réduit : pas d'épinglage, la bande se fait défiler au doigt / à la molette */
 @media(prefers-reduced-motion: reduce){
   .lc-pano{height:auto !important}
-  .pano-colle{position:static;height:auto;padding:80px 0}
+  .pano-colle{position:static;height:100svh}
   .pano-bande{overflow-x:auto}
   .pano-bande img{position:static;transform:none !important}
   .pano-prog{display:none}
@@ -869,6 +868,16 @@ body{overflow-x:clip}   /* clip ne cree pas de conteneur de defilement, contrair
 </div>
 
 
+<div class="lc-pano" id="panorama" data-j33-evt="lu/local/panorama">
+  <div class="pano-colle">
+    <div class="pano-bande">
+      <img src="images/local/Illustration_3.jpg" alt="Panorama du futur local de l'église J33" width="7680" height="1000" fetchpriority="high"
+           onerror="this.closest('.lc-pano').remove()">
+    </div>
+    <div class="pano-prog" aria-hidden="true"><span></span></div>
+  </div>
+</div>
+
 <header class="hero-image">
   <picture>
     <!-- recadrage portrait sous 900 px, paysage au-dela -->
@@ -908,17 +917,6 @@ body{overflow-x:clip}   /* clip ne cree pas de conteneur de defilement, contrair
     <span class="repli">La jauge ne s'affiche pas ? <a href="https://www.helloasso.com/associations/jeremie-33/collectes/eglise-j33-notre-nouveau-local-prend-vie-soutenez-le-projet" target="_blank" rel="noopener">Voir la collecte</a></span>
   </div>
 </section>
-
-<div class="lc-pano" id="panorama" data-j33-evt="lu/local/panorama">
-  <div class="pano-colle">
-    <span class="eyebrow pano-titre">Le chantier d'un seul regard</span>
-    <div class="pano-bande">
-      <img src="images/local/Illustration_3.jpg" alt="Panorama du futur local de l'église J33" width="7680" height="1000" decoding="async"
-           onerror="this.closest('.lc-pano').remove()">
-    </div>
-    <div class="pano-prog" aria-hidden="true"><span></span></div>
-  </div>
-</div>
 
 <section class="lc-journal" id="actus" data-j33-evt="lu/local/journal">
   <div class="lc-journal-tete reveal">
@@ -1092,7 +1090,8 @@ const j33Evt = (() => {
 (function(){
   const banniere = document.querySelector('.hero-image');
   const cloture = document.getElementById('clotureSombre');
-  const zones = [banniere, cloture].filter(Boolean);
+  const pano = document.getElementById('panorama');
+  const zones = [pano, banniere, cloture].filter(Boolean);
   if(!zones.length) return;
   const nav = document.querySelector('nav');
   const titre = banniere ? banniere.querySelector('.hd-titre') : null;
@@ -1105,7 +1104,7 @@ const j33Evt = (() => {
     zones.forEach(z => {
       const r = z.getBoundingClientRect();
       if(r.bottom <= 0 || r.top >= nh) return;       /* zone hors du bandeau */
-      if(r.top <= nh * 0.5 && r.bottom > nh * 0.5) sombre = true;
+      if(z === cloture && r.top <= nh * 0.5 && r.bottom > nh * 0.5) sombre = true;   /* J33 et burger restent noirs sur les photos */
       const haut = Math.max(0, Math.min(nh, r.top));
       const bas  = Math.max(0, Math.min(nh, r.bottom));
       /* le sombre arrive par le bas : on rogne le voile par le bas, et inversement */
@@ -1124,7 +1123,7 @@ const j33Evt = (() => {
        sur mobile, la retraction de la barre d'adresse modifie la hauteur de fenetre et
        faisait sauter le titre au chargement. */
     if(titre){
-      const s = Math.max(0, Math.min(banniere.offsetHeight, window.scrollY || window.pageYOffset || 0));
+      const s = Math.max(0, Math.min(banniere.offsetHeight, -banniere.getBoundingClientRect().top));   /* le bandeau n'est plus en haut de page : décalage relatif à lui */
       banniere.style.setProperty('--pin', (s * 0.45).toFixed(1) + 'px');
     }
   }
