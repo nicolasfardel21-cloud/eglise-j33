@@ -719,20 +719,33 @@ body{overflow-x:clip}   /* clip ne cree pas de conteneur de defilement, contrair
    Le cadre (.lc-pano) est allongé en JS de la course horizontale de l'image : tant qu'on
    le parcourt, la bande reste épinglée (sticky, géré par le compositeur, donc sans
    tremblement) et l'image glisse vers la gauche au même rythme que le défilement. */
-.lc-pano{position:relative;height:100svh}
-.pano-colle{position:sticky;top:0;height:100svh;overflow:hidden}
+.lc-pano{position:relative;height:100svh;height:100lvh}
+/* lvh = hauteur d'écran barres du navigateur rétractées : sur mobile, la bande couvre tout
+   l'écran même quand la barre d'adresse disparaît au défilement (svh laissait un vide en
+   bas). Cette hauteur est fixe, contrairement à dvh : pas de saut ni de recalcul quand les
+   barres apparaissent ou disparaissent. */
+.pano-colle{position:sticky;top:0;height:100svh;height:100lvh;overflow:hidden}
 .pano-bande{position:absolute;inset:0;overflow:hidden;
   background:radial-gradient(circle at 30% 20%, var(--bleu-pale), transparent 65%),#EDEAE2}
 .pano-bande img{position:absolute;left:0;top:0;height:100%;width:auto;max-width:none;will-change:transform}
 /* jauge de progression : dorée, au premier plan, sans fusion */
-.pano-prog{position:absolute;left:50%;bottom:28px;z-index:2;transform:translateX(-50%);width:min(320px,60vw);height:3px;background:rgba(255,255,255,.45)}
+.pano-prog{position:absolute;left:50%;bottom:calc(100lvh - 100svh + 28px);z-index:2;transform:translateX(-50%);width:min(320px,60vw);height:3px;background:rgba(255,255,255,.45)}
 .pano-prog span{display:block;height:100%;width:100%;background:var(--or);transform:scaleX(0);transform-origin:left}
 /* mouvement réduit : pas d'épinglage, la bande se fait défiler au doigt / à la molette */
 @media(prefers-reduced-motion: reduce){
   .lc-pano{height:auto !important}
-  .pano-colle{position:static;height:100svh}
+  .pano-colle{position:static;height:100svh;height:100lvh}
   .pano-bande{overflow-x:auto}
   .pano-bande img{position:static;transform:none !important}
+  .pano-prog{display:none}
+}
+/* mobile : pas de panorama, une photo fixe plein écran. Hauteur en lvh (barres du
+   navigateur rétractées) : l'image couvre tout l'écran même quand la barre d'adresse
+   disparaît au défilement. */
+@media(max-width:900px){
+  .lc-pano{height:100vh !important;height:100lvh !important}
+  .pano-colle{position:relative;height:100%}
+  .pano-bande img{width:100%;height:100%;object-fit:cover;transform:none !important}
   .pano-prog{display:none}
 }
 
@@ -871,8 +884,12 @@ body{overflow-x:clip}   /* clip ne cree pas de conteneur de defilement, contrair
 <div class="lc-pano" id="panorama" data-j33-evt="lu/local/panorama">
   <div class="pano-colle">
     <div class="pano-bande">
-      <img src="images/local/Illustration_3.jpg" alt="Panorama du futur local de l'église J33" width="7680" height="1000" fetchpriority="high"
-           onerror="this.closest('.lc-pano').remove()">
+      <picture>
+        <!-- mobile : photo fixe plein écran (Illustration_4) ; au-delà : panorama défilant -->
+        <source media="(max-width:900px)" srcset="images/local/Illustration_4.jpg">
+        <img src="images/local/Illustration_3.jpg" alt="Le futur local de l'église J33" fetchpriority="high"
+             onerror="this.closest('.lc-pano').remove()">
+      </picture>
     </div>
     <div class="pano-prog" aria-hidden="true"><span></span></div>
   </div>
@@ -1377,9 +1394,15 @@ document.addEventListener('click', e => {
   const img = bande.querySelector('img');
   const barre = cadre.querySelector('.pano-prog span');
   let course = 0, tick = false;
+  const mobile = window.matchMedia('(max-width:900px)');   /* mobile : photo fixe, pas de défilement */
 
   function mesurer(){
     if(!cadre.isConnected) return;
+    if(mobile.matches){
+      course = 0; cadre.style.height = ''; img.style.transform = '';
+      if(typeof lenis !== 'undefined' && lenis) lenis.resize();
+      return;
+    }
     const ratio = img.naturalWidth ? img.naturalWidth / img.naturalHeight : 7680 / 1000;
     course = Math.max(0, Math.round(bande.offsetHeight * ratio - bande.offsetWidth));
     cadre.style.height = (colle.offsetHeight + course) + 'px';
@@ -1388,12 +1411,14 @@ document.addEventListener('click', e => {
   }
   function maj(){
     tick = false;
+    if(mobile.matches) return;
     const p = course ? Math.max(0, Math.min(1, -cadre.getBoundingClientRect().top / course)) : 0;
     img.style.transform = 'translate3d(' + (-p * course).toFixed(1) + 'px,0,0)';
     barre.style.transform = 'scaleX(' + p.toFixed(4) + ')';
   }
   mesurer();
   if(!img.complete) img.addEventListener('load', mesurer, {once:true});
+  img.addEventListener('load', mesurer);   /* changement de source (rotation, redimensionnement) */
   window.addEventListener('scroll', () => { if(!tick){ tick = true; requestAnimationFrame(maj); } }, {passive:true});
   let t; window.addEventListener('resize', () => { clearTimeout(t); t = setTimeout(mesurer, 150); }, {passive:true});
 })();
