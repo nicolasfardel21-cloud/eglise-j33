@@ -1,0 +1,481 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex, nofollow, noarchive">
+<title>Admin — Journal de chantier | J33</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Anton&family=Archivo:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet">
+<style>
+:root{
+  --fond:#FFFFFF; --encre:#101622; --gris:#5A6068;
+  --ligne:rgba(16,22,34,.14); --ligne-l:rgba(16,22,34,.08);
+  --or-rgb:189,137,30; --or:rgb(var(--or-rgb));
+  --or-fonce:color-mix(in srgb, var(--or) 86%, #000);
+  --bleu:#5E97BD; --bleu-pale:#DCEAF3;
+  --noir:#0C111C; --creme:#F3EFE4; --creme-50:rgba(243,239,228,.55); --creme-15:rgba(243,239,228,.16);
+  --rouge:#B3402E;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html{-webkit-text-size-adjust:100%;text-size-adjust:100%}
+body{background:var(--fond);color:var(--encre);font-family:'Archivo',sans-serif;font-weight:300;line-height:1.55}
+::selection{background:var(--or);color:#fff}
+a{color:inherit}
+button,input,textarea{font:inherit;color:inherit}
+
+.barre{position:sticky;top:0;z-index:10;display:flex;justify-content:space-between;align-items:center;gap:16px;
+  padding:14px 22px;background:var(--noir);color:var(--creme)}
+.barre .marque{font-family:'Anton',sans-serif;font-size:1.9rem;line-height:1;letter-spacing:.06em;text-decoration:none}
+.barre .marque small{font-family:'Archivo',sans-serif;font-size:.68rem;letter-spacing:.22em;text-transform:uppercase;color:var(--or);margin-left:12px;vertical-align:middle}
+.barre a.voir{font-size:.85rem;font-weight:500;text-decoration:none;color:var(--creme)}
+.barre a.voir::before{content:"(\00a0";color:var(--or)} .barre a.voir::after{content:"\00a0)";color:var(--or)}
+.barre a.voir:hover{color:var(--or)}
+
+main{max-width:980px;margin:0 auto;padding:46px 22px 90px}
+h1{font-family:'Anton',sans-serif;font-weight:400;text-transform:uppercase;letter-spacing:.02em;line-height:.95;font-size:clamp(2.6rem,8vw,5rem)}
+h1 span{color:var(--or)}
+.chapo{margin-top:16px;max-width:60ch;color:var(--gris)}
+h2{font-family:'Anton',sans-serif;font-weight:400;text-transform:uppercase;letter-spacing:.03em;font-size:clamp(1.5rem,3.6vw,2.2rem);line-height:1.05}
+.eyebrow{display:block;text-transform:uppercase;letter-spacing:.2em;font-size:.72rem;font-weight:600;color:var(--or);margin-bottom:10px}
+.eyebrow::before{content:"( "} .eyebrow::after{content:" )"}
+
+.bloc{margin-top:46px;border:1px solid var(--encre);padding:32px 30px}
+.bloc+.bloc{margin-top:30px}
+.bloc-tete{display:flex;justify-content:space-between;align-items:baseline;gap:12px;flex-wrap:wrap;margin-bottom:24px}
+
+.champ{margin-bottom:24px}
+.champ:last-child{margin-bottom:0}
+.champ label,.champ .lbl{display:block;font-size:.72rem;font-weight:700;letter-spacing:.14em;text-transform:uppercase;margin-bottom:10px}
+.champ .aide{display:block;font-size:.8rem;color:var(--gris);margin-top:8px}
+.champ input[type=text],.champ input[type=date],.champ input[type=url],.champ input[type=password],.champ textarea{
+  width:100%;background:#F1F1EF;border:0;border-bottom:1px solid var(--encre);padding:13px 12px;font-size:1rem;
+  transition:background .25s,border-color .25s}
+.champ input:focus,.champ textarea:focus{outline:none;background:#EAEAE6;border-color:var(--or)}
+.champ textarea{resize:vertical;min-height:180px;line-height:1.55}
+.deux{display:grid;grid-template-columns:200px 1fr;gap:0 22px}
+@media(max-width:640px){.deux{grid-template-columns:1fr}.bloc{padding:24px 18px}}
+
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;border:1px solid var(--encre);border-radius:999px;
+  background:none;cursor:pointer;padding:11px 22px;font-size:.92rem;font-weight:500;transition:background .25s,color .25s,border-color .25s}
+.btn::before{content:"(\00a0"} .btn::after{content:"\00a0)"}
+.btn:hover{background:var(--encre);color:var(--fond)}
+.btn.petit{padding:7px 14px;font-size:.8rem}
+.btn.danger{border-color:var(--rouge);color:var(--rouge)} .btn.danger:hover{background:var(--rouge);color:#fff}
+.btn[disabled]{opacity:.4;pointer-events:none}
+.publier{width:100%;margin-top:30px;border:0;cursor:pointer;background:var(--or);color:#fff;font-family:'Anton',sans-serif;
+  font-size:1.2rem;letter-spacing:.12em;text-transform:uppercase;padding:20px;transition:background .25s}
+.publier:hover{background:var(--or-fonce)}
+.publier[disabled]{background:#C9C4B8;cursor:wait}
+.actions{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+
+/* zone de dépôt + vignettes */
+.depot{display:block;border:1.5px dashed rgba(16,22,34,.35);padding:26px 16px;text-align:center;cursor:pointer;
+  background:#FAFAF8;transition:border-color .25s,background .25s}
+.depot:hover,.depot.survol{border-color:var(--or);background:rgba(var(--or-rgb),.06)}
+.depot b{font-family:'Anton',sans-serif;font-weight:400;text-transform:uppercase;letter-spacing:.06em;font-size:1.15rem;display:block}
+.depot span{font-size:.82rem;color:var(--gris)}
+.depot input{position:absolute;width:1px;height:1px;opacity:0;pointer-events:none}
+.vignettes{display:grid;grid-template-columns:repeat(auto-fill,minmax(130px,1fr));gap:12px;margin-top:14px}
+.vg{position:relative;aspect-ratio:1;border-radius:3px;overflow:hidden;background:#EDEAE2}
+.vg img{width:100%;height:100%;object-fit:cover;display:block}
+.vg .badge{position:absolute;left:6px;top:6px;background:var(--or);color:#fff;font-size:.62rem;font-weight:700;letter-spacing:.12em;text-transform:uppercase;padding:3px 7px;border-radius:2px}
+.vg .ctrl{position:absolute;left:0;right:0;bottom:0;display:flex;justify-content:space-between;background:linear-gradient(transparent,rgba(12,17,28,.75));padding:18px 6px 6px}
+.vg .ctrl button{background:rgba(255,255,255,.92);border:0;border-radius:50%;width:30px;height:30px;cursor:pointer;font-size:.9rem;line-height:1;color:var(--encre)}
+.vg .ctrl button.suppr{background:var(--rouge);color:#fff}
+
+/* liste des actus */
+.liste{border-top:1px solid var(--ligne)}
+.ligne-actu{display:grid;grid-template-columns:72px 1fr auto;gap:16px;align-items:center;padding:16px 0;border-bottom:1px solid var(--ligne)}
+.ligne-actu .mini{width:72px;height:54px;border-radius:2px;object-fit:cover;background:#EDEAE2;display:block}
+.ligne-actu .t{font-family:'Anton',sans-serif;text-transform:uppercase;letter-spacing:.02em;font-size:1.15rem;line-height:1.1}
+.ligne-actu .d{font-size:.75rem;letter-spacing:.14em;text-transform:uppercase;color:var(--gris);margin-top:4px}
+.ligne-actu.en-cours{background:rgba(var(--or-rgb),.08)}
+@media(max-width:640px){.ligne-actu{grid-template-columns:56px 1fr}.ligne-actu .mini{width:56px;height:44px}.ligne-actu .actions{grid-column:1 / -1}}
+.vide{padding:24px 0;color:var(--gris);font-style:italic}
+
+/* messages */
+.etat{margin-top:16px;padding:14px 16px;border-left:3px solid var(--bleu);background:var(--bleu-pale);font-size:.92rem;display:none}
+.etat.ok{border-color:var(--or);background:rgba(var(--or-rgb),.1)}
+.etat.err{border-color:var(--rouge);background:#F8E5E1}
+.etat.vu{display:block}
+.etat a{color:var(--encre);font-weight:600}
+.connecte{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap}
+.connecte b{font-weight:600}
+.pastille{display:inline-block;width:9px;height:9px;border-radius:50%;background:#3C9A5F;margin-right:8px;vertical-align:1px}
+details.aide-token{margin-top:18px;font-size:.88rem;color:var(--gris)}
+details.aide-token summary{cursor:pointer;color:var(--encre);font-weight:500}
+details.aide-token ol{margin:12px 0 0 20px}
+details.aide-token li{margin-bottom:6px}
+.cache{display:none !important}
+</style>
+</head>
+<body>
+
+<div class="barre">
+  <a class="marque" href="local-j33.html">J33<small>Admin chantier</small></a>
+  <a class="voir" href="local-j33.html" target="_blank" rel="noopener">Voir la page</a>
+</div>
+
+<main>
+  <h1>Journal de <span>chantier</span></h1>
+  <p class="chapo">Ajoutez, modifiez ou supprimez les nouvelles de la page « Notre local prend vie ». Chaque publication met le site à jour en une minute environ.</p>
+
+  <!-- ===== connexion ===== -->
+  <section class="bloc" id="blocConnexion">
+    <div class="bloc-tete"><div><span class="eyebrow">Étape 1</span><h2>Connexion</h2></div></div>
+    <div id="formToken">
+      <div class="champ">
+        <label for="token">Jeton d'accès GitHub</label>
+        <input type="password" id="token" autocomplete="off" spellcheck="false" placeholder="github_pat_…">
+        <span class="aide">Collé une seule fois : il reste mémorisé dans ce navigateur uniquement.</span>
+      </div>
+      <button class="btn" type="button" id="btnToken">Se connecter</button>
+      <details class="aide-token">
+        <summary>Comment obtenir ce jeton ?</summary>
+        <ol>
+          <li>Sur GitHub : <b>Settings → Developer settings → Personal access tokens → Fine-grained tokens → Generate new token</b>.</li>
+          <li>Repository access : <b>Only select repositories → eglise-j33</b>.</li>
+          <li>Permissions → Repository permissions → <b>Contents : Read and write</b> (rien d'autre).</li>
+          <li>Expiration : jusqu'à 1 an. Copiez le jeton et collez-le ci-dessus.</li>
+        </ol>
+      </details>
+    </div>
+    <div id="infoConnecte" class="connecte cache">
+      <span><span class="pastille"></span>Connecté à <b>nicolasfardel21-cloud/eglise-j33</b></span>
+      <button class="btn petit" type="button" id="btnOublier">Oublier le jeton</button>
+    </div>
+    <div class="etat" id="etatConnexion"></div>
+  </section>
+
+  <!-- ===== formulaire ===== -->
+  <section class="bloc cache" id="blocForm">
+    <div class="bloc-tete">
+      <div><span class="eyebrow" id="formEyebrow">Étape 2</span><h2 id="formTitre">Nouvelle actu</h2></div>
+      <button class="btn petit cache" type="button" id="btnAnnuler">Annuler la modification</button>
+    </div>
+    <form id="form" novalidate>
+      <div class="deux">
+        <div class="champ"><label for="fDate">Date</label><input type="date" id="fDate" required></div>
+        <div class="champ"><label for="fTitre">Titre</label><input type="text" id="fTitre" maxlength="90" required placeholder="Ex. : Les cloisons sont posées !"></div>
+      </div>
+      <div class="champ">
+        <label for="fTexte">Texte</label>
+        <textarea id="fTexte" placeholder="Racontez l'avancement…"></textarea>
+        <span class="aide">Une ligne vide = nouveau paragraphe · **mot** = mot en gras.</span>
+      </div>
+      <div class="champ">
+        <span class="lbl">Photos</span>
+        <label class="depot" id="depot">
+          <input type="file" id="fPhotos" accept="image/*" multiple>
+          <b>Ajouter des photos</b>
+          <span>Cliquez ou glissez-les ici · elles sont allégées automatiquement</span>
+        </label>
+        <div class="vignettes" id="vignettes"></div>
+        <span class="aide">La première photo est la plus grande. Flèches ← → pour réordonner.</span>
+      </div>
+      <div class="champ">
+        <label for="fVideo">Vidéo (facultatif)</label>
+        <input type="url" id="fVideo" placeholder="https://www.youtube.com/watch?v=… ou https://vimeo.com/…">
+        <span class="aide">Publiez d'abord la vidéo sur YouTube (en « non répertoriée » si vous voulez) puis collez son lien.</span>
+      </div>
+      <button class="publier" type="submit" id="btnPublier">Publier</button>
+      <div class="etat" id="etatForm"></div>
+    </form>
+  </section>
+
+  <!-- ===== liste ===== -->
+  <section class="bloc cache" id="blocListe">
+    <div class="bloc-tete"><div><span class="eyebrow">Déjà en ligne</span><h2>Actus publiées</h2></div>
+      <button class="btn petit" type="button" id="btnRecharger">Actualiser</button></div>
+    <div class="liste" id="liste"></div>
+    <div class="etat" id="etatListe"></div>
+  </section>
+</main>
+
+<script>
+/* =====================================================================
+   Admin du journal de chantier — écrit directement dans le dépôt GitHub
+   ---------------------------------------------------------------------
+   Une publication = UN commit (API Git Data) contenant :
+     - les nouvelles photos, allégées dans le navigateur (JPEG, 1800 px max),
+       rangées dans images/local/Illustration_N.jpg (N = suite de la numérotation ;
+       1 et 2 sont réservées au bandeau de la page) ;
+     - actus-local.json mis à jour ;
+     - la suppression des photos retirées.
+   GitHub Pages redéploie ensuite le site (≈ 1 min).
+   ===================================================================== */
+const DEPOT = { proprio:'nicolasfardel21-cloud', nom:'eglise-j33', branche:'main' };
+const JSON_PATH = 'actus-local.json';
+const DOSSIER = 'images/local';
+const RESERVEES = 2;          /* Illustration_1 et _2 : bandeau desktop / mobile */
+const COTE_MAX = 1800, QUALITE = 0.82;
+const CLE = 'j33-gh-token';
+const RAW = `https://raw.githubusercontent.com/${DEPOT.proprio}/${DEPOT.nom}/${DEPOT.branche}/`;
+
+const $ = id => document.getElementById(id);
+const esc = s => String(s == null ? '' : s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+function etat(el, msg, type){ el.className = 'etat vu' + (type ? ' ' + type : ''); el.innerHTML = msg; }
+function effacer(el){ el.className = 'etat'; el.innerHTML = ''; }
+
+let jeton = null;
+try{ jeton = localStorage.getItem(CLE); }catch(e){}
+
+/* ---------- API GitHub ---------- */
+async function gh(chemin, opts = {}){
+  const r = await fetch('https://api.github.com/repos/' + DEPOT.proprio + '/' + DEPOT.nom + chemin, {
+    method: opts.method || 'GET',
+    headers: Object.assign({
+      'Authorization': 'Bearer ' + jeton,
+      'Accept': 'application/vnd.github+json'
+    }, opts.body ? {'Content-Type':'application/json'} : {}, opts.headers || {}),
+    body: opts.body ? JSON.stringify(opts.body) : undefined,
+    cache: 'no-store'
+  });
+  if(opts.ok404 && r.status === 404) return null;
+  if(!r.ok){
+    let detail = ''; try{ detail = (await r.json()).message || ''; }catch(e){}
+    const err = new Error(detail || ('Erreur ' + r.status)); err.status = r.status; throw err;
+  }
+  return opts.raw ? r.text() : (r.status === 204 ? null : r.json());
+}
+function messageErreur(e){
+  if(e.status === 401) return 'Jeton refusé (expiré ou mal copié). Cliquez « Oublier le jeton » et recollez-en un.';
+  if(e.status === 403) return 'Ce jeton n\'a pas le droit d\'écrire. Vérifiez la permission « Contents : Read and write ».';
+  if(e.status === 404) return 'Dépôt introuvable avec ce jeton : vérifiez qu\'il donne accès à eglise-j33.';
+  if(e.status === 422 || e.status === 409) return 'Le site a été modifié entre-temps. Cliquez « Actualiser » puis republiez.';
+  if(e.name === 'TypeError') return 'Connexion à GitHub impossible. Vérifiez votre réseau.';
+  return esc(e.message || 'Erreur inattendue.');
+}
+
+/* état courant du dépôt : commit de tête, actus, numéros d'images déjà pris */
+async function lireDepot(){
+  const ref = await gh('/git/ref/heads/' + DEPOT.branche);
+  const sha = ref.object.sha;
+  const commit = await gh('/git/commits/' + sha);
+  const txt = await gh('/contents/' + JSON_PATH + '?ref=' + sha, {raw:true, ok404:true, headers:{'Accept':'application/vnd.github.raw+json'}});
+  let actus = [];
+  if(txt){ try{ actus = JSON.parse(txt).actus || []; }catch(e){ throw new Error('actus-local.json est illisible (JSON invalide).'); } }
+  const dossier = await gh('/contents/' + DOSSIER + '?ref=' + sha, {ok404:true});
+  const pris = (Array.isArray(dossier) ? dossier.map(f => f.name) : [])
+    .concat(actus.flatMap(a => (a.photos || []).map(p => p.split('/').pop())));
+  const max = pris.reduce((m, n) => { const x = /^Illustration_(\d+)\.jpe?g$/i.exec(n); return x ? Math.max(m, +x[1]) : m; }, RESERVEES);
+  const existants = new Set(Array.isArray(dossier) ? dossier.map(f => f.path) : []);
+  return { sha, tree: commit.tree.sha, actus, prochain: max + 1, existants };
+}
+
+/* ---------- connexion ---------- */
+async function connecter(){
+  etat($('etatConnexion'), 'Vérification…');
+  try{
+    const r = await fetch('https://api.github.com/repos/' + DEPOT.proprio + '/' + DEPOT.nom, {headers:{'Authorization':'Bearer ' + jeton,'Accept':'application/vnd.github+json'}, cache:'no-store'});
+    if(!r.ok){ const e = new Error(); e.status = r.status; throw e; }
+    const info = await r.json();
+    if(info.permissions && !info.permissions.push){ const e = new Error(); e.status = 403; throw e; }
+    effacer($('etatConnexion'));
+    $('formToken').classList.add('cache'); $('infoConnecte').classList.remove('cache');
+    $('blocForm').classList.remove('cache'); $('blocListe').classList.remove('cache');
+    chargerListe();
+  }catch(e){
+    etat($('etatConnexion'), messageErreur(e), 'err');
+    $('formToken').classList.remove('cache'); $('infoConnecte').classList.add('cache');
+  }
+}
+$('btnToken').addEventListener('click', () => {
+  const v = $('token').value.trim();
+  if(!v){ etat($('etatConnexion'), 'Collez d\'abord votre jeton.', 'err'); return; }
+  jeton = v; try{ localStorage.setItem(CLE, v); }catch(e){}
+  $('token').value = '';
+  connecter();
+});
+$('btnOublier').addEventListener('click', () => {
+  try{ localStorage.removeItem(CLE); }catch(e){}
+  jeton = null;
+  ['blocForm','blocListe','infoConnecte'].forEach(id => $(id).classList.add('cache'));
+  $('formToken').classList.remove('cache');
+  etat($('etatConnexion'), 'Jeton oublié sur cet appareil.');
+});
+
+/* ---------- liste ---------- */
+let actusCourantes = [];
+const fmt = new Intl.DateTimeFormat('fr-FR', {day:'numeric', month:'long', year:'numeric'});
+const dateFr = iso => { const d = new Date(iso + 'T12:00:00'); return isNaN(d) ? iso : fmt.format(d); };
+
+async function chargerListe(){
+  $('liste').innerHTML = '<p class="vide">Chargement…</p>';
+  effacer($('etatListe'));
+  try{
+    const d = await lireDepot();
+    actusCourantes = d.actus.slice().sort((a, b) => String(b.date).localeCompare(String(a.date)));
+    afficherListe();
+  }catch(e){ $('liste').innerHTML = ''; etat($('etatListe'), messageErreur(e), 'err'); }
+}
+function afficherListe(){
+  if(!actusCourantes.length){ $('liste').innerHTML = '<p class="vide">Aucune actu pour l\'instant — la page affiche « Premières nouvelles très bientôt ».</p>'; return; }
+  $('liste').innerHTML = actusCourantes.map(a => {
+    const p = (a.photos || [])[0];
+    return '<div class="ligne-actu' + (edition && edition.id === a.id ? ' en-cours' : '') + '" data-id="' + esc(a.id) + '">' +
+      (p ? '<img class="mini" src="' + esc(RAW + p) + '" alt="" loading="lazy">' : '<span class="mini"></span>') +
+      '<div><div class="t">' + esc(a.titre) + '</div><div class="d">' + esc(dateFr(a.date)) + ' · ' + (a.photos || []).length + ' photo(s)' + (a.video ? ' · vidéo' : '') + '</div></div>' +
+      '<div class="actions"><button class="btn petit" data-act="modifier">Modifier</button><button class="btn petit danger" data-act="supprimer">Supprimer</button></div>' +
+    '</div>';
+  }).join('');
+}
+$('btnRecharger').addEventListener('click', chargerListe);
+$('liste').addEventListener('click', e => {
+  const b = e.target.closest('button[data-act]'); if(!b) return;
+  const a = actusCourantes.find(x => x.id === b.closest('.ligne-actu').dataset.id); if(!a) return;
+  if(b.dataset.act === 'modifier') commencerEdition(a);
+  else supprimer(a);
+});
+
+/* ---------- formulaire : photos ---------- */
+let photos = [];      /* {path} existante, ou {file, url} nouvelle */
+let edition = null;   /* actu en cours de modification */
+
+function afficherVignettes(){
+  $('vignettes').innerHTML = photos.map((p, i) =>
+    '<div class="vg"><img src="' + esc(p.file ? p.url : RAW + p.path) + '" alt="">' +
+      (i === 0 ? '<span class="badge">Principale</span>' : '') +
+      '<div class="ctrl"><span><button type="button" data-i="' + i + '" data-d="-1" title="Avancer">←</button> ' +
+      '<button type="button" data-i="' + i + '" data-d="1" title="Reculer">→</button></span>' +
+      '<button type="button" class="suppr" data-i="' + i + '" data-x="1" title="Retirer">✕</button></div></div>').join('');
+}
+$('vignettes').addEventListener('click', e => {
+  const b = e.target.closest('button'); if(!b) return;
+  const i = +b.dataset.i;
+  if(b.dataset.x){ const [p] = photos.splice(i, 1); if(p.url) URL.revokeObjectURL(p.url); }
+  else { const j = i + (+b.dataset.d); if(j < 0 || j >= photos.length) return; [photos[i], photos[j]] = [photos[j], photos[i]]; }
+  afficherVignettes();
+});
+function ajouterFichiers(liste){
+  [...liste].filter(f => f.type.startsWith('image/') || /\.(heic|heif)$/i.test(f.name))
+    .forEach(f => photos.push({file:f, url:URL.createObjectURL(f)}));
+  afficherVignettes();
+}
+$('fPhotos').addEventListener('change', e => { ajouterFichiers(e.target.files); e.target.value = ''; });
+const depot = $('depot');
+['dragenter','dragover'].forEach(t => depot.addEventListener(t, e => { e.preventDefault(); depot.classList.add('survol'); }));
+['dragleave','drop'].forEach(t => depot.addEventListener(t, e => { e.preventDefault(); depot.classList.remove('survol'); }));
+depot.addEventListener('drop', e => ajouterFichiers(e.dataTransfer.files));
+
+/* allègement : redimensionne (côté le plus long ≤ 1800 px) et réencode en JPEG */
+async function alleger(file){
+  let source;
+  try{ source = await createImageBitmap(file, {imageOrientation:'from-image'}); }
+  catch(e){
+    source = await new Promise((ok, ko) => { const im = new Image(); im.onload = () => ok(im); im.onerror = () => ko(new Error('Format d\'image non lisible par ce navigateur : ' + file.name)); im.src = URL.createObjectURL(file); });
+  }
+  const w0 = source.width, h0 = source.height, k = Math.min(1, COTE_MAX / Math.max(w0, h0));
+  const c = document.createElement('canvas'); c.width = Math.round(w0 * k); c.height = Math.round(h0 * k);
+  const ctx = c.getContext('2d'); ctx.fillStyle = '#fff'; ctx.fillRect(0, 0, c.width, c.height);
+  ctx.drawImage(source, 0, 0, c.width, c.height);
+  const blob = await new Promise(ok => c.toBlob(ok, 'image/jpeg', QUALITE));
+  return await new Promise(ok => { const fr = new FileReader(); fr.onload = () => ok(fr.result.split(',')[1]); fr.readAsDataURL(blob); });
+}
+
+/* ---------- commit unique ---------- */
+async function commit(base, fichiers, suppressions, actus, message, suivi){
+  const tree = [];
+  let n = 0;
+  for(const f of fichiers){
+    suivi('Envoi de la photo ' + (++n) + ' / ' + fichiers.length + '…');
+    const b = await gh('/git/blobs', {method:'POST', body:{content:f.b64, encoding:'base64'}});
+    tree.push({path:f.path, mode:'100644', type:'blob', sha:b.sha});
+  }
+  suppressions.filter(p => base.existants.has(p)).forEach(p => tree.push({path:p, mode:'100644', type:'blob', sha:null}));
+  const json = JSON.stringify({ maj: new Date().toISOString(), actus }, null, 2) + '\n';
+  tree.push({path:JSON_PATH, mode:'100644', type:'blob', content:json});
+  suivi('Enregistrement…');
+  const t = await gh('/git/trees', {method:'POST', body:{base_tree:base.tree, tree}});
+  const c = await gh('/git/commits', {method:'POST', body:{message, tree:t.sha, parents:[base.sha]}});
+  await gh('/git/refs/heads/' + DEPOT.branche, {method:'PATCH', body:{sha:c.sha, force:false}});
+}
+
+/* ---------- publier / modifier ---------- */
+function auj(){ const d = new Date(); return new Date(d - d.getTimezoneOffset() * 6e4).toISOString().slice(0, 10); }
+function reinitialiser(){
+  edition = null;
+  photos.forEach(p => p.url && URL.revokeObjectURL(p.url)); photos = [];
+  $('form').reset(); $('fDate').value = auj();
+  $('formTitre').textContent = 'Nouvelle actu'; $('formEyebrow').textContent = 'Étape 2';
+  $('btnPublier').textContent = 'Publier'; $('btnAnnuler').classList.add('cache');
+  afficherVignettes(); afficherListe();
+}
+function commencerEdition(a){
+  reinitialiser();
+  edition = a;
+  $('fDate').value = a.date || auj(); $('fTitre').value = a.titre || ''; $('fTexte').value = a.texte || ''; $('fVideo').value = a.video || '';
+  photos = (a.photos || []).map(p => ({path:p}));
+  $('formTitre').textContent = 'Modifier l\'actu'; $('formEyebrow').textContent = 'Modification';
+  $('btnPublier').textContent = 'Enregistrer les modifications'; $('btnAnnuler').classList.remove('cache');
+  effacer($('etatForm')); afficherVignettes(); afficherListe();
+  $('blocForm').scrollIntoView({behavior:'smooth', block:'start'});
+}
+$('btnAnnuler').addEventListener('click', () => { reinitialiser(); effacer($('etatForm')); });
+
+$('form').addEventListener('submit', async e => {
+  e.preventDefault();
+  const titre = $('fTitre').value.trim(), date = $('fDate').value;
+  const video = $('fVideo').value.trim();
+  if(!date || !titre){ etat($('etatForm'), 'La date et le titre sont obligatoires.', 'err'); return; }
+  if(video && !/(youtube\.com|youtu\.be|vimeo\.com)/i.test(video)){ etat($('etatForm'), 'Le lien vidéo doit venir de YouTube ou Vimeo.', 'err'); return; }
+  const btn = $('btnPublier'); btn.disabled = true;
+  const suivi = m => etat($('etatForm'), m);
+  try{
+    suivi('Lecture du site…');
+    const base = await lireDepot();
+    let n = base.prochain;
+    const fichiers = [];
+    for(const p of photos){
+      if(p.file){
+        suivi('Allègement de ' + esc(p.file.name) + '…');
+        p.dest = DOSSIER + '/Illustration_' + (n++) + '.jpg';
+        fichiers.push({path:p.dest, b64: await alleger(p.file)});
+      }
+    }
+    const chemins = photos.map(p => p.dest || p.path);
+    const actu = { id: edition ? edition.id : 'a' + Date.now().toString(36), date, titre, texte: $('fTexte').value.replace(/\r/g, '').trim(), photos: chemins, video };
+    let actus = base.actus.slice();
+    let suppressions = [];
+    if(edition){
+      const ancienne = actus.find(x => x.id === edition.id);
+      if(!ancienne) throw new Error('Cette actu a été supprimée entre-temps.');
+      suppressions = (ancienne.photos || []).filter(p => !chemins.includes(p));
+      actus = actus.map(x => x.id === edition.id ? actu : x);
+    } else actus.push(actu);
+    await commit(base, fichiers, suppressions, actus, (edition ? 'Actu chantier modifiée : ' : 'Actu chantier : ') + titre, suivi);
+    const modif = !!edition;
+    reinitialiser();
+    etat($('etatForm'), (modif ? 'Modifications enregistrées.' : 'Actu publiée !') + ' Elle sera visible sur <a href="local-j33.html#actu-' + esc(actu.id) + '" target="_blank" rel="noopener">la page</a> d\'ici une minute environ.', 'ok');
+    chargerListe();
+  }catch(err){
+    photos.forEach(p => delete p.dest);
+    etat($('etatForm'), messageErreur(err), 'err');
+  }finally{ btn.disabled = false; }
+});
+
+async function supprimer(a){
+  if(!confirm('Supprimer définitivement « ' + a.titre + ' » et ses photos ?')) return;
+  etat($('etatListe'), 'Suppression…');
+  try{
+    const base = await lireDepot();
+    const cible = base.actus.find(x => x.id === a.id);
+    if(!cible){ chargerListe(); return; }
+    await commit(base, [], cible.photos || [], base.actus.filter(x => x.id !== a.id), 'Actu chantier supprimée : ' + a.titre, m => etat($('etatListe'), m));
+    if(edition && edition.id === a.id) reinitialiser();
+    etat($('etatListe'), 'Actu supprimée. La page sera à jour d\'ici une minute.', 'ok');
+    const garde = $('etatListe').innerHTML;
+    await chargerListe();
+    etat($('etatListe'), garde, 'ok');
+  }catch(err){ etat($('etatListe'), messageErreur(err), 'err'); }
+}
+
+/* ---------- démarrage ---------- */
+$('fDate').value = auj();
+if(jeton) connecter();
+window.addEventListener('beforeunload', e => { if(photos.some(p => p.file)){ e.preventDefault(); e.returnValue = ''; } });
+</script>
+</body>
+</html>
