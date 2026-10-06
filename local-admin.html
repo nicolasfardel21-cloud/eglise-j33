@@ -108,6 +108,17 @@ details.aide-token{margin-top:18px;font-size:.88rem;color:var(--gris)}
 details.aide-token summary{cursor:pointer;color:var(--encre);font-weight:500}
 details.aide-token ol{margin:12px 0 0 20px}
 details.aide-token li{margin-bottom:6px}
+.aa-slots{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.aa-slot{position:relative;aspect-ratio:4/3;border:1.5px dashed rgba(16,22,34,.35);background:#FAFAF8;cursor:pointer;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;overflow:hidden;transition:border-color .25s,background .25s}
+.aa-slot:hover,.aa-slot.survol{border-color:var(--or);background:rgba(var(--or-rgb),.06)}
+.aa-slot b{font-family:'Anton',sans-serif;font-weight:400;text-transform:uppercase;letter-spacing:.06em;font-size:1.3rem}
+.aa-slot span{font-size:.78rem;color:var(--gris)}
+.aa-slot input{position:absolute;width:1px;height:1px;opacity:0;pointer-events:none}
+.aa-slot img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+.aa-slot .badge{position:absolute;left:8px;top:8px;z-index:2;background:var(--or);color:#fff;font-size:.62rem;font-weight:700;letter-spacing:.12em;text-transform:uppercase;padding:3px 7px;border-radius:2px}
+.aa-slot .suppr{position:absolute;right:8px;bottom:8px;z-index:2;background:var(--rouge);color:#fff;border:0;border-radius:50%;width:30px;height:30px;cursor:pointer}
+@media(max-width:640px){.aa-slots{grid-template-columns:1fr}}
 .cache{display:none !important}
 </style>
 </head>
@@ -176,6 +187,11 @@ details.aide-token li{margin-bottom:6px}
         <span class="aide">La première photo est la plus grande. Flèches ← → pour réordonner.</span>
       </div>
       <div class="champ">
+        <span class="lbl">Avant / après (facultatif)</span>
+        <div class="aa-slots" id="aaSlots"></div>
+        <span class="aide">Deux photos prises du même endroit, même cadrage : un curseur permettra de passer de l'une à l'autre.</span>
+      </div>
+      <div class="champ">
         <label for="fVideo">Vidéo (facultatif)</label>
         <input type="url" id="fVideo" placeholder="https://www.youtube.com/watch?v=… ou https://vimeo.com/…">
         <span class="aide">Publiez d'abord la vidéo sur YouTube (en « non répertoriée » si vous voulez) puis collez son lien.</span>
@@ -201,7 +217,7 @@ details.aide-token li{margin-bottom:6px}
    Une publication = UN commit (API Git Data) contenant :
      - les nouvelles photos, allégées dans le navigateur (JPEG, 1800 px max),
        rangées dans images/local/Illustration_N.jpg (N = suite de la numérotation ;
-       1 et 2 sont réservées au bandeau de la page) ;
+       1 à 9 sont réservées aux visuels fixes de la page) ;
      - actus-local.json mis à jour ;
      - la suppression des photos retirées.
    GitHub Pages redéploie ensuite le site (≈ 1 min).
@@ -209,7 +225,7 @@ details.aide-token li{margin-bottom:6px}
 const DEPOT = { proprio:'nicolasfardel21-cloud', nom:'eglise-j33', branche:'main' };
 const JSON_PATH = 'actus-local.json';
 const DOSSIER = 'images/local';
-const RESERVEES = 2;          /* Illustration_1 et _2 : bandeau desktop / mobile */
+const RESERVEES = 9;          /* Illustration_1 à _9 : visuels fixes de la page (bandeau, panorama…) */
 const COTE_MAX = 1800, QUALITE = 0.82;
 const CLE = 'j33-gh-token';
 const RAW = `https://raw.githubusercontent.com/${DEPOT.proprio}/${DEPOT.nom}/${DEPOT.branche}/`;
@@ -249,6 +265,9 @@ function messageErreur(e){
   return esc(e.message || 'Erreur inattendue.');
 }
 
+/* tous les fichiers image d'une actu (photos + paire avant/après) */
+const fichiersActu = a => (a.photos || []).concat(a.avantApres ? [a.avantApres.avant, a.avantApres.apres] : []).filter(Boolean);
+
 /* état courant du dépôt : commit de tête, actus, numéros d'images déjà pris */
 async function lireDepot(){
   const ref = await gh('/git/ref/heads/' + DEPOT.branche);
@@ -259,7 +278,7 @@ async function lireDepot(){
   if(txt){ try{ actus = JSON.parse(txt).actus || []; }catch(e){ throw new Error('actus-local.json est illisible (JSON invalide).'); } }
   const dossier = await gh('/contents/' + DOSSIER + '?ref=' + sha, {ok404:true});
   const pris = (Array.isArray(dossier) ? dossier.map(f => f.name) : [])
-    .concat(actus.flatMap(a => (a.photos || []).map(p => p.split('/').pop())));
+    .concat(actus.flatMap(a => fichiersActu(a).map(p => p.split('/').pop())));
   const max = pris.reduce((m, n) => { const x = /^Illustration_(\d+)\.jpe?g$/i.exec(n); return x ? Math.max(m, +x[1]) : m; }, RESERVEES);
   const existants = new Set(Array.isArray(dossier) ? dossier.map(f => f.path) : []);
   return { sha, tree: commit.tree.sha, actus, prochain: max + 1, existants };
@@ -317,7 +336,7 @@ function afficherListe(){
     const p = (a.photos || [])[0];
     return '<div class="ligne-actu' + (edition && edition.id === a.id ? ' en-cours' : '') + '" data-id="' + esc(a.id) + '">' +
       (p ? '<img class="mini" src="' + esc(RAW + p) + '" alt="" loading="lazy">' : '<span class="mini"></span>') +
-      '<div><div class="t">' + esc(a.titre) + '</div><div class="d">' + esc(dateFr(a.date)) + ' · ' + (a.photos || []).length + ' photo(s)' + (a.video ? ' · vidéo' : '') + '</div></div>' +
+      '<div><div class="t">' + esc(a.titre) + '</div><div class="d">' + esc(dateFr(a.date)) + ' · ' + (a.photos || []).length + ' photo(s)' + (a.avantApres ? ' · avant/après' : '') + (a.video ? ' · vidéo' : '') + '</div></div>' +
       '<div class="actions"><button class="btn petit" data-act="modifier">Modifier</button><button class="btn petit danger" data-act="supprimer">Supprimer</button></div>' +
     '</div>';
   }).join('');
@@ -333,6 +352,33 @@ $('liste').addEventListener('click', e => {
 /* ---------- formulaire : photos ---------- */
 let photos = [];      /* {path} existante, ou {file, url} nouvelle */
 let edition = null;   /* actu en cours de modification */
+let aa = {avant:null, apres:null};   /* chaque côté : {path} existante, {file, url} nouvelle, ou null */
+
+function afficherAA(){
+  $('aaSlots').innerHTML = ['avant','apres'].map(c => {
+    const v = aa[c], nom = c === 'avant' ? 'Avant' : 'Après';
+    return '<label class="aa-slot" data-c="' + c + '"><input type="file" accept="image/*" data-c="' + c + '">' +
+      (v ? '<img src="' + esc(v.file ? v.url : RAW + v.path) + '" alt=""><span class="badge">' + nom + '</span>' +
+           '<button type="button" class="suppr" data-c="' + c + '" title="Retirer">✕</button>'
+         : '<b>Photo ' + nom.toLowerCase() + '</b><span>Cliquez ou glissez</span>') +
+    '</label>';
+  }).join('');
+}
+function poserAA(c, f){
+  if(!f || !(f.type.startsWith('image/') || /\.(heic|heif)$/i.test(f.name))) return;
+  if(aa[c] && aa[c].url) URL.revokeObjectURL(aa[c].url);
+  aa[c] = {file:f, url:URL.createObjectURL(f)}; afficherAA();
+}
+$('aaSlots').addEventListener('change', e => { const i = e.target; if(i.files && i.files[0]) poserAA(i.dataset.c, i.files[0]); });
+$('aaSlots').addEventListener('click', e => {
+  const b = e.target.closest('.suppr'); if(!b) return;
+  e.preventDefault(); const c = b.dataset.c;
+  if(aa[c] && aa[c].url) URL.revokeObjectURL(aa[c].url);
+  aa[c] = null; afficherAA();
+});
+['dragenter','dragover'].forEach(t => $('aaSlots').addEventListener(t, e => { const s = e.target.closest('.aa-slot'); if(s){ e.preventDefault(); s.classList.add('survol'); } }));
+['dragleave','drop'].forEach(t => $('aaSlots').addEventListener(t, e => { const s = e.target.closest('.aa-slot'); if(s){ e.preventDefault(); s.classList.remove('survol'); } }));
+$('aaSlots').addEventListener('drop', e => { const s = e.target.closest('.aa-slot'); if(s && e.dataTransfer.files[0]) poserAA(s.dataset.c, e.dataTransfer.files[0]); });
 
 function afficherVignettes(){
   $('vignettes').innerHTML = photos.map((p, i) =>
@@ -398,19 +444,21 @@ function auj(){ const d = new Date(); return new Date(d - d.getTimezoneOffset() 
 function reinitialiser(){
   edition = null;
   photos.forEach(p => p.url && URL.revokeObjectURL(p.url)); photos = [];
+  ['avant','apres'].forEach(c => aa[c] && aa[c].url && URL.revokeObjectURL(aa[c].url)); aa = {avant:null, apres:null};
   $('form').reset(); $('fDate').value = auj();
   $('formTitre').textContent = 'Nouvelle actu'; $('formEyebrow').textContent = 'Étape 2';
   $('btnPublier').textContent = 'Publier'; $('btnAnnuler').classList.add('cache');
-  afficherVignettes(); afficherListe();
+  afficherVignettes(); afficherAA(); afficherListe();
 }
 function commencerEdition(a){
   reinitialiser();
   edition = a;
   $('fDate').value = a.date || auj(); $('fTitre').value = a.titre || ''; $('fTexte').value = a.texte || ''; $('fVideo').value = a.video || '';
   photos = (a.photos || []).map(p => ({path:p}));
+  if(a.avantApres) aa = {avant:{path:a.avantApres.avant}, apres:{path:a.avantApres.apres}};
   $('formTitre').textContent = 'Modifier l\'actu'; $('formEyebrow').textContent = 'Modification';
   $('btnPublier').textContent = 'Enregistrer les modifications'; $('btnAnnuler').classList.remove('cache');
-  effacer($('etatForm')); afficherVignettes(); afficherListe();
+  effacer($('etatForm')); afficherVignettes(); afficherAA(); afficherListe();
   $('blocForm').scrollIntoView({behavior:'smooth', block:'start'});
 }
 $('btnAnnuler').addEventListener('click', () => { reinitialiser(); effacer($('etatForm')); });
@@ -421,6 +469,7 @@ $('form').addEventListener('submit', async e => {
   const video = $('fVideo').value.trim();
   if(!date || !titre){ etat($('etatForm'), 'La date et le titre sont obligatoires.', 'err'); return; }
   if(video && !/(youtube\.com|youtu\.be|vimeo\.com)/i.test(video)){ etat($('etatForm'), 'Le lien vidéo doit venir de YouTube ou Vimeo.', 'err'); return; }
+  if(!aa.avant !== !aa.apres){ etat($('etatForm'), 'Pour l\'avant/après, il faut les deux photos (ou aucune).', 'err'); return; }
   const btn = $('btnPublier'); btn.disabled = true;
   const suivi = m => etat($('etatForm'), m);
   try{
@@ -428,7 +477,7 @@ $('form').addEventListener('submit', async e => {
     const base = await lireDepot();
     let n = base.prochain;
     const fichiers = [];
-    for(const p of photos){
+    for(const p of photos.concat([aa.avant, aa.apres].filter(Boolean))){
       if(p.file){
         suivi('Allègement de ' + esc(p.file.name) + '…');
         p.dest = DOSSIER + '/Illustration_' + (n++) + '.jpg';
@@ -436,13 +485,15 @@ $('form').addEventListener('submit', async e => {
       }
     }
     const chemins = photos.map(p => p.dest || p.path);
-    const actu = { id: edition ? edition.id : 'a' + Date.now().toString(36), date, titre, texte: $('fTexte').value.replace(/\r/g, '').trim(), photos: chemins, video };
+    const actu = { id: edition ? edition.id : 'a' + Date.now().toString(36), date, titre, texte: $('fTexte').value.replace(/\r/g, '').trim(), photos: chemins, video,
+      avantApres: aa.avant ? { avant: aa.avant.dest || aa.avant.path, apres: aa.apres.dest || aa.apres.path } : null };
+    const garde = chemins.concat(actu.avantApres ? [actu.avantApres.avant, actu.avantApres.apres] : []);
     let actus = base.actus.slice();
     let suppressions = [];
     if(edition){
       const ancienne = actus.find(x => x.id === edition.id);
       if(!ancienne) throw new Error('Cette actu a été supprimée entre-temps.');
-      suppressions = (ancienne.photos || []).filter(p => !chemins.includes(p));
+      suppressions = fichiersActu(ancienne).filter(p => !garde.includes(p));
       actus = actus.map(x => x.id === edition.id ? actu : x);
     } else actus.push(actu);
     await commit(base, fichiers, suppressions, actus, (edition ? 'Actu chantier modifiée : ' : 'Actu chantier : ') + titre, suivi);
@@ -451,7 +502,7 @@ $('form').addEventListener('submit', async e => {
     etat($('etatForm'), (modif ? 'Modifications enregistrées.' : 'Actu publiée !') + ' Elle sera visible sur <a href="local-j33.html#actu-' + esc(actu.id) + '" target="_blank" rel="noopener">la page</a> d\'ici une minute environ.', 'ok');
     chargerListe();
   }catch(err){
-    photos.forEach(p => delete p.dest);
+    photos.concat([aa.avant, aa.apres].filter(Boolean)).forEach(p => delete p.dest);
     etat($('etatForm'), messageErreur(err), 'err');
   }finally{ btn.disabled = false; }
 });
@@ -463,7 +514,7 @@ async function supprimer(a){
     const base = await lireDepot();
     const cible = base.actus.find(x => x.id === a.id);
     if(!cible){ chargerListe(); return; }
-    await commit(base, [], cible.photos || [], base.actus.filter(x => x.id !== a.id), 'Actu chantier supprimée : ' + a.titre, m => etat($('etatListe'), m));
+    await commit(base, [], fichiersActu(cible), base.actus.filter(x => x.id !== a.id), 'Actu chantier supprimée : ' + a.titre, m => etat($('etatListe'), m));
     if(edition && edition.id === a.id) reinitialiser();
     etat($('etatListe'), 'Actu supprimée. La page sera à jour d\'ici une minute.', 'ok');
     const garde = $('etatListe').innerHTML;
@@ -474,8 +525,9 @@ async function supprimer(a){
 
 /* ---------- démarrage ---------- */
 $('fDate').value = auj();
+afficherAA();
 if(jeton) connecter();
-window.addEventListener('beforeunload', e => { if(photos.some(p => p.file)){ e.preventDefault(); e.returnValue = ''; } });
+window.addEventListener('beforeunload', e => { if(photos.some(p => p.file) || (aa.avant && aa.avant.file) || (aa.apres && aa.apres.file)){ e.preventDefault(); e.returnValue = ''; } });
 </script>
 </body>
 </html>
