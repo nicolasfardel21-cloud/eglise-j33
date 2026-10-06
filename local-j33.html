@@ -739,6 +739,12 @@ body{overflow-x:clip}   /* clip ne cree pas de conteneur de defilement, contrair
   .pano-bande img{position:static;transform:none !important}
   .pano-prog{display:none}
 }
+/* mobile : J33 et burger masqués tant que la photo d'ouverture occupe l'écran,
+   ils glissent depuis le haut quand elle a fini de défiler */
+nav{transition:transform .4s cubic-bezier(.2,.7,.2,1),opacity .3s ease}
+@media(max-width:900px){
+  body.nav-cachee:not(.menu-ouvert) nav{transform:translateY(-100%);opacity:0;pointer-events:none}
+}
 /* mobile : pas de panorama, une photo fixe plein écran. Hauteur en lvh (barres du
    navigateur rétractées) : l'image couvre tout l'écran même quand la barre d'adresse
    disparaît au défilement. */
@@ -1416,6 +1422,15 @@ document.addEventListener('click', e => {
     img.style.transform = 'translate3d(' + (-p * course).toFixed(1) + 'px,0,0)';
     barre.style.transform = 'scaleX(' + p.toFixed(4) + ')';
   }
+  /* mobile : le bandeau (J33 + burger) n'apparaît qu'une fois la photo passée */
+  function navMobile(){
+    const nh = (document.querySelector('nav') || {}).offsetHeight || 64;
+    document.body.classList.toggle('nav-cachee', mobile.matches && cadre.isConnected && cadre.getBoundingClientRect().bottom > nh);
+  }
+  window.addEventListener('scroll', navMobile, {passive:true});
+  window.addEventListener('resize', navMobile, {passive:true});
+  navMobile();
+
   mesurer();
   if(!img.complete) img.addEventListener('load', mesurer, {once:true});
   img.addEventListener('load', mesurer);   /* changement de source (rotation, redimensionnement) */
