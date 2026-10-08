@@ -1295,11 +1295,16 @@ body:not(.nav-init) .burger span{background:var(--creme)}
       });
       window.addEventListener('resize', caler);
       if(window.ResizeObserver && texte) new ResizeObserver(caler).observe(texte);
-      /* aucun signe de vie du widget 8 s après le chargement de la page : carte de secours */
+      /* le widget est-il joignable ? On interroge discrètement son adresse : si la requête est
+         bloquée (bloqueur de publicités ou de traceurs, réseau filtré…) ou n'aboutit pas en 15 s,
+         la carte de secours remplace le compteur. HelloAsso n'envoyant pas toujours de message,
+         l'absence de message seule ne suffit pas (le compteur peut très bien s'afficher). */
       function verifier(){ if(!recu){ secours = true; boite.classList.add('secours'); caler(); } }
-      f.addEventListener('error', verifier);
-      if(document.readyState === 'complete') setTimeout(verifier, 8000);
-      else window.addEventListener('load', function(){ setTimeout(verifier, 8000); });
+      if(window.fetch){
+        var fini = false, delai = setTimeout(function(){ if(!fini) verifier(); }, 15000);
+        fetch(f.src, {mode:'no-cors', cache:'no-store', credentials:'omit'})
+          .then(function(){ fini = true; clearTimeout(delai); }, function(){ fini = true; clearTimeout(delai); verifier(); });
+      }
       caler();
     })();
     </script>
