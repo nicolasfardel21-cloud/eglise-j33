@@ -748,7 +748,8 @@ body{overflow-x:clip}   /* clip ne cree pas de conteneur de defilement, contrair
   .pano-bande{background:transparent}
   .pano-bande img{transform-origin:0 0}
   .pano-prog{display:none}
-  .ps-titre{top:0;opacity:0;will-change:transform,opacity}
+  .ps-titre{top:0;opacity:0;will-change:transform,opacity;transition:opacity .9s ease}
+  .ps-titre.apparu{opacity:1}
   /* le titre est posé sous l'image, sur fond blanc : pas de fusion, noir J33 + doré */
   .ps-titre.ps-blend{mix-blend-mode:normal;color:var(--encre)}
 }
@@ -1521,7 +1522,7 @@ document.addEventListener('click', e => {
   function reinit(){
     cadre.style.height = ''; cadre.style.marginBottom = '';
     img.style.transform = '';
-    titres.forEach(t => { t.style.transform = ''; t.style.opacity = ''; t.style.fontSize = ''; });
+    titres.forEach(t => { t.style.transform = ''; t.style.fontSize = ''; t.classList.remove('apparu'); });
   }
   /* titre : taille calculée pour occuper toute la largeur, gouttières déduites */
   function calerTitre(W){
@@ -1553,8 +1554,9 @@ document.addEventListener('click', e => {
     const k = 1 - p * (1 - kFin);
     img.style.transform = 'scale(' + k.toFixed(5) + ')';
     const y = (H * k + ECART).toFixed(1);
-    const o = Math.max(0, Math.min(1, (p - .35) / .5)).toFixed(3);
-    titres.forEach(t => { t.style.transform = 'translate3d(0,' + y + 'px,0)'; t.style.opacity = o; });
+    /* le titre n'apparaît (fondu CSS) qu'une fois l'image entièrement affichée dans la largeur */
+    const fini = p >= .999;
+    titres.forEach(t => { t.style.transform = 'translate3d(0,' + y + 'px,0)'; t.classList.toggle('apparu', fini); });
   }
   /* mobile : le bandeau (J33 + burger) n'apparaît qu'une fois la photo passée */
   function navMobile(){
