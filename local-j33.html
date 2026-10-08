@@ -743,6 +743,15 @@ body{overflow-x:clip}   /* clip ne cree pas de conteneur de defilement, contrair
 .ps-titre.ps-or{color:var(--or);z-index:2}
 .ps-titre.ps-or .t-blanc{visibility:hidden}
 @media(max-width:900px){ .ps-titre{top:max(88px,13svh);font-size:calc((10.6vw) * var(--zc))} }
+/* PC : l'image se rétrécit autour de son coin haut gauche, le titre la suit en dessous */
+@media(min-width:901px) and (prefers-reduced-motion: no-preference){
+  .pano-bande{background:transparent}
+  .pano-bande img{transform-origin:0 0}
+  .pano-prog{display:none}
+  .ps-titre{top:0;opacity:0;will-change:transform,opacity}
+  /* le titre est posé sous l'image, sur fond blanc : pas de fusion, noir J33 + doré */
+  .ps-titre.ps-blend{mix-blend-mode:normal;color:var(--encre)}
+}
 
 /* mouvement réduit : pas d'épinglage, la bande se fait défiler au doigt / à la molette */
 @media(prefers-reduced-motion: reduce){
@@ -1490,30 +1499,49 @@ document.addEventListener('click', e => {
   }, {passive:true});
 })();
 
-/* ---------- panorama : l'image glisse vers la gauche au fil du défilement ----------
-   Course horizontale = largeur rendue de l'image − largeur de la fenêtre. Le cadre est
-   allongé d'autant : 1 px de défilement vertical = 1 px de glissement horizontal. Une fois
-   le bord droit atteint, la bande se décolle et la page reprend normalement. */
+/* ---------- panorama (ordinateur) : l'image se rétrécit jusqu'à tenir dans la largeur ----------
+   Au départ, Illustration_3 occupe toute la hauteur de l'écran (on en voit le bord gauche).
+   Au fil du défilement, elle se réduit (scale) autour de son coin haut gauche, qui ne bouge
+   pas, jusqu'à occuper exactement la largeur de l'écran. « Notre local prend vie » suit son
+   bord bas et apparaît en dessous, calé sur toute la largeur.
+   Distance de défilement = une hauteur d'écran. Le cadre reçoit ensuite une marge basse
+   négative : la suite de la page remonte au rythme du rétrécissement, juste sous le titre,
+   sans laisser de blanc. Mobile : photo fixe (Illustration_4), rien de tout cela. */
 (function(){
   const cadre = document.getElementById('panorama');
   if(!cadre || window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
   const colle = cadre.querySelector('.pano-colle');
   const bande = cadre.querySelector('.pano-bande');
   const img = bande.querySelector('img');
-  const barre = cadre.querySelector('.pano-prog span');
-  let course = 0, tick = false;
-  const mobile = window.matchMedia('(max-width:900px)');   /* mobile : photo fixe, pas de défilement */
+  const titres = [...cadre.querySelectorAll('.ps-titre')];
+  const mobile = window.matchMedia('(max-width:900px)');
+  const MARGE = 28, ECART = 22, BAS = 36;      /* gouttières latérales, image → titre, titre → page */
+  let H = 0, kFin = 1, course = 0, tick = false;
 
+  function reinit(){
+    cadre.style.height = ''; cadre.style.marginBottom = '';
+    img.style.transform = '';
+    titres.forEach(t => { t.style.transform = ''; t.style.opacity = ''; t.style.fontSize = ''; });
+  }
+  /* titre : taille calculée pour occuper toute la largeur, gouttières déduites */
+  function calerTitre(W){
+    titres.forEach(t => t.style.fontSize = '100px');
+    const sp = titres[0].children;
+    const w = sp[sp.length - 1].getBoundingClientRect().right - sp[0].getBoundingClientRect().left;
+    if(w > 0) titres.forEach(t => t.style.fontSize = (100 * (W - 2 * MARGE) / w).toFixed(2) + 'px');
+  }
   function mesurer(){
     if(!cadre.isConnected) return;
-    if(mobile.matches){
-      course = 0; cadre.style.height = ''; img.style.transform = '';
-      if(typeof lenis !== 'undefined' && lenis) lenis.resize();
-      return;
-    }
+    if(mobile.matches){ reinit(); if(typeof lenis !== 'undefined' && lenis) lenis.resize(); return; }
+    const W = colle.offsetWidth;
+    H = colle.offsetHeight;
     const ratio = img.naturalWidth ? img.naturalWidth / img.naturalHeight : 7680 / 1000;
-    course = Math.max(0, Math.round(bande.offsetHeight * ratio - bande.offsetWidth));
-    cadre.style.height = (colle.offsetHeight + course) + 'px';
+    kFin = Math.min(1, W / (H * ratio));
+    course = H;
+    calerTitre(W);
+    const hFin = H * kFin + ECART + titres[0].offsetHeight + BAS;
+    cadre.style.height = (H + course) + 'px';
+    cadre.style.marginBottom = -Math.max(0, H - hFin) + 'px';
     if(typeof lenis !== 'undefined' && lenis) lenis.resize();
     maj();
   }
@@ -1521,9 +1549,12 @@ document.addEventListener('click', e => {
     tick = false;
     if(mobile.matches) return;
     const s = Math.max(0, Math.min(course, -cadre.getBoundingClientRect().top));
-    img.style.transform = 'translate3d(' + (-s).toFixed(1) + 'px,0,0)';
     const p = course ? s / course : 0;
-    barre.style.transform = 'scaleX(' + p.toFixed(4) + ')';
+    const k = 1 - p * (1 - kFin);
+    img.style.transform = 'scale(' + k.toFixed(5) + ')';
+    const y = (H * k + ECART).toFixed(1);
+    const o = Math.max(0, Math.min(1, (p - .35) / .5)).toFixed(3);
+    titres.forEach(t => { t.style.transform = 'translate3d(0,' + y + 'px,0)'; t.style.opacity = o; });
   }
   /* mobile : le bandeau (J33 + burger) n'apparaît qu'une fois la photo passée */
   function navMobile(){
@@ -1535,8 +1566,8 @@ document.addEventListener('click', e => {
   navMobile();
 
   mesurer();
-  if(!img.complete) img.addEventListener('load', mesurer, {once:true});
-  img.addEventListener('load', mesurer);   /* changement de source (rotation, redimensionnement) */
+  img.addEventListener('load', mesurer);   /* chargement, ou changement de source (rotation, redimensionnement) */
+  if(document.fonts && document.fonts.ready) document.fonts.ready.then(mesurer);
   window.addEventListener('scroll', () => { if(!tick){ tick = true; requestAnimationFrame(maj); } }, {passive:true});
   let t; window.addEventListener('resize', () => { clearTimeout(t); t = setTimeout(mesurer, 150); }, {passive:true});
 })();
@@ -1546,7 +1577,9 @@ document.addEventListener('click', e => {
    elle est réduite à proportion. Les deux couches (fusion + dorée) reçoivent la même valeur. */
 (function(){
   function ajuster(){
+    const pc = window.matchMedia('(min-width:901px)').matches && !window.matchMedia('(prefers-reduced-motion: reduce)').matches;
     document.querySelectorAll('.ps-titre, .hd-titre').forEach(t => {
+      if(pc && t.classList.contains('ps-titre')) return;   /* PC : taille gérée par le panorama (pleine largeur) */
       t.style.fontSize = '';
       const sp = t.children;
       if(!t.clientWidth || sp.length < 2) return;
