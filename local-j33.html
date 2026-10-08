@@ -795,7 +795,7 @@ nav{transition:transform .4s cubic-bezier(.2,.7,.2,1),opacity .3s ease}
 .q7-fond img{width:100%;height:100%;object-fit:cover;display:block}
 .q7-cartes{position:relative;z-index:1;margin-top:-100vh;margin-top:-100lvh;
   width:min(640px,40vw);margin-left:auto;margin-right:6vw;padding:28vh 0 34vh;display:flex;flex-direction:column;gap:36px}
-.q7-carte{padding:clamp(30px,3.4vw,52px) clamp(28px,3.6vw,56px);border-radius:0;color:var(--encre);
+.q7-carte{position:relative;padding:clamp(30px,3.4vw,52px) clamp(28px,3.6vw,56px);border-radius:0;color:var(--encre);
   border:3px solid var(--or);
   /* verre dépoli crème : on devine la photo derrière, le texte reste lisible */
   background:rgba(243,239,228,.74);
@@ -804,8 +804,12 @@ nav{transition:transform .4s cubic-bezier(.2,.7,.2,1),opacity .3s ease}
 /* navigateur sans flou d'arrière-plan : fond crème plus couvrant pour garder la lisibilité */
 @supports not ((-webkit-backdrop-filter:blur(1px)) or (backdrop-filter:blur(1px))){ .q7-carte{background:rgba(243,239,228,.92)} }
 .q7-carte h3,.q7-tete h2{font-family:'Anton',sans-serif;font-weight:400;text-transform:uppercase;letter-spacing:.01em;
-  line-height:1;font-size:clamp(2.6rem,4.4vw,4.4rem);color:var(--or);margin:6px 0 22px}
-.q7-num{display:block;font-size:.74rem;font-weight:600;letter-spacing:.22em;color:var(--or)}
+  line-height:1;font-size:clamp(2.6rem,4.4vw,4.4rem);color:var(--encre);margin:0 0 22px;padding-right:84px}
+/* gros numéro en haut à droite, comme les tuiles de la confession de foi */
+.q7-num{position:absolute;top:20px;right:26px;font-family:'Anton',sans-serif;font-size:clamp(2.2rem,4vw,3.4rem);line-height:1;
+  color:rgba(16,22,34,.16);transition:color .3s}
+.q7-carte:hover .q7-num{color:var(--or)}
+.q7-carte strong.or{color:var(--or)}
 .q7-carte p,.q7-carte li{font-size:1.06rem;line-height:1.6}
 .q7-carte p+p{margin-top:8px}
 .q7-carte strong{font-weight:600}
@@ -813,11 +817,14 @@ nav{transition:transform .4s cubic-bezier(.2,.7,.2,1),opacity .3s ease}
 .q7-tete .eyebrow{margin-bottom:16px}
 .q7-tete h2{color:var(--encre);margin-bottom:0}
 .q7-tete h2 span{color:var(--or)}
-.q-montant{font-family:'Anton',sans-serif;font-size:clamp(2.4rem,4.8vw,3.8rem) !important;line-height:1 !important;letter-spacing:.01em;margin-bottom:10px}
+.q-montant{color:var(--or);font-family:'Anton',sans-serif;font-size:clamp(2.4rem,4.8vw,3.8rem) !important;line-height:1 !important;letter-spacing:.01em;margin-bottom:10px}
 .q-dates{list-style:none;display:grid;gap:12px}
 .q-dates li{display:grid;gap:2px}
 .q-dates b{font-weight:600;text-transform:uppercase;letter-spacing:.08em;font-size:.8rem}
 .q-dates sup{font-size:.7em}
+.q-surfaces{list-style:none;display:flex;flex-wrap:wrap;gap:12px 28px;margin-top:14px}
+.q-surfaces li{display:flex;flex-direction:column;font-size:.95rem;line-height:1.3}
+.q-surfaces b{font-family:'Anton',sans-serif;font-weight:400;font-size:clamp(1.8rem,2.8vw,2.4rem);line-height:1.05;color:var(--encre)}
 @media(max-width:900px){
   .q7-cartes{width:auto;margin-left:16px;margin-right:16px;padding:40vh 0 30vh;gap:22px}
   .q7-carte{padding:28px 24px}
@@ -995,24 +1002,29 @@ nav{transition:transform .4s cubic-bezier(.2,.7,.2,1),opacity .3s ease}
   <div class="q7-fond" aria-hidden="true"><img src="images/local/Illustration_1.jpg" alt="" loading="lazy" decoding="async"></div>
   <div class="q7-cartes">
     <div class="q7-carte q7-tete"><span class="eyebrow">Le projet en bref</span><h2>7 questions <span>clés</span></h2></div>
-    <article class="q7-carte"><span class="q7-num">01</span><h3>Qui ?</h3>
-      <p><strong>Bénéficiaire :</strong> l'église J33.</p><p><strong>Contributeurs :</strong> toutes celles et ceux qui ont à cœur de nous aider à mener ce projet.</p></article>
-    <article class="q7-carte"><span class="q7-num">02</span><h3>Quoi ?</h3>
-      <p>L'aménagement de notre <strong>tout premier local d'église</strong>.</p></article>
-    <article class="q7-carte"><span class="q7-num">03</span><h3>Où ?</h3>
-      <p>À <strong>Is-sur-Tille</strong> (21120).</p></article>
-    <article class="q7-carte"><span class="q7-num">04</span><h3>Quand ?</h3>
+    <article class="q7-carte"><span class="q7-num" aria-hidden="true">01</span><h3>Qui ?</h3>
+      <p><strong>Bénéficiaire :</strong> <strong class="or">l'église J33</strong>.</p><p><strong>Contributeurs :</strong> <strong class="or">toutes celles et ceux qui ont à cœur</strong> de nous aider à mener ce projet.</p></article>
+    <article class="q7-carte"><span class="q7-num" aria-hidden="true">02</span><h3>Quoi ?</h3>
+      <p>L'aménagement de notre <strong class="or">tout premier local d'église</strong> :</p>
+      <ul class="q-surfaces">
+        <li><b>180 m²</b>de bâtiment</li>
+        <li><b>130 m²</b>de préau</li>
+        <li><b>+ 1</b>espace extérieur</li>
+      </ul></article>
+    <article class="q7-carte"><span class="q7-num" aria-hidden="true">03</span><h3>Où ?</h3>
+      <p>À <strong class="or">Is-sur-Tille</strong> (21120).</p></article>
+    <article class="q7-carte"><span class="q7-num" aria-hidden="true">04</span><h3>Quand ?</h3>
       <ul class="q-dates">
         <li><b>Jusqu'à mi-décembre 2026</b>campagne de dons en cours</li>
         <li><b>Dès le 1<sup>er</sup> novembre</b>remise des clés et début des travaux</li>
         <li><b>Janvier 2027</b>ouverture espérée</li>
       </ul></article>
-    <article class="q7-carte"><span class="q7-num">05</span><h3>Comment ?</h3>
+    <article class="q7-carte"><span class="q7-num" aria-hidden="true">05</span><h3>Comment ?</h3>
       <p>Grâce à la <a href="https://www.helloasso.com/associations/jeremie-33/collectes/eglise-j33-notre-nouveau-local-prend-vie-soutenez-le-projet" target="_blank" rel="noopener" data-j33-clic="clic/local/don-7q">campagne de dons en ligne</a> : chaque don, quel qu'en soit le montant, fait avancer le chantier.</p></article>
-    <article class="q7-carte"><span class="q7-num">06</span><h3>Combien ?</h3>
+    <article class="q7-carte"><span class="q7-num" aria-hidden="true">06</span><h3>Combien ?</h3>
       <p class="q-montant">20 000 €</p><p>Pour couvrir l'ensemble des frais : travaux, mise aux normes, décoration, mobilier, équipements…</p></article>
-    <article class="q7-carte"><span class="q7-num">07</span><h3>Pourquoi ?</h3>
-      <p><strong>Bâtir un lieu d'accueil et de vie à Is-sur-Tille</strong> pour offrir à chacun la possibilité d'entendre et de vivre l'Évangile, et voir un réveil durable jaillir dans notre région.</p></article>
+    <article class="q7-carte"><span class="q7-num" aria-hidden="true">07</span><h3>Pourquoi ?</h3>
+      <p><strong class="or">Bâtir</strong> <strong>un lieu d'accueil et de vie à Is-sur-Tille</strong> pour offrir à chacun la possibilité d'entendre et de vivre l'Évangile, et voir un réveil durable jaillir dans notre région.</p></article>
   </div>
 </section>
 
