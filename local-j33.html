@@ -792,6 +792,30 @@ nav{transition:transform .4s cubic-bezier(.2,.7,.2,1),opacity .3s ease}
 .actu:nth-of-type(odd) .aa{margin-left:auto}
 @media(max-width:900px){.aa{aspect-ratio:1/1}.aa-poignee b{width:46px;height:46px}}
 
+/* ---------- 7 questions clés : liste numérotée (gabarit « valeurs » du site) ---------- */
+.lc-7q{padding-top:70px;padding-bottom:70px}
+.lc-7q .valeurs-liste{margin-top:46px}
+.lc-7q .valeur{grid-template-columns:90px minmax(0,.8fr) minmax(0,1.7fr);align-items:baseline;padding:26px 0}
+.lc-7q .valeur h3{text-transform:uppercase;letter-spacing:.02em}
+.q-rep{font-size:1.02rem;color:var(--gris);line-height:1.6;max-width:60ch}
+.lc-7q .valeur .q-rep p{font-size:inherit;color:inherit;max-width:none}
+.q-rep p+p{margin-top:6px}
+.q-rep strong{color:var(--encre);font-weight:600}
+.q-rep a{color:var(--or);text-decoration:none;border-bottom:1px solid rgba(var(--or-rgb),.35);transition:border-color .25s}
+.q-rep a:hover{border-color:var(--or)}
+.lc-7q .valeur .q-rep .q-montant{font-family:'Anton',sans-serif;font-size:clamp(2.2rem,4.6vw,3.6rem);line-height:1;color:var(--or);letter-spacing:.01em;margin-bottom:8px}
+.q-dates{list-style:none;display:grid;gap:10px}
+.q-dates li{display:grid;grid-template-columns:minmax(0,15em) 1fr;gap:4px 18px;align-items:baseline}
+.q-dates b{font-weight:600;color:var(--encre);text-transform:uppercase;letter-spacing:.08em;font-size:.82rem}
+.q-dates sup{font-size:.7em}
+@media(max-width:760px){
+  .lc-7q{padding-top:50px;padding-bottom:50px}
+  .lc-7q .titre-bloc,.lc-7q .eyebrow{text-align:center}
+  .lc-7q .valeur{grid-template-columns:50px minmax(0,1fr);gap:8px 14px;padding:22px 0}
+  .lc-7q .valeur .q-rep{grid-column:2}
+  .q-dates li{grid-template-columns:1fr;gap:0}
+}
+
 /* ---------- avant / après fixe, avant le journal : paysage sur ordinateur ---------- */
 .lc-aa{padding-top:30px;padding-bottom:60px}
 .lc-aa .titre-bloc{text-align:center}
@@ -969,6 +993,31 @@ nav{transition:transform .4s cubic-bezier(.2,.7,.2,1),opacity .3s ease}
     <iframe title="Collecte HelloAsso — Notre nouveau local prend vie" allowtransparency="true" scrolling="no"
       src="https://www.helloasso.com/associations/jeremie-33/collectes/eglise-j33-notre-nouveau-local-prend-vie-soutenez-le-projet/widget-vignette"></iframe>
     <span class="repli">La jauge ne s'affiche pas ? <a href="https://www.helloasso.com/associations/jeremie-33/collectes/eglise-j33-notre-nouveau-local-prend-vie-soutenez-le-projet" target="_blank" rel="noopener">Voir la collecte</a></span>
+  </div>
+</section>
+
+<section class="lc-7q reveal" id="projet" data-j33-evt="lu/local/7-questions">
+  <span class="eyebrow">Le projet en bref</span>
+  <h2 class="titre-bloc">7 questions <span class="or">clés</span></h2>
+  <div class="valeurs-liste">
+    <div class="valeur"><span class="vnum">01</span><h3>Qui ?</h3>
+      <div class="q-rep"><p><strong>Bénéficiaire :</strong> l'église J33.</p><p><strong>Contributeurs :</strong> toutes celles et ceux qui ont à cœur de nous aider à mener ce projet.</p></div></div>
+    <div class="valeur"><span class="vnum">02</span><h3>Quoi ?</h3>
+      <div class="q-rep"><p>L'aménagement de notre <strong>tout premier local d'église</strong>.</p></div></div>
+    <div class="valeur"><span class="vnum">03</span><h3>Où ?</h3>
+      <div class="q-rep"><p>À <strong>Is-sur-Tille</strong> (21120).</p></div></div>
+    <div class="valeur"><span class="vnum">04</span><h3>Quand ?</h3>
+      <div class="q-rep"><ul class="q-dates">
+        <li><b>Jusqu'à mi-décembre 2026</b>campagne de dons en cours</li>
+        <li><b>Dès le 1<sup>er</sup> novembre</b>remise des clés et début des travaux</li>
+        <li><b>Janvier 2027</b>ouverture espérée</li>
+      </ul></div></div>
+    <div class="valeur"><span class="vnum">05</span><h3>Comment ?</h3>
+      <div class="q-rep"><p>Grâce à la <a href="https://www.helloasso.com/associations/jeremie-33/collectes/eglise-j33-notre-nouveau-local-prend-vie-soutenez-le-projet" target="_blank" rel="noopener" data-j33-clic="clic/local/don-7q">campagne de dons en ligne</a> : chaque don, quel qu'en soit le montant, fait avancer le chantier.</p></div></div>
+    <div class="valeur"><span class="vnum">06</span><h3>Combien ?</h3>
+      <div class="q-rep"><p class="q-montant">20 000 €</p><p>Pour couvrir l'ensemble des frais : travaux, mise aux normes, décoration, mobilier, équipements…</p></div></div>
+    <div class="valeur"><span class="vnum">07</span><h3>Pourquoi ?</h3>
+      <div class="q-rep"><p><strong>Bâtir un lieu d'accueil et de vie à Is-sur-Tille</strong> pour offrir à chacun la possibilité d'entendre et de vivre l'Évangile, et voir un réveil durable jaillir dans notre région.</p></div></div>
   </div>
 </section>
 
