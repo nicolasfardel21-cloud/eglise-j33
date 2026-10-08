@@ -217,7 +217,7 @@ details.aide-token li{margin-bottom:6px}
    Une publication = UN commit (API Git Data) contenant :
      - les nouvelles photos, allégées dans le navigateur (JPEG, 1800 px max),
        rangées dans images/local/Illustration_N.jpg (N = suite de la numérotation ;
-       1 à 9 sont réservées aux visuels fixes de la page) ;
+       1 à 19 sont réservées aux visuels fixes de la page) ;
      - actus-local.json mis à jour ;
      - la suppression des photos retirées.
    GitHub Pages redéploie ensuite le site (≈ 1 min).
@@ -225,7 +225,7 @@ details.aide-token li{margin-bottom:6px}
 const DEPOT = { proprio:'nicolasfardel21-cloud', nom:'eglise-j33', branche:'main' };
 const JSON_PATH = 'actus-local.json';
 const DOSSIER = 'images/local';
-const RESERVEES = 9;          /* Illustration_1 à _9 : visuels fixes de la page (bandeau, panorama…) */
+const RESERVEES = 19;         /* Illustration_1 à _19 : visuels fixes de la page (bandeau, panorama, avant/après…) */
 const COTE_MAX = 1800, QUALITE = 0.82;
 const CLE = 'j33-gh-token';
 const RAW = `https://raw.githubusercontent.com/${DEPOT.proprio}/${DEPOT.nom}/${DEPOT.branche}/`;
@@ -258,12 +258,17 @@ async function gh(chemin, opts = {}){
 }
 function messageErreur(e){
   if(e.status === 401) return 'Jeton refusé (expiré ou mal copié). Cliquez « Oublier le jeton » et recollez-en un.';
-  if(e.status === 403) return 'Ce jeton n\'a pas le droit d\'écrire. Vérifiez la permission « Contents : Read and write ».';
+  if(e.status === 403) return 'Ce jeton peut lire le site mais pas le modifier. Sur GitHub, ouvrez le jeton → <b>Edit</b> : ' +
+    'dans « Repository access », choisissez <b>Only select repositories</b> → <b>eglise-j33</b> (et non « Public repositories »), ' +
+    'puis dans « Repository permissions » réglez <b>Contents</b> sur <b>Read and write</b>. Enregistrez, rechargez cette page : le même jeton fonctionnera.';
   if(e.status === 404) return 'Dépôt introuvable avec ce jeton : vérifiez qu\'il donne accès à eglise-j33.';
   if(e.status === 422 || e.status === 409) return 'Le site a été modifié entre-temps. Cliquez « Actualiser » puis republiez.';
   if(e.name === 'TypeError') return 'Connexion à GitHub impossible. Vérifiez votre réseau.';
   return esc(e.message || 'Erreur inattendue.');
 }
+
+/* visuels fixes (n° ≤ RESERVEES) : jamais supprimés par l'admin, même s'ils sont cités dans une actu */
+const estFixe = p => { const x = /Illustration_(\d+)\.jpe?g$/i.exec(p); return !!x && +x[1] <= RESERVEES; };
 
 /* tous les fichiers image d'une actu (photos + paire avant/après) */
 const fichiersActu = a => (a.photos || []).concat(a.avantApres ? [a.avantApres.avant, a.avantApres.apres] : []).filter(Boolean);
@@ -430,7 +435,7 @@ async function commit(base, fichiers, suppressions, actus, message, suivi){
     const b = await gh('/git/blobs', {method:'POST', body:{content:f.b64, encoding:'base64'}});
     tree.push({path:f.path, mode:'100644', type:'blob', sha:b.sha});
   }
-  suppressions.filter(p => base.existants.has(p)).forEach(p => tree.push({path:p, mode:'100644', type:'blob', sha:null}));
+  suppressions.filter(p => base.existants.has(p) && !estFixe(p)).forEach(p => tree.push({path:p, mode:'100644', type:'blob', sha:null}));
   const json = JSON.stringify({ maj: new Date().toISOString(), actus }, null, 2) + '\n';
   tree.push({path:JSON_PATH, mode:'100644', type:'blob', content:json});
   suivi('Enregistrement…');
