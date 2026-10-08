@@ -826,7 +826,7 @@ nav{transition:transform .4s cubic-bezier(.2,.7,.2,1),opacity .3s ease}
   nav .marque{transition:color .45s ease,opacity .35s ease}
   body.sur-q7:not(.menu-ouvert) nav .marque{opacity:0;pointer-events:none}
 }
-/* même retrait que les titres de section (« Chaque pierre compte ») : 28 px, ou centrage
+/* même retrait que les titres de section (« Aidez-nous à le rendre réel ») : 28 px, ou centrage
    dans 1500 px sur grand écran — et marge haute identique à la marge gauche */
 .q7-titre{--m:max(28px, calc((100vw - 1500px) / 2 + 28px));--m:max(28px, calc((100cqw - 1500px) / 2 + 28px));
   position:absolute;left:var(--m);top:calc(var(--m) - .0825em);z-index:1;   /* -.0825em : haut des lettres, pas de la boîte */margin:0;font-family:'Anton',sans-serif;font-weight:400;text-transform:uppercase;
@@ -881,7 +881,7 @@ nav{transition:transform .4s cubic-bezier(.2,.7,.2,1),opacity .3s ease}
 .lc-plan{position:relative;max-width:none;padding:0;margin:0;height:400vh;height:calc(100lvh + 300vh);background:var(--noir)}
 /* texte d'ouverture, centré sur la scène noire */
 .ouv-texte{position:absolute;left:50%;top:50%;z-index:3;transform:translate(-50%,-50%);text-align:center;width:max-content;max-width:92vw;
-  will-change:opacity,transform;pointer-events:none}
+  will-change:opacity;pointer-events:none}
 .ouv-j33{margin:0;font-family:'Anton',sans-serif;font-weight:400;line-height:.86;letter-spacing:.02em;color:#fff;
   font-size:calc((clamp(7rem,24vw,20rem)) * var(--zc))}
 .ouv-sous{margin:clamp(14px,2.4vh,28px) 0 0;font-family:'Archivo',sans-serif;font-weight:300;text-transform:uppercase;
@@ -1120,10 +1120,10 @@ body.plan-sombre nav::before{opacity:0}
 
 <section class="lc-collecte reveal" id="collecte" data-j33-evt="lu/local/collecte">
   <div>
-    <h2 class="titre-bloc">Chaque pierre <span class="or">compte</span></h2>
+    <h2 class="titre-bloc">Aidez-nous à le rendre <span class="or">réel</span></h2>
     <div class="texte-bloc">
       <p><strong>Ce local, c'est un lieu pour prier, accueillir, enseigner et servir Is-sur-Tille et ses environs.</strong></p>
-      <p>La collecte finance les travaux qui le rendront prêt à ouvrir ses portes. Suivez son avancement ici, en direct.</p>
+      <p>Les dons financent les travaux, les aménagements, le mobilier, les équipements qui le rendront prêt à ouvrir ses portes. Suivez son avancement ici, en direct.</p>
     </div>
   </div>
   <div class="lc-compteur">
@@ -1687,7 +1687,8 @@ document.addEventListener('click', e => {
     });
     if(surfaces) surfaces.style.opacity = Math.max(0, Math.min(1, (q - .15) / .35)).toFixed(3);
     bati.forEach(b => b.p.style.opacity = (.6 * Math.max(0, Math.min(1, (q - b.t) / .12))).toFixed(3));
-    sec.classList.toggle('habille', q > .04);
+    /* nom de la ville, rose des vents, échelle : une fois les rues dessinées */
+    sec.classList.toggle('habille', q >= .97);
     /* halo de lumière du centre-ville : monte avec le dessin */
     if(halo) halo.style.opacity = Math.max(0, Math.min(1, (q - .1) / .6)).toFixed(3);
   }
@@ -1699,7 +1700,6 @@ document.addEventListener('click', e => {
     if(texte){
       const e = Math.min(1, p / .22);
       texte.style.opacity = (1 - e).toFixed(3);
-      texte.style.transform = 'translate(-50%,-50%) translateY(' + (-e * 40).toFixed(1) + 'px) scale(' + (1 - e * .06).toFixed(3) + ')';
       texte.style.visibility = e >= 1 ? 'hidden' : '';
     }
     const q = Math.max(0, Math.min(1, (p - .25) / .63));
