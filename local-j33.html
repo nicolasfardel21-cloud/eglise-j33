@@ -877,7 +877,7 @@ nav{transition:transform .4s cubic-bezier(.2,.7,.2,1),opacity .3s ease}
    et reste épinglée pendant que les tracés se dessinent : chaque chemin a pathLength=1,
    son décalage de tirets dépend de --q (avancement, posé par le JS) et de ses propres
    --t (départ) et --d (durée), du centre-ville vers l'extérieur. */
-.lc-plan{position:relative;max-width:none;padding:0;margin:0;height:400vh;height:calc(100lvh + 300vh);background:var(--noir)}
+.lc-plan{position:relative;max-width:none;padding:0;margin:0;height:425vh;height:calc(100lvh + 325vh);background:var(--noir)}   /* +25vh : le nom de la ville reste un peu plus longtemps */
 /* texte d'ouverture, centré sur la scène noire */
 .ouv-texte{position:absolute;left:50%;top:50%;z-index:3;transform:translate(-50%,-50%);text-align:center;width:max-content;max-width:92vw;
   will-change:opacity;pointer-events:none}
@@ -911,11 +911,10 @@ nav{transition:transform .4s cubic-bezier(.2,.7,.2,1),opacity .3s ease}
 /* nom de la ville au centre du plan : plaque sombre diffuse derrière + ombre portée pour
    rester lisible sur les rues lumineuses du centre-ville */
 .plan-nom{left:50%;top:50%;transform:translate(-50%,-50%);text-align:center;padding:4vh 7vw;
-  background:radial-gradient(closest-side, rgba(12,17,28,.88) 0%, rgba(12,17,28,.7) 55%, rgba(12,17,28,0) 100%)}
+  background:radial-gradient(closest-side, rgba(12,17,28,.55) 0%, rgba(12,17,28,.35) 55%, rgba(12,17,28,0) 100%)}
 .pc-ville{font-family:'Archivo',sans-serif;font-weight:400;text-transform:uppercase;letter-spacing:.42em;line-height:1;white-space:nowrap;
   font-size:clamp(1.6rem,4.2vw,4.4rem);margin:0 -.42em 0 0;   /* -.42em : compense l'espacement après la dernière lettre */
   text-shadow:0 0 18px rgba(12,17,28,.95),0 0 4px rgba(12,17,28,.9)}
-.pc-filet{display:block;width:70px;height:2px;background:currentColor;margin:22px auto 0;box-shadow:0 0 10px rgba(12,17,28,.9)}
 .plan-cartouche{left:var(--m);top:max(110px,14vh);text-shadow:0 0 10px rgba(12,17,28,.95)}
 .pc-info{font-family:'Archivo',sans-serif;font-weight:400;text-transform:uppercase;letter-spacing:.22em;font-size:.8rem;margin:0 0 12px}
 .plan-rose{right:var(--m);top:max(96px,12vh);width:clamp(84px,8vw,120px);height:auto}
@@ -930,7 +929,6 @@ nav{transition:transform .4s cubic-bezier(.2,.7,.2,1),opacity .3s ease}
 @media(max-width:900px){
   .plan-cartouche{left:28px;top:max(90px,12svh)}
   .pc-ville{font-size:calc((7.4vw) * var(--zc));letter-spacing:.3em;margin-right:-.3em}
-  .pc-filet{margin-top:14px}
   .pc-info{font-size:.68rem;margin-bottom:6px}
   .plan-rose{right:22px;top:max(84px,11svh);width:70px}
   .plan-echelle{right:28px;bottom:max(36px,6svh)}
@@ -1096,7 +1094,6 @@ body.plan-sombre nav::before{opacity:0}
 <!-- centre-ville dans le viewBox : 804.7 439.9 -->
     <div class="plan-nom">
       <p class="pc-ville">Is-sur-Tille</p>
-      <span class="pc-filet"></span>
     </div>
     <div class="plan-cartouche">
       <p class="pc-info">Côte-d'Or</p>
@@ -1138,14 +1135,14 @@ body.plan-sombre nav::before{opacity:0}
          s'affiche pas correctement), réduit à l'échelle sur les écrans plus étroits -->
     <iframe id="haWidgetCounter" title="Compteur de la collecte HelloAsso" allowtransparency="true" scrolling="no"
       src="https://www.helloasso.com/associations/jeremie-33/collectes/eglise-j33-notre-nouveau-local-prend-vie-soutenez-le-projet/widget-compteur"
-      width="350" height="250" style="width:350px;border:none;"></iframe>
+      width="350" height="520" style="width:350px;border:none;"></iframe>
     <script>
     /* écouteur posé AVANT le chargement du widget : il ne rate plus le message de hauteur
        envoyé par HelloAsso (l'ancien, posé dans onload, arrivait parfois trop tard) */
     (function(){
       var f = document.getElementById('haWidgetCounter'), boite = f.parentNode;
       function caler(){
-        var s = Math.min(1, boite.clientWidth / 350), h = parseFloat(f.height) || 250;
+        var s = Math.min(1, boite.clientWidth / 350), h = parseFloat(f.height) || 520;
         f.style.transform = s < 1 ? 'scale(' + s + ')' : '';
         f.style.transformOrigin = '0 0';
         boite.style.height = (h * s) + 'px';
@@ -1153,7 +1150,9 @@ body.plan-sombre nav::before{opacity:0}
       window.addEventListener('message', function(e){
         if(!/helloasso\.com$/.test(String(e.origin).replace(/^https?:\/\//, ''))) return;
         var h = e.data && parseFloat(e.data.height);
-        if(h > 0){ f.height = h; caler(); }
+        /* on ne fait que grandir (comme le code HelloAsso d'origine) : un premier message,
+           envoyé avant le chargement des polices, annonçait une hauteur trop faible */
+        if(h > (parseFloat(f.height) || 0)){ f.height = h; caler(); }
       });
       window.addEventListener('resize', caler);
       caler();
@@ -1727,13 +1726,14 @@ document.addEventListener('click', e => {
     tick = false;
     const r = sec.getBoundingClientRect(), H = window.innerHeight;
     const course = Math.max(1, sec.offsetHeight - H);
-    const p = Math.max(0, Math.min(1, -r.top / course));
+    const s = Math.max(0, Math.min(course, -r.top));
     if(texte){
-      const e = Math.min(1, p / .22);
+      const e = Math.min(1, s / (.66 * H));
       texte.style.opacity = (1 - e).toFixed(3);
       texte.style.visibility = e >= 1 ? 'hidden' : '';
     }
-    const q = Math.max(0, Math.min(1, (p - .25) / .63));
+    /* dessin de .75 H à 2,64 H de défilement ; le reste (≈ 0,6 H) = pause sur le plan nommé */
+    const q = Math.max(0, Math.min(1, (s - .75 * H) / (1.89 * H)));
     if(Math.abs(q - qPrec) > .0002){ qPrec = q; dessiner(q); }
   }
   maj();
