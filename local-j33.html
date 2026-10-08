@@ -652,16 +652,12 @@ body{overflow-x:clip}   /* clip ne cree pas de conteneur de defilement, contrair
 .lc-collecte{display:grid;grid-template-columns:1.15fr 1fr;gap:70px;align-items:center;padding-top:90px;padding-bottom:90px}
 .lc-collecte .texte-bloc{max-width:52ch}
 .lc-cta-g{justify-content:flex-start}
-.lc-vignette{justify-self:center;width:100%;max-width:380px;border:1px solid var(--encre);padding:18px;
-  background:var(--fond);transform:rotate(1.2deg);box-shadow:14px 14px 0 rgba(var(--or-rgb),.9)}
-.lc-vignette iframe{display:block;width:100%;height:450px;border:0}
-.lc-vignette .repli{display:block;text-align:center;margin-top:10px;font-size:.78rem;color:var(--gris)}
-.lc-vignette .repli a{color:var(--or)}
+.lc-compteur{justify-self:center;width:100%;max-width:350px}
+.lc-compteur iframe{display:block;margin:0 auto}
 @media(max-width:900px){
   .lc-collecte{grid-template-columns:1fr;gap:46px;text-align:center;padding-top:60px;padding-bottom:70px}
   .lc-collecte .texte-bloc{margin-left:auto;margin-right:auto}
   .lc-collecte .lc-cta{justify-content:center}
-  .lc-vignette{transform:none;box-shadow:8px 8px 0 rgba(var(--or-rgb),.9)}
 }
 
 /* ---------- journal de chantier ---------- */
@@ -799,7 +795,11 @@ nav{transition:transform .4s cubic-bezier(.2,.7,.2,1),opacity .3s ease}
 /* ---------- 7 questions clés : photo fixe en fond, cartes qui défilent à droite ----------
    La photo est épinglée (sticky) sur toute la hauteur de la section ; la colonne de cartes
    remonte par-dessus (marge négative d'un écran) et défile normalement. */
-.lc-7q{position:relative;max-width:none;padding:0;margin:0}
+.lc-7q{position:relative;z-index:60;max-width:none;padding:0;margin:0}   /* passe devant le bandeau fixe */
+.pano-fixe{position:fixed;top:0;left:0;width:100%;z-index:50;display:none;pointer-events:none}
+.pano-fixe.actif{display:block}
+.pano-fixe img{display:block;width:100%;height:auto}
+@media(max-width:900px),(prefers-reduced-motion: reduce){ .pano-fixe{display:none !important} }
 .q7-fond{position:sticky;top:0;height:100vh;height:100lvh;overflow:hidden;
   background:radial-gradient(circle at 30% 20%, var(--bleu-pale), transparent 65%),#EDEAE2}
 .q7-fond img{width:100%;height:100%;object-fit:cover;display:block}
@@ -846,8 +846,11 @@ nav{transition:transform .4s cubic-bezier(.2,.7,.2,1),opacity .3s ease}
 /* ---------- avant / après fixe, avant le journal : paysage sur ordinateur ---------- */
 .lc-aa{padding-top:30px;padding-bottom:60px}
 .lc-aa .titre-bloc{text-align:center}
-.lc-aa .aa{width:100%;max-width:none;margin:40px 0 0;aspect-ratio:16/9}
-@media(max-width:900px){ .lc-aa .aa{aspect-ratio:4/3;margin-top:28px} }
+.lc-aa .aa{width:100%;max-width:none;margin:40px 0 0;aspect-ratio:auto;
+  height:calc(100vh - 96px);height:calc(100svh - 96px);background:var(--noir)}
+/* les deux photos entières, sans recadrage, sur toute la hauteur du cadre */
+.lc-aa .aa img{object-fit:contain}
+@media(max-width:900px){ .lc-aa .aa{margin-top:28px;height:calc(100svh - 84px)} }
 
 /* ---------- visionneuse photo ---------- */
 .lb{position:fixed;inset:0;z-index:200;background:rgba(12,17,28,.96);display:flex;align-items:center;justify-content:center;
@@ -980,6 +983,10 @@ nav{transition:transform .4s cubic-bezier(.2,.7,.2,1),opacity .3s ease}
   </div>
 </div>
 
+<!-- PC : Illustration_3 rétrécie reste affichée en haut d'écran pendant le défilement,
+     jusqu'à ce que la section des 7 questions (Illustration_1) passe devant -->
+<div class="pano-fixe" aria-hidden="true"><img src="images/local/Illustration_3.jpg" alt=""></div>
+
 <div class="hero-don">
   <section class="hd-grille lc-intro">
     <span class="eyebrow">Chantier en cours</span>
@@ -1003,10 +1010,11 @@ nav{transition:transform .4s cubic-bezier(.2,.7,.2,1),opacity .3s ease}
       <a class="lien-paren plein or" href="https://www.helloasso.com/associations/jeremie-33/collectes/eglise-j33-notre-nouveau-local-prend-vie-soutenez-le-projet" target="_blank" rel="noopener" data-j33-clic="clic/local/don-collecte">Je fais un don</a>
     </div>
   </div>
-  <div class="lc-vignette">
-    <iframe title="Collecte HelloAsso — Notre nouveau local prend vie" allowtransparency="true" scrolling="no"
-      src="https://www.helloasso.com/associations/jeremie-33/collectes/eglise-j33-notre-nouveau-local-prend-vie-soutenez-le-projet/widget-vignette"></iframe>
-    <span class="repli">La jauge ne s'affiche pas ? <a href="https://www.helloasso.com/associations/jeremie-33/collectes/eglise-j33-notre-nouveau-local-prend-vie-soutenez-le-projet" target="_blank" rel="noopener">Voir la collecte</a></span>
+  <div class="lc-compteur">
+    <iframe id="haWidgetCounter" title="Compteur de la collecte HelloAsso" allowtransparency="true"
+      src="https://www.helloasso.com/associations/jeremie-33/collectes/eglise-j33-notre-nouveau-local-prend-vie-soutenez-le-projet/widget-compteur"
+      style="width:100%;max-width:350px;border:none;"
+      onload="window.addEventListener('message', function(e) { const dataHeight = e.data && e.data.height; const haWidgetElement = document.getElementById('haWidgetCounter'); if (dataHeight > parseFloat(haWidgetElement.height || 0)) { haWidgetElement.height = dataHeight + 'px';}})"></iframe>
   </div>
 </section>
 
@@ -1223,7 +1231,7 @@ const j33Evt = (() => {
   const banniere = document.querySelector('.hero-image');
   const cloture = document.getElementById('clotureSombre');
   const pano = document.getElementById('panorama');
-  const zones = [pano, banniere, (matchMedia('(min-width:901px)').matches ? document.getElementById('projet') : null), cloture]   /* mobile : voile conservé, les cartes passent sous le bandeau */.filter(Boolean);
+  const zones = [pano, document.querySelector('.pano-fixe'), banniere, (matchMedia('(min-width:901px)').matches ? document.getElementById('projet') : null), cloture]   /* mobile : voile conservé, les cartes passent sous le bandeau */.filter(Boolean);
   if(!zones.length) return;
   const nav = document.querySelector('nav');
   const titre = banniere ? banniere.querySelector('.hd-titre') : null;
@@ -1518,11 +1526,14 @@ document.addEventListener('click', e => {
   const mobile = window.matchMedia('(max-width:900px)');
   const MARGE = 28, ECART = 22, BAS = 36;      /* gouttières latérales, image → titre, titre → page */
   let H = 0, kFin = 1, course = 0, tick = false;
+  const fixe = document.querySelector('.pano-fixe');    /* copie fixe de la bande, une fois rétrécie */
+  const q7 = document.getElementById('projet');          /* section qui passe devant puis la fait disparaître */
 
   function reinit(){
     cadre.style.height = ''; cadre.style.marginBottom = '';
     img.style.transform = '';
     titres.forEach(t => { t.style.transform = ''; t.style.fontSize = ''; t.classList.remove('apparu'); });
+    img.style.opacity = ''; if(fixe) fixe.classList.remove('actif');
   }
   /* titre : taille calculée pour occuper toute la largeur, gouttières déduites */
   function calerTitre(W){
@@ -1557,6 +1568,16 @@ document.addEventListener('click', e => {
     /* le titre n'apparaît (fondu CSS) qu'une fois l'image entièrement affichée dans la largeur */
     const fini = p >= .999;
     titres.forEach(t => { t.style.transform = 'translate3d(0,' + y + 'px,0)'; t.classList.toggle('apparu', fini); });
+    /* bande rétrécie : relayée par une copie fixe en haut d'écran (mêmes pixels, même place)
+       tant que la section des 7 questions n'est pas passée devant */
+    if(fixe){
+      const montrer = fini && !(q7 && q7.getBoundingClientRect().top <= 0);
+      if(montrer !== fixe.classList.contains('actif')){
+        fixe.classList.toggle('actif', montrer);
+        img.style.opacity = montrer ? '0' : '';
+        window.dispatchEvent(new Event('scroll'));   /* recalcule le voile du bandeau J33 */
+      }
+    }
   }
   /* mobile : le bandeau (J33 + burger) n'apparaît qu'une fois la photo passée */
   function navMobile(){
