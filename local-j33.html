@@ -795,24 +795,24 @@ nav{transition:transform .4s cubic-bezier(.2,.7,.2,1),opacity .3s ease}
 .q7-fond img{width:100%;height:100%;object-fit:cover;display:block}
 .q7-cartes{position:relative;z-index:1;margin-top:-100vh;margin-top:-100lvh;
   width:min(640px,40vw);margin-left:auto;margin-right:6vw;padding:28vh 0 34vh;display:flex;flex-direction:column;gap:36px}
-.q7-carte{padding:clamp(30px,3.4vw,52px) clamp(28px,3.6vw,56px);border-radius:12px;background:var(--creme);color:var(--encre);
-  box-shadow:0 30px 60px -34px rgba(12,17,28,.55)}
+.q7-carte{padding:clamp(30px,3.4vw,52px) clamp(28px,3.6vw,56px);border-radius:12px;color:var(--encre);
+  border:1.5px solid var(--or);
+  /* verre dépoli crème : on devine la photo derrière, le texte reste lisible */
+  background:rgba(243,239,228,.74);
+  -webkit-backdrop-filter:blur(14px) saturate(1.1);backdrop-filter:blur(14px) saturate(1.1);
+  box-shadow:0 30px 60px -34px rgba(12,17,28,.45)}
+/* navigateur sans flou d'arrière-plan : fond crème plus couvrant pour garder la lisibilité */
+@supports not ((-webkit-backdrop-filter:blur(1px)) or (backdrop-filter:blur(1px))){ .q7-carte{background:rgba(243,239,228,.92)} }
 .q7-carte h3,.q7-tete h2{font-family:'Anton',sans-serif;font-weight:400;text-transform:uppercase;letter-spacing:.01em;
   line-height:1;font-size:clamp(2.6rem,4.4vw,4.4rem);color:var(--or);margin:6px 0 22px}
-.q7-num{display:block;font-size:.74rem;font-weight:600;letter-spacing:.22em;opacity:.6}
+.q7-num{display:block;font-size:.74rem;font-weight:600;letter-spacing:.22em;color:var(--or)}
 .q7-carte p,.q7-carte li{font-size:1.06rem;line-height:1.6}
 .q7-carte p+p{margin-top:8px}
 .q7-carte strong{font-weight:600}
-.q7-carte a{color:inherit;text-decoration:underline;text-decoration-color:currentColor;text-underline-offset:3px;font-weight:500}
-/* alternance de couleurs, palette J33 : noir (titre) puis or / noir / crème */
-.q7-tete{background:var(--noir);color:var(--creme)}
+.q7-carte a{color:var(--or-fonce);text-decoration:underline;text-decoration-color:currentColor;text-underline-offset:3px;font-weight:600}
 .q7-tete .eyebrow{margin-bottom:16px}
-.q7-tete h2{color:var(--creme);margin-bottom:0}
+.q7-tete h2{color:var(--encre);margin-bottom:0}
 .q7-tete h2 span{color:var(--or)}
-.q7-carte:nth-child(3n+2){background:var(--or);color:#fff}
-.q7-carte:nth-child(3n+2) h3{color:var(--noir)}
-.q7-carte:nth-child(3n+3){background:var(--noir);color:var(--creme)}
-.q7-carte:nth-child(3n+3) .q7-num{color:var(--or);opacity:1}
 .q-montant{font-family:'Anton',sans-serif;font-size:clamp(2.4rem,4.8vw,3.8rem) !important;line-height:1 !important;letter-spacing:.01em;margin-bottom:10px}
 .q-dates{list-style:none;display:grid;gap:12px}
 .q-dates li{display:grid;gap:2px}
