@@ -733,19 +733,23 @@ body{overflow-x:clip}   /* clip ne cree pas de conteneur de defilement, contrair
    Couche claire en difference sur la photo, couche dorée par-dessus sans fusion. */
 .ps-titre{position:absolute;left:0;right:0;top:max(96px,14vh);z-index:1;margin:0;display:flex;justify-content:center;gap:.28em;
   font-family:'Anton',sans-serif;font-weight:400;text-transform:uppercase;letter-spacing:.01em;line-height:.92;white-space:nowrap;
-  font-size:calc((min(9.5vw,16vh)) * var(--zc));pointer-events:none}
+  font-size:calc((clamp(2.2rem,6vw,5rem)) * var(--zc));pointer-events:none}   /* taille des titres de bloc */
 .ps-titre.ps-blend{mix-blend-mode:difference;color:#fff}
 .ps-titre.ps-blend .t-or{visibility:hidden}
 .ps-titre.ps-or{color:var(--or);z-index:2}
 .ps-titre.ps-or .t-blanc{visibility:hidden}
-@media(max-width:900px){ .ps-titre{top:max(88px,13svh);font-size:calc((10.6vw) * var(--zc))} }
+@media(max-width:900px){ .ps-titre{top:max(88px,13svh)} }
 /* PC : l'image se rétrécit autour de son coin haut gauche, le titre la suit en dessous */
 @media(min-width:901px) and (prefers-reduced-motion: no-preference){
   .pano-bande{background:transparent}
   .pano-bande img{transform-origin:0 0}
   .pano-prog{display:none}
-  .ps-titre{top:0;opacity:0;will-change:transform,opacity;transition:opacity .9s ease}
-  .ps-titre.apparu{opacity:1}
+  /* arrivée par le bas : les mots montent depuis sous leur ligne (découpe clip-path),
+     une fois l'image entièrement rétrécie */
+  .ps-titre{top:0;will-change:transform;clip-path:inset(0 -2% -.06em -2%)}
+  .ps-titre>span{transform:translateY(110%);transition:transform .9s cubic-bezier(.2,.75,.2,1)}
+  .ps-titre>span+span{transition-delay:.08s}
+  .ps-titre.apparu>span{transform:none}
   /* le titre est posé sous l'image, sur fond blanc : pas de fusion, noir J33 + doré */
   .ps-titre.ps-blend{mix-blend-mode:normal;color:var(--encre)}
 }
@@ -846,11 +850,11 @@ nav{transition:transform .4s cubic-bezier(.2,.7,.2,1),opacity .3s ease}
 /* ---------- avant / après fixe, avant le journal : paysage sur ordinateur ---------- */
 .lc-aa{padding-top:30px;padding-bottom:60px}
 .lc-aa .titre-bloc{text-align:center}
-.lc-aa .aa{width:100%;max-width:none;margin:40px 0 0;aspect-ratio:auto;
-  height:calc(100vh - 96px);height:calc(100svh - 96px);background:var(--noir)}
-/* les deux photos entières, sans recadrage, sur toute la hauteur du cadre */
-.lc-aa .aa img{object-fit:contain}
-@media(max-width:900px){ .lc-aa .aa{margin-top:28px;height:calc(100svh - 84px)} }
+.lc-aa .aa{max-width:none;margin:40px auto 0;aspect-ratio:4/3;
+  /* photos 4:3 : le cadre prend toute la hauteur d'écran disponible, largeur au même format */
+  height:calc(100vh - 96px);height:calc(100svh - 96px);width:auto;max-width:100%}
+@supports not (aspect-ratio:4/3){ .lc-aa .aa{width:100%;height:auto} }
+@media(max-width:900px){ .lc-aa .aa{margin-top:28px;width:100%;height:auto} }
 
 /* ---------- visionneuse photo ---------- */
 .lb{position:fixed;inset:0;z-index:200;background:rgba(12,17,28,.96);display:flex;align-items:center;justify-content:center;
@@ -992,10 +996,6 @@ nav{transition:transform .4s cubic-bezier(.2,.7,.2,1),opacity .3s ease}
     <span class="eyebrow">Chantier en cours</span>
     <p class="hd-intro">Les murs se dressent, les pièces prennent forme : voici, au fil des semaines, les nouvelles du futur lieu de vie de l'église J33. Merci de bâtir avec nous.</p>
     <blockquote class="hd-verset">« Levons-nous, et bâtissons ! »<cite>Néhémie 2 : 18</cite></blockquote>
-    <div class="lc-cta">
-      <a class="lien-paren plein or" href="https://www.helloasso.com/associations/jeremie-33/collectes/eglise-j33-notre-nouveau-local-prend-vie-soutenez-le-projet" target="_blank" rel="noopener" data-j33-clic="clic/local/don-intro">Soutenir le projet</a>
-      <a class="lien-paren plein" href="#actus">Les dernières nouvelles</a>
-    </div>
   </section>
 </div>
 
@@ -1005,9 +1005,6 @@ nav{transition:transform .4s cubic-bezier(.2,.7,.2,1),opacity .3s ease}
     <div class="texte-bloc">
       <p><strong>Ce local, c'est un lieu pour prier, accueillir, enseigner et servir Is-sur-Tille et ses environs.</strong></p>
       <p>La collecte finance les travaux qui le rendront prêt à ouvrir ses portes. Suivez son avancement ici, en direct.</p>
-    </div>
-    <div class="lc-cta lc-cta-g">
-      <a class="lien-paren plein or" href="https://www.helloasso.com/associations/jeremie-33/collectes/eglise-j33-notre-nouveau-local-prend-vie-soutenez-le-projet" target="_blank" rel="noopener" data-j33-clic="clic/local/don-collecte">Je fais un don</a>
     </div>
   </div>
   <div class="lc-compteur">
@@ -1524,7 +1521,7 @@ document.addEventListener('click', e => {
   const img = bande.querySelector('img');
   const titres = [...cadre.querySelectorAll('.ps-titre')];
   const mobile = window.matchMedia('(max-width:900px)');
-  const MARGE = 28, ECART = 22, BAS = 36;      /* gouttières latérales, image → titre, titre → page */
+  const ECART = 22, BAS = 36;                  /* image → titre, titre → page */
   let H = 0, kFin = 1, course = 0, tick = false;
   const fixe = document.querySelector('.pano-fixe');    /* copie fixe de la bande, une fois rétrécie */
   const q7 = document.getElementById('projet');          /* section qui passe devant puis la fait disparaître */
@@ -1532,15 +1529,8 @@ document.addEventListener('click', e => {
   function reinit(){
     cadre.style.height = ''; cadre.style.marginBottom = '';
     img.style.transform = '';
-    titres.forEach(t => { t.style.transform = ''; t.style.fontSize = ''; t.classList.remove('apparu'); });
+    titres.forEach(t => { t.style.transform = ''; t.classList.remove('apparu'); });
     img.style.opacity = ''; if(fixe) fixe.classList.remove('actif');
-  }
-  /* titre : taille calculée pour occuper toute la largeur, gouttières déduites */
-  function calerTitre(W){
-    titres.forEach(t => t.style.fontSize = '100px');
-    const sp = titres[0].children;
-    const w = sp[sp.length - 1].getBoundingClientRect().right - sp[0].getBoundingClientRect().left;
-    if(w > 0) titres.forEach(t => t.style.fontSize = (100 * (W - 2 * MARGE) / w).toFixed(2) + 'px');
   }
   function mesurer(){
     if(!cadre.isConnected) return;
@@ -1550,7 +1540,6 @@ document.addEventListener('click', e => {
     const ratio = img.naturalWidth ? img.naturalWidth / img.naturalHeight : 7680 / 1000;
     kFin = Math.min(1, W / (H * ratio));
     course = H;
-    calerTitre(W);
     const hFin = H * kFin + ECART + titres[0].offsetHeight + BAS;
     cadre.style.height = (H + course) + 'px';
     cadre.style.marginBottom = -Math.max(0, H - hFin) + 'px';
@@ -1600,9 +1589,7 @@ document.addEventListener('click', e => {
    elle est réduite à proportion. Les deux couches (fusion + dorée) reçoivent la même valeur. */
 (function(){
   function ajuster(){
-    const pc = window.matchMedia('(min-width:901px)').matches && !window.matchMedia('(prefers-reduced-motion: reduce)').matches;
     document.querySelectorAll('.ps-titre, .hd-titre').forEach(t => {
-      if(pc && t.classList.contains('ps-titre')) return;   /* PC : taille gérée par le panorama (pleine largeur) */
       t.style.fontSize = '';
       const sp = t.children;
       if(!t.clientWidth || sp.length < 2) return;
