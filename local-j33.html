@@ -807,6 +807,12 @@ nav{transition:transform .4s cubic-bezier(.2,.7,.2,1),opacity .3s ease}
 .q7-fond{position:sticky;top:0;height:100vh;height:100lvh;overflow:hidden;
   background:radial-gradient(circle at 30% 20%, var(--bleu-pale), transparent 65%),#EDEAE2}
 .q7-fond img{width:100%;height:100%;object-fit:cover;display:block}
+/* titre posé en haut à gauche de la photo, fixe avec elle : blanc + doré */
+.q7-titre{position:absolute;left:6vw;top:max(110px,16vh);margin:0;font-family:'Anton',sans-serif;font-weight:400;text-transform:uppercase;
+  letter-spacing:.02em;line-height:1.04;font-size:calc((clamp(2.2rem,6vw,5rem)) * var(--zc));color:#fff;
+  text-shadow:0 2px 24px rgba(12,17,28,.35)}
+.q7-titre span{display:block}
+.q7-titre .or{color:var(--or)}
 .q7-cartes{position:relative;z-index:1;margin-top:-100vh;margin-top:-100lvh;
   width:min(640px,40vw);margin-left:auto;margin-right:6vw;padding:28vh 0 34vh;display:flex;flex-direction:column;gap:36px}
 .q7-carte{position:relative;padding:clamp(30px,3.4vw,52px) clamp(28px,3.6vw,56px);border-radius:0;color:var(--encre);
@@ -817,7 +823,7 @@ nav{transition:transform .4s cubic-bezier(.2,.7,.2,1),opacity .3s ease}
   box-shadow:0 30px 60px -34px rgba(12,17,28,.45)}
 /* navigateur sans flou d'arrière-plan : fond crème plus couvrant pour garder la lisibilité */
 @supports not ((-webkit-backdrop-filter:blur(1px)) or (backdrop-filter:blur(1px))){ .q7-carte{background:rgba(243,239,228,.92)} }
-.q7-carte h3,.q7-tete h2{font-family:'Anton',sans-serif;font-weight:400;text-transform:uppercase;letter-spacing:.01em;
+.q7-carte h3{font-family:'Anton',sans-serif;font-weight:400;text-transform:uppercase;letter-spacing:.01em;
   line-height:1;font-size:clamp(2.6rem,4.4vw,4.4rem);color:var(--encre);margin:0 0 22px;padding-right:1.5em}
 /* gros numéro en haut à droite, comme les tuiles de la confession de foi */
 /* même taille que la question, collé aux bords haut et droit de la carte */
@@ -829,9 +835,6 @@ nav{transition:transform .4s cubic-bezier(.2,.7,.2,1),opacity .3s ease}
 .q7-carte p+p{margin-top:8px}
 .q7-carte strong{font-weight:600}
 .q7-carte a{color:var(--or-fonce);text-decoration:underline;text-decoration-color:currentColor;text-underline-offset:3px;font-weight:600}
-.q7-tete .eyebrow{margin-bottom:16px}
-.q7-tete h2{color:var(--encre);margin-bottom:0}
-.q7-tete h2 span{color:var(--or)}
 .q-montant{color:var(--or);font-family:'Anton',sans-serif;font-size:clamp(2.4rem,4.8vw,3.8rem) !important;line-height:1 !important;letter-spacing:.01em;margin-bottom:10px}
 .q-dates{list-style:none;display:grid;gap:12px}
 .q-dates li{display:grid;gap:2px}
@@ -843,7 +846,8 @@ nav{transition:transform .4s cubic-bezier(.2,.7,.2,1),opacity .3s ease}
 @media(max-width:900px){
   .q7-cartes{width:auto;margin-left:16px;margin-right:16px;padding:40vh 0 30vh;gap:22px}
   .q7-carte{padding:28px 24px}
-  .q7-carte h3,.q7-tete h2{font-size:clamp(2.2rem,11vw,3.2rem);margin-bottom:16px}
+  .q7-titre{left:16px;right:16px;top:max(90px,13svh)}
+  .q7-carte h3{font-size:clamp(2.2rem,11vw,3.2rem);margin-bottom:16px}
   .q7-num{font-size:clamp(2.2rem,11vw,3.2rem);top:8px;right:12px}
 }
 
@@ -1016,9 +1020,11 @@ nav{transition:transform .4s cubic-bezier(.2,.7,.2,1),opacity .3s ease}
 </section>
 
 <section class="lc-7q" id="projet" data-j33-evt="lu/local/7-questions">
-  <div class="q7-fond" aria-hidden="true"><img src="images/local/Illustration_1.jpg" alt="" loading="lazy" decoding="async"></div>
+  <div class="q7-fond">
+    <img src="images/local/Illustration_1.jpg" alt="" loading="lazy" decoding="async">
+    <h2 class="q7-titre"><span>Le projet en</span><span class="or">7 questions clés</span></h2>
+  </div>
   <div class="q7-cartes">
-    <div class="q7-carte q7-tete"><span class="eyebrow">Le projet en bref</span><h2>7 questions <span>clés</span></h2></div>
     <article class="q7-carte"><span class="q7-num" aria-hidden="true">01</span><h3>Qui ?</h3>
       <p><strong>Bénéficiaire :</strong> <strong class="or">l'église J33</strong>.</p><p><strong>Contributeurs :</strong> <strong class="or">toutes celles et ceux qui ont à cœur</strong> de nous aider à mener ce projet.</p></article>
     <article class="q7-carte"><span class="q7-num" aria-hidden="true">02</span><h3>Quoi ?</h3>
@@ -1241,7 +1247,7 @@ const j33Evt = (() => {
     zones.forEach(z => {
       const r = z.getBoundingClientRect();
       if(r.bottom <= 0 || r.top >= nh) return;       /* zone hors du bandeau */
-      if(z === cloture && r.top <= nh * 0.5 && r.bottom > nh * 0.5) sombre = true;   /* J33 et burger restent noirs sur les photos */
+      if((z === cloture || z.id === 'projet') && r.top <= nh * 0.5 && r.bottom > nh * 0.5) sombre = true;   /* crème sur les fonds sombres (fin de page, plan des 7 questions), noir ailleurs */
       const haut = Math.max(0, Math.min(nh, r.top));
       const bas  = Math.max(0, Math.min(nh, r.bottom));
       /* le sombre arrive par le bas : on rogne le voile par le bas, et inversement */
@@ -1541,8 +1547,12 @@ document.addEventListener('click', e => {
     kFin = Math.min(1, W / (H * ratio));
     course = H;
     const hFin = H * kFin + ECART + titres[0].offsetHeight + BAS;
-    cadre.style.height = (H + course) + 'px';
-    cadre.style.marginBottom = -Math.max(0, H - hFin) + 'px';
+    /* la suite de la page n'arrive par le bas qu'une fois l'image entièrement rétrécie :
+       le cadre est prolongé de l'espace libre sous le titre, puis rattrapé par une marge
+       négative identique, si bien que l'intro remonte juste sous le titre, sans blanc */
+    const libre = Math.max(0, Math.round(H - hFin));
+    cadre.style.height = (H + course + libre) + 'px';
+    cadre.style.marginBottom = -libre + 'px';
     if(typeof lenis !== 'undefined' && lenis) lenis.resize();
     maj();
   }
