@@ -744,14 +744,18 @@ body{overflow-x:clip}   /* clip ne cree pas de conteneur de defilement, contrair
   .pano-bande{background:transparent}
   .pano-bande img{transform-origin:0 0}
   .pano-prog{display:none}
-  /* arrivée par le bas : les mots montent depuis sous leur ligne (découpe clip-path),
-     une fois l'image entièrement rétrécie */
-  .ps-titre{top:0;will-change:transform;clip-path:inset(0 -2% -.06em -2%)}
-  .ps-titre>span{transform:translateY(110%);transition:transform .9s cubic-bezier(.2,.75,.2,1)}
-  .ps-titre>span+span{transition-delay:.08s}
-  .ps-titre.apparu>span{transform:none}
-  /* le titre est posé sous l'image, sur fond blanc : pas de fusion, noir J33 + doré */
-  .ps-titre.ps-blend{mix-blend-mode:normal;color:var(--encre)}
+  .ps-titre{display:none}
+}
+/* PC : le titre vit dans l'intro (un seul titre visible par format) */
+.lc-titre{display:none}
+@media(min-width:901px){
+  .ps-titre{display:none}
+  .lc-titre{display:flex;justify-content:center;flex-wrap:nowrap;gap:.28em;margin:0 0 34px;font-family:'Anton',sans-serif;font-weight:400;
+    text-transform:uppercase;letter-spacing:.01em;line-height:.92;white-space:nowrap;
+    font-size:calc((clamp(2.2rem,6vw,5rem)) * var(--zc));color:var(--encre)}
+  .lc-titre .or{color:var(--or)}
+  .hd-grille.lc-intro{padding-top:0}
+}
 }
 
 /* mouvement réduit : pas d'épinglage, la bande se fait défiler au doigt / à la molette */
@@ -808,7 +812,15 @@ nav{transition:transform .4s cubic-bezier(.2,.7,.2,1),opacity .3s ease}
   background:radial-gradient(circle at 30% 20%, var(--bleu-pale), transparent 65%),#EDEAE2}
 .q7-fond img{width:100%;height:100%;object-fit:cover;display:block}
 /* titre posé en haut à gauche de la photo, fixe avec elle : blanc + doré */
-.q7-titre{position:absolute;left:6vw;top:max(110px,16vh);margin:0;font-family:'Anton',sans-serif;font-weight:400;text-transform:uppercase;
+.q7-fond{container-type:inline-size}
+@media(min-width:901px){
+  nav .marque{transition:color .45s ease,opacity .35s ease}
+  body.sur-q7:not(.menu-ouvert) nav .marque{opacity:0;pointer-events:none}
+}
+/* même retrait que les titres de section (« Chaque pierre compte ») : 28 px, ou centrage
+   dans 1500 px sur grand écran — et marge haute identique à la marge gauche */
+.q7-titre{--m:max(28px, calc((100vw - 1500px) / 2 + 28px));--m:max(28px, calc((100cqw - 1500px) / 2 + 28px));
+  position:absolute;left:var(--m);top:calc(var(--m) - .0825em);z-index:1;   /* -.0825em : haut des lettres, pas de la boîte */margin:0;font-family:'Anton',sans-serif;font-weight:400;text-transform:uppercase;
   letter-spacing:.02em;line-height:1.04;font-size:calc((clamp(2.2rem,6vw,5rem)) * var(--zc));color:#fff;
   text-shadow:0 2px 24px rgba(12,17,28,.35)}
 .q7-titre span{display:block}
@@ -846,17 +858,26 @@ nav{transition:transform .4s cubic-bezier(.2,.7,.2,1),opacity .3s ease}
 @media(max-width:900px){
   .q7-cartes{width:auto;margin-left:16px;margin-right:16px;padding:40vh 0 30vh;gap:22px}
   .q7-carte{padding:28px 24px}
-  .q7-titre{left:16px;right:16px;top:max(90px,13svh)}
+  .q7-titre{left:28px;right:28px;top:max(90px,13svh)}
   .q7-carte h3{font-size:clamp(2.2rem,11vw,3.2rem);margin-bottom:16px}
   .q7-num{font-size:clamp(2.2rem,11vw,3.2rem);top:8px;right:12px}
 }
 
 /* ---------- avant / après fixe, avant le journal : paysage sur ordinateur ---------- */
 .lc-aa{padding-top:30px;padding-bottom:60px}
-.lc-aa .titre-bloc{text-align:center}
+/* PC : titre à gauche (même retrait que « Chaque pierre compte »), comparateur à sa droite,
+   le haut de l'image aligné sur le haut des lettres du titre */
+@media(min-width:901px){
+  .lc-aa{--t:clamp(2.2rem,6vw,5rem);display:grid;grid-template-columns:auto minmax(0,1fr);gap:48px;align-items:start}
+  .lc-aa .titre-bloc{margin:0}
+  .lc-aa .titre-bloc span{display:block}
+  .lc-aa .aa{justify-self:end;margin:calc(var(--t) * .1225) 0 0 !important}
+}
+.lc-aa .titre-bloc span.or{color:var(--or)}
+@media(max-width:900px){ .lc-aa .titre-bloc{text-align:center} }
 .lc-aa .aa{max-width:none;margin:40px auto 0;aspect-ratio:4/3;
   /* photos 4:3 : le cadre prend toute la hauteur d'écran disponible, largeur au même format */
-  height:calc(100vh - 96px);height:calc(100svh - 96px);width:auto;max-width:100%}
+  width:min(100%, calc((100vh - 96px) * 4 / 3));width:min(100%, calc((100svh - 96px) * 4 / 3));height:auto}
 @supports not (aspect-ratio:4/3){ .lc-aa .aa{width:100%;height:auto} }
 @media(max-width:900px){ .lc-aa .aa{margin-top:28px;width:100%;height:auto} }
 
@@ -984,7 +1005,7 @@ nav{transition:transform .4s cubic-bezier(.2,.7,.2,1),opacity .3s ease}
              onerror="this.closest('.lc-pano').remove()">
       </picture>
     </div>
-    <!-- titre fixe dans la partie haute de l'image d'ouverture (panorama sur PC, Illustration_4 sur mobile) -->
+    <!-- mobile : titre posé dans la partie haute d'Illustration_4 (sur PC il est dans l'intro) -->
     <p class="ps-titre ps-blend" role="heading" aria-level="1"><span class="t-blanc">Notre local</span><span class="t-or">prend vie</span></p>
     <div class="ps-titre ps-or" aria-hidden="true"><span class="t-blanc">Notre local</span><span class="t-or">prend vie</span></div>
     <div class="pano-prog" aria-hidden="true"><span></span></div>
@@ -997,7 +1018,8 @@ nav{transition:transform .4s cubic-bezier(.2,.7,.2,1),opacity .3s ease}
 
 <div class="hero-don">
   <section class="hd-grille lc-intro">
-    <span class="eyebrow">Chantier en cours</span>
+    <!-- PC : titre + texte + verset arrivent ensemble par le bas, une fois Illustration_3 entière -->
+    <h1 class="lc-titre"><span>Notre local</span> <span class="or">prend vie</span></h1>
     <p class="hd-intro">Les murs se dressent, les pièces prennent forme : voici, au fil des semaines, les nouvelles du futur lieu de vie de l'église J33. Merci de bâtir avec nous.</p>
     <blockquote class="hd-verset">« Levons-nous, et bâtissons ! »<cite>Néhémie 2 : 18</cite></blockquote>
   </section>
@@ -1052,7 +1074,7 @@ nav{transition:transform .4s cubic-bezier(.2,.7,.2,1),opacity .3s ease}
 </section>
 
 <section class="lc-aa reveal" id="avant-apres" data-j33-evt="lu/local/avant-apres">
-  <h2 class="titre-bloc">Avant / <span class="or">après</span></h2>
+  <h2 class="titre-bloc"><span>Avant /</span> <span class="or">après</span></h2>
   <div class="aa aa-fixe">
     <img class="aa-apres" src="images/local/Illustration_11.jpg" alt="Après" loading="lazy" decoding="async" onerror="this.closest('.lc-aa').remove()">
     <img class="aa-avant" src="images/local/Illustration_10.jpg" alt="Avant" loading="lazy" decoding="async" onerror="this.closest('.lc-aa').remove()">
@@ -1525,9 +1547,8 @@ document.addEventListener('click', e => {
   const colle = cadre.querySelector('.pano-colle');
   const bande = cadre.querySelector('.pano-bande');
   const img = bande.querySelector('img');
-  const titres = [...cadre.querySelectorAll('.ps-titre')];
   const mobile = window.matchMedia('(max-width:900px)');
-  const ECART = 22, BAS = 36;                  /* image → titre, titre → page */
+  const ECART = 40;                            /* bande rétrécie → bloc titre + intro */
   let H = 0, kFin = 1, course = 0, tick = false;
   const fixe = document.querySelector('.pano-fixe');    /* copie fixe de la bande, une fois rétrécie */
   const q7 = document.getElementById('projet');          /* section qui passe devant puis la fait disparaître */
@@ -1535,7 +1556,6 @@ document.addEventListener('click', e => {
   function reinit(){
     cadre.style.height = ''; cadre.style.marginBottom = '';
     img.style.transform = '';
-    titres.forEach(t => { t.style.transform = ''; t.classList.remove('apparu'); });
     img.style.opacity = ''; if(fixe) fixe.classList.remove('actif');
   }
   function mesurer(){
@@ -1546,10 +1566,10 @@ document.addEventListener('click', e => {
     const ratio = img.naturalWidth ? img.naturalWidth / img.naturalHeight : 7680 / 1000;
     kFin = Math.min(1, W / (H * ratio));
     course = H;
-    const hFin = H * kFin + ECART + titres[0].offsetHeight + BAS;
-    /* la suite de la page n'arrive par le bas qu'une fois l'image entièrement rétrécie :
-       le cadre est prolongé de l'espace libre sous le titre, puis rattrapé par une marge
-       négative identique, si bien que l'intro remonte juste sous le titre, sans blanc */
+    const hFin = H * kFin + ECART;
+    /* la suite de la page (titre + texte + verset en tête) n'arrive par le bas qu'une fois
+       l'image entièrement rétrécie : le cadre est prolongé de l'espace libre sous la bande,
+       puis rattrapé par une marge négative identique — le bloc remonte jusque sous la bande */
     const libre = Math.max(0, Math.round(H - hFin));
     cadre.style.height = (H + course + libre) + 'px';
     cadre.style.marginBottom = -libre + 'px';
@@ -1563,10 +1583,7 @@ document.addEventListener('click', e => {
     const p = course ? s / course : 0;
     const k = 1 - p * (1 - kFin);
     img.style.transform = 'scale(' + k.toFixed(5) + ')';
-    const y = (H * k + ECART).toFixed(1);
-    /* le titre n'apparaît (fondu CSS) qu'une fois l'image entièrement affichée dans la largeur */
     const fini = p >= .999;
-    titres.forEach(t => { t.style.transform = 'translate3d(0,' + y + 'px,0)'; t.classList.toggle('apparu', fini); });
     /* bande rétrécie : relayée par une copie fixe en haut d'écran (mêmes pixels, même place)
        tant que la section des 7 questions n'est pas passée devant */
     if(fixe){
@@ -1599,7 +1616,7 @@ document.addEventListener('click', e => {
    elle est réduite à proportion. Les deux couches (fusion + dorée) reçoivent la même valeur. */
 (function(){
   function ajuster(){
-    document.querySelectorAll('.ps-titre, .hd-titre').forEach(t => {
+    document.querySelectorAll('.ps-titre, .hd-titre, .lc-titre').forEach(t => {
       t.style.fontSize = '';
       const sp = t.children;
       if(!t.clientWidth || sp.length < 2) return;
@@ -1613,6 +1630,21 @@ document.addEventListener('click', e => {
   if(document.fonts && document.fonts.ready) document.fonts.ready.then(ajuster);
   window.addEventListener('load', ajuster);
   let t; window.addEventListener('resize', () => { clearTimeout(t); t = setTimeout(ajuster, 150); }, {passive:true});
+})();
+
+/* ---------- PC : le logo J33 s'efface tant que la section des 7 questions est sous le bandeau ----------
+   Son titre est calé à 28 px du haut et du bord gauche, exactement là où se trouve le logo. */
+(function(){
+  const q7 = document.getElementById('projet');
+  const nav = document.querySelector('nav');
+  if(!q7 || !nav) return;
+  function maj(){
+    const r = q7.getBoundingClientRect(), mi = nav.offsetHeight / 2;
+    document.body.classList.toggle('sur-q7', r.top <= mi && r.bottom > mi);
+  }
+  maj();
+  window.addEventListener('scroll', maj, {passive:true});
+  window.addEventListener('resize', maj, {passive:true});
 })();
 </script>
 <!-- mesure d'audience GoatCounter : sans cookie, sans empreinte de navigateur,
