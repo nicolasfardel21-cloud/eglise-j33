@@ -655,12 +655,11 @@ body{overflow-x:clip}   /* clip ne cree pas de conteneur de defilement, contrair
   .lc-collecte>div:first-child{text-align:right;justify-self:end}
   .lc-collecte .texte-bloc{margin-left:auto}
   .lc-compteur{justify-self:start !important}
-  .lc-compteur iframe{margin:0 !important}
 }
 .lc-collecte .texte-bloc{max-width:52ch}
 .lc-cta-g{justify-content:flex-start}
-.lc-compteur{justify-self:center;width:100%;max-width:350px}
-.lc-compteur iframe{display:block;margin:0 auto}
+.lc-compteur{justify-self:center;width:100%;max-width:350px;overflow:hidden}
+.lc-compteur iframe{display:block;max-width:none}
 @media(max-width:900px){
   .lc-collecte{grid-template-columns:1fr;gap:46px;text-align:center;padding-top:60px;padding-bottom:70px}
   .lc-collecte .texte-bloc{margin-left:auto;margin-right:auto}
@@ -907,12 +906,17 @@ nav{transition:transform .4s cubic-bezier(.2,.7,.2,1),opacity .3s ease}
 .p-eau-surf{opacity:0}
 /* habillage façon carte imprimée : cartouche, rose des vents, échelle (fondu au début du dessin) */
 .lc-plan{--m:max(28px, calc((100vw - 1500px) / 2 + 28px))}
-.plan-cartouche,.plan-rose,.plan-echelle{position:absolute;z-index:2;color:#fff;opacity:0;transition:opacity .8s ease;pointer-events:none}
-.lc-plan.habille .plan-cartouche,.lc-plan.habille .plan-rose,.lc-plan.habille .plan-echelle{opacity:1}
-.plan-cartouche{left:var(--m);top:max(110px,14vh)}
-.pc-ville{font-family:'Archivo',sans-serif;font-weight:300;text-transform:uppercase;letter-spacing:.42em;line-height:1;
-  font-size:clamp(1.4rem,2.6vw,2.5rem);margin:0}
-.pc-filet{display:block;width:62px;height:2px;background:currentColor;margin:22px 0 20px}
+.plan-nom,.plan-cartouche,.plan-rose,.plan-echelle{position:absolute;z-index:2;color:#fff;opacity:0;transition:opacity .8s ease;pointer-events:none}
+.lc-plan.habille .plan-nom,.lc-plan.habille .plan-cartouche,.lc-plan.habille .plan-rose,.lc-plan.habille .plan-echelle{opacity:1}
+/* nom de la ville au centre du plan : plaque sombre diffuse derrière + ombre portée pour
+   rester lisible sur les rues lumineuses du centre-ville */
+.plan-nom{left:50%;top:50%;transform:translate(-50%,-50%);text-align:center;padding:4vh 7vw;
+  background:radial-gradient(closest-side, rgba(12,17,28,.88) 0%, rgba(12,17,28,.7) 55%, rgba(12,17,28,0) 100%)}
+.pc-ville{font-family:'Archivo',sans-serif;font-weight:400;text-transform:uppercase;letter-spacing:.42em;line-height:1;white-space:nowrap;
+  font-size:clamp(1.6rem,4.2vw,4.4rem);margin:0 -.42em 0 0;   /* -.42em : compense l'espacement après la dernière lettre */
+  text-shadow:0 0 18px rgba(12,17,28,.95),0 0 4px rgba(12,17,28,.9)}
+.pc-filet{display:block;width:70px;height:2px;background:currentColor;margin:22px auto 0;box-shadow:0 0 10px rgba(12,17,28,.9)}
+.plan-cartouche{left:var(--m);top:max(110px,14vh);text-shadow:0 0 10px rgba(12,17,28,.95)}
 .pc-info{font-family:'Archivo',sans-serif;font-weight:400;text-transform:uppercase;letter-spacing:.22em;font-size:.8rem;margin:0 0 12px}
 .plan-rose{right:var(--m);top:max(96px,12vh);width:clamp(84px,8vw,120px);height:auto}
 .plan-rose text{fill:currentColor;font-family:'Archivo',sans-serif;font-size:11px;letter-spacing:.05em}
@@ -925,7 +929,8 @@ nav{transition:transform .4s cubic-bezier(.2,.7,.2,1),opacity .3s ease}
 .pe-barre i{position:absolute;bottom:0;width:1px;height:7px;background:currentColor}
 @media(max-width:900px){
   .plan-cartouche{left:28px;top:max(90px,12svh)}
-  .pc-filet{margin:14px 0 12px}
+  .pc-ville{font-size:calc((7.4vw) * var(--zc));letter-spacing:.3em;margin-right:-.3em}
+  .pc-filet{margin-top:14px}
   .pc-info{font-size:.68rem;margin-bottom:6px}
   .plan-rose{right:22px;top:max(84px,11svh);width:70px}
   .plan-echelle{right:28px;bottom:max(36px,6svh)}
@@ -1089,9 +1094,11 @@ body.plan-sombre nav::before{opacity:0}
 <g class="p-axes"><path pathLength="1" style="--t:0.256;--d:0.3" d="M1524.5 536.5 1553.8 529.0 1581.6 520.5 1658.2 501.6 1680.3 494.9 1702.8 481.2 1724.7 469.6 1744.4 461.7 1784.4 449.8 1810.1 446.9 1819.1 447.4 1861.6 456.0 1912.0 460.3 1944.3 465.5 1950.1 465.5 2012.6 447.5"/><path pathLength="1" style="--t:0.047;--d:0.3" d="M935.8 417.9 990.3 424.0 1019.6 428.9 1039.4 434.0 1089.8 454.2 1106.6 461.7 1117.2 467.2 1135.8 479.2 1158.9 492.7 1175.0 498.7 1234.2 511.1"/><path pathLength="1" style="--t:0.016;--d:0.3" d="M824.6 400.6 828.7 401.4 853.1 399.1 862.7 399.9 864.8 401.1 881.5 418.1"/><path pathLength="1" style="--t:0.071;--d:0.3" d="M663.0 298.4 663.0 298.4"/><path pathLength="1" style="--t:0.068;--d:0.3" d="M735.6 260.5 695.5 280.9 664.3 293.3"/><path pathLength="1" style="--t:0.067;--d:0.3" d="M667.4 307.2 662.6 298.6"/><path pathLength="1" style="--t:0.197;--d:0.3" d="M1342.1 592.9 1350.3 596.6 1355.5 597.6 1365.8 596.4 1372.7 593.1 1391.4 581.6 1411.2 567.9 1417.7 564.2 1426.5 561.3 1462.2 554.7 1507.3 542.9 1524.5 536.5"/><path pathLength="1" style="--t:0.065;--d:0.3" d="M739.7 268.4 735.6 260.5"/><path pathLength="1" style="--t:0.068;--d:0.3" d="M735.6 260.5 740.8 256.8 752.2 240.6 1002.1 -77.1"/><path pathLength="1" style="--t:0.010;--d:0.3" d="M798.1 466.1 796.0 467.0 792.8 471.4 781.5 495.8 760.0 517.1 737.3 543.5 725.7 550.5 718.0 554.2"/><path pathLength="1" style="--t:0.255;--d:0.3" d="M1356.4 906.9 1355.5 910.0 1355.9 920.7 1358.4 942.0 1356.9 957.3 1336.1 1055.7 1323.4 1095.8 1320.3 1113.1 1305.1 1281.2 1300.8 1313.7 1286.9 1356.5 1284.6 1368.4 1284.0 1376.9 1287.7 1420.0 1290.4 1496.9 1307.4 1659.8 1315.7 1746.2 1322.6 1832.5"/><path pathLength="1" style="--t:0.213;--d:0.3" d="M1391.4 581.6 1395.0 586.7 1413.8 608.4 1424.3 628.3 1425.0 632.1 1424.7 641.3 1421.6 650.4 1411.3 670.0 1410.4 674.4 1409.7 690.2 1398.2 747.1 1375.8 814.9 1369.8 840.8 1367.7 886.9 1362.5 897.8"/><path pathLength="1" style="--t:0.268;--d:0.3" d="M1560.2 344.5 1564.5 339.3 1566.2 334.1 1566.1 330.6 1561.6 312.1 1561.6 305.5 1564.4 293.8 1574.6 262.9 1580.1 254.7 1641.4 197.8 1651.4 179.8"/><path pathLength="1" style="--t:0.045;--d:0.3" d="M696.3 506.8 701.2 519.6 703.5 530.0 701.6 559.9"/><path pathLength="1" style="--t:0.153;--d:0.3" d="M1234.2 511.1 1275.9 528.2 1284.3 533.5 1293.4 542.0 1318.5 576.7 1323.4 581.0 1332.9 587.4"/><path pathLength="1" style="--t:0.193;--d:0.3" d="M1332.9 587.4 1342.1 592.9"/><path pathLength="1" style="--t:0.016;--d:0.3" d="M824.6 400.6 824.0 397.0 814.2 367.7"/><path pathLength="1" style="--t:0.046;--d:0.3" d="M691.9 505.9 664.5 526.9 645.6 546.1 635.5 554.3 572.5 588.6 500.9 640.7"/><path pathLength="1" style="--t:0.133;--d:0.3" d="M718.4 807.4 718.4 807.4"/><path pathLength="1" style="--t:0.142;--d:0.3" d="M712.3 832.7 708.0 858.3 701.4 880.5 695.8 892.6 689.5 903.6 668.8 936.4"/><path pathLength="1" style="--t:0.043;--d:0.3" d="M697.5 500.9 698.5 503.7 697.8 505.6 696.3 506.8"/><path pathLength="1" style="--t:0.043;--d:0.3" d="M771.1 322.4 761.3 316.0 759.9 314.2"/><path pathLength="1" style="--t:0.027;--d:0.3" d="M811.8 363.1 797.6 340.8 787.0 333.0"/><path pathLength="1" style="--t:0.006;--d:0.3" d="M801.0 424.7 819.7 403.8 824.6 400.6"/><path pathLength="1" style="--t:0.068;--d:0.3" d="M735.6 260.5 714.0 232.2 699.6 207.5 694.7 201.7"/><path pathLength="1" style="--t:0.004;--d:0.3" d="M792.2 442.5 780.8 448.3 711.0 488.9 704.1 494.7"/><path pathLength="1" style="--t:0.009;--d:0.3" d="M798.1 466.1 814.4 463.1 827.1 457.6 864.3 431.4 881.5 418.1"/><path pathLength="1" style="--t:0.056;--d:0.3" d="M701.6 559.9 713.9 785.2"/><path pathLength="1" style="--t:0.132;--d:0.3" d="M727.2 805.9 815.8 856.2 821.8 860.0 828.0 865.3"/><path pathLength="1" style="--t:0.158;--d:0.3" d="M431.0 689.7 384.7 717.9 237.7 792.4 221.8 798.6 210.4 801.0 -127.0 811.7 -164.4 809.3 -183.2 809.8 -280.4 820.2 -300.2 818.1 -336.3 806.6 -358.7 801.7 -403.4 795.6 -442.1 787.7 -479.5 776.5 -496.6 772.8 -529.3 767.7 -556.8 758.8 -566.5 753.9"/><path pathLength="1" style="--t:0.092;--d:0.3" d="M694.7 201.7 690.0 199.8 651.3 189.8 646.5 186.2 638.1 177.6 625.0 157.9 608.5 101.7 591.5 64.1 582.7 46.8 573.9 35.0 562.2 24.8"/><path pathLength="1" style="--t:0.183;--d:0.3" d="M1312.7 544.6 1324.8 549.4 1329.2 550.3 1335.4 549.1 1339.4 545.4"/><path pathLength="1" style="--t:0.038;--d:0.3" d="M787.0 333.0 771.1 322.4"/><path pathLength="1" style="--t:0.047;--d:0.3" d="M759.9 314.2 749.1 287.4 739.7 268.4"/><path pathLength="1" style="--t:0.041;--d:0.3" d="M692.3 410.2 686.4 384.8"/><path pathLength="1" style="--t:0.065;--d:0.3" d="M670.2 315.1 667.4 307.2"/><path pathLength="1" style="--t:0.046;--d:0.3" d="M686.4 384.8 684.3 371.6"/><path pathLength="1" style="--t:0.040;--d:0.3" d="M693.6 416.0 692.3 410.2"/><path pathLength="1" style="--t:0.049;--d:0.3" d="M684.3 371.6 670.2 315.1"/><path pathLength="1" style="--t:0.038;--d:0.3" d="M697.3 436.2 693.6 416.0"/><path pathLength="1" style="--t:0.254;--d:0.3" d="M1362.5 897.8 1356.4 906.9"/><path pathLength="1" style="--t:0.192;--d:0.3" d="M1339.4 545.4 1342.4 540.6"/><path pathLength="1" style="--t:0.193;--d:0.3" d="M1342.4 540.6 1377.3 491.5 1398.2 466.9 1426.9 436.7 1439.0 425.1 1451.9 414.4 1455.2 412.5 1459.4 411.0 1477.7 407.5 1488.5 403.4"/><path pathLength="1" style="--t:0.175;--d:0.3" d="M549.0 12.5 538.2 -0.4 513.7 -36.0 498.5 -52.8 340.1 -207.2 293.0 -258.3 264.5 -284.9 221.7 -333.4 207.5 -364.9 199.1 -378.2 170.3 -409.4 164.0 -420.7 146.1 -474.4 138.5 -491.2 104.3 -550.3 83.3 -596.4 49.4 -649.9 32.1 -689.5 -36.7 -784.0 -89.0 -845.2 -108.4 -861.3 -160.8 -888.4 -168.7 -897.2 -174.2 -909.7 -177.7 -924.1 -193.8 -1066.5 -231.0 -1191.2 -241.8 -1210.4 -297.4 -1290.2 -314.4 -1313.2 -328.9 -1320.6 -388.2 -1345.9 -435.6 -1384.8 -456.6 -1406.7 -495.9 -1492.0 -542.9 -1706.1 -549.6 -1724.9 -560.0 -1743.2 -636.8 -1856.4 -651.1 -1881.3 -681.4 -1939.7 -713.3 -1992.7 -740.9 -2053.9 -762.6 -2095.0 -789.5 -2143.4 -805.4 -2166.8 -810.9 -2176.4 -848.0 -2262.8 -870.0 -2301.7 -907.4 -2364.0 -1039.6 -2553.9"/><path pathLength="1" style="--t:0.155;--d:0.3" d="M837.9 879.7 850.6 898.6 873.3 926.8 877.5 933.6 881.5 942.9 897.9 994.5 904.9 1013.7 913.8 1031.1 947.3 1088.8 954.8 1103.5 959.8 1119.8 964.7 1155.0 967.4 1168.5 972.2 1183.5 978.4 1197.9 985.1 1210.4 994.9 1226.4 1039.0 1293.6 1050.1 1316.0 1056.1 1333.1 1059.7 1349.1 1062.8 1399.5 1067.9 1431.2 1075.4 1458.3 1090.9 1497.2 1094.9 1513.5 1099.5 1539.8 1103.3 1555.2 1108.1 1566.7 1114.6 1578.7 1124.3 1592.8 1151.3 1628.4"/><path pathLength="1" style="--t:0.038;--d:0.3" d="M697.3 440.1 697.3 444.6"/><path pathLength="1" style="--t:0.038;--d:0.3" d="M697.4 450.8 697.5 493.6"/><path pathLength="1" style="--t:0.241;--d:0.3" d="M1488.5 403.4 1499.7 395.2"/><path pathLength="1" style="--t:0.245;--d:0.3" d="M1499.7 395.2 1560.2 344.5"/><path pathLength="1" style="--t:0.177;--d:0.3" d="M1295.7 545.5 1305.3 544.1 1312.7 544.6"/><path pathLength="1" style="--t:0.176;--d:0.3" d="M1293.4 542.0 1298.9 540.0 1302.3 539.7 1304.7 540.2 1312.7 544.6"/><path pathLength="1" style="--t:0.128;--d:0.3" d="M500.9 640.7 448.2 679.2"/><path pathLength="1" style="--t:0.041;--d:0.3" d="M702.2 495.9 699.1 498.1 697.5 500.9"/><path pathLength="1" style="--t:0.040;--d:0.3" d="M915.4 415.8 926.5 417.0"/><path pathLength="1" style="--t:0.036;--d:0.3" d="M903.7 414.7 915.4 415.8"/><path pathLength="1" style="--t:0.031;--d:0.3" d="M889.9 416.1 903.7 414.7"/><path pathLength="1" style="--t:0.131;--d:0.3" d="M717.9 800.6 724.2 803.6 727.2 805.9"/><path pathLength="1" style="--t:0.132;--d:0.3" d="M727.2 805.9 721.5 806.2 718.4 807.4"/><path pathLength="1" style="--t:0.126;--d:0.3" d="M713.9 785.2 712.8 796.1 711.0 800.9"/><path pathLength="1" style="--t:0.126;--d:0.3" d="M713.9 785.2 715.9 796.0 717.4 800.3"/><path pathLength="1" style="--t:0.134;--d:0.3" d="M711.4 808.0 712.9 813.3 712.3 832.7"/><path pathLength="1" style="--t:0.133;--d:0.3" d="M717.3 808.4 715.5 813.3 714.1 827.5 712.3 832.7"/><path pathLength="1" style="--t:0.003;--d:0.3" d="M792.2 442.5 796.6 436.3 801.0 424.7"/><path pathLength="1" style="--t:0.026;--d:0.3" d="M814.2 367.7 811.8 363.1"/><path pathLength="1" style="--t:0.038;--d:0.3" d="M697.3 440.1 697.3 436.2"/><path pathLength="1" style="--t:0.042;--d:0.3" d="M697.5 493.6 695.2 499.7"/><path pathLength="1" style="--t:0.040;--d:0.3" d="M704.1 494.7 702.2 495.9"/><path pathLength="1" style="--t:0.043;--d:0.3" d="M697.5 500.9 695.2 499.7 692.0 500.8 691.0 503.5 691.9 505.9"/><path pathLength="1" style="--t:0.045;--d:0.3" d="M696.3 506.8 693.9 507.1 691.9 505.9"/><path pathLength="1" style="--t:0.181;--d:0.3" d="M668.8 936.4 621.6 1010.7"/><path pathLength="1" style="--t:0.038;--d:0.3" d="M697.3 444.6 697.4 450.8"/><path pathLength="1" style="--t:0.150;--d:0.3" d="M828.0 865.3 837.9 879.7"/><path pathLength="1" style="--t:0.169;--d:0.3" d="M562.2 24.8 549.0 12.5"/><path pathLength="1" style="--t:0.151;--d:0.3" d="M448.2 679.2 431.0 689.7"/><path pathLength="1" style="--t:0.051;--d:0.3" d="M718.0 554.2 701.6 559.9"/><path pathLength="1" style="--t:0.044;--d:0.3" d="M926.5 417.0 935.8 417.9"/><path pathLength="1" style="--t:0.028;--d:0.3" d="M881.5 418.1 889.9 416.1"/></g>
 </svg>
 <!-- centre-ville dans le viewBox : 804.7 439.9 -->
-    <div class="plan-cartouche">
+    <div class="plan-nom">
       <p class="pc-ville">Is-sur-Tille</p>
       <span class="pc-filet"></span>
+    </div>
+    <div class="plan-cartouche">
       <p class="pc-info">Côte-d'Or</p>
       <p class="pc-info">47° 31′ N &nbsp;&nbsp; 5° 06′ E</p>
     </div>
@@ -1113,7 +1120,7 @@ body.plan-sombre nav::before{opacity:0}
 <div class="hero-don">
   <section class="hd-grille lc-intro">
     <h1 class="lc-titre"><span>Notre local</span> <span class="or">prend vie</span></h1>
-    <p class="hd-intro">Les murs se dressent, les pièces prennent forme : voici, au fil des semaines, les nouvelles du futur lieu de vie de l'église J33. Merci de bâtir avec nous.</p>
+    <p class="hd-intro">Après plusieurs années à nous rassembler dans nos maisons, l'église J33 va enfin ouvrir son premier local à Is-sur-Tille !</p>
     <blockquote class="hd-verset">« Levons-nous, et bâtissons ! »<cite>Néhémie 2 : 18</cite></blockquote>
   </section>
 </div>
@@ -1127,16 +1134,40 @@ body.plan-sombre nav::before{opacity:0}
     </div>
   </div>
   <div class="lc-compteur">
-    <iframe id="haWidgetCounter" title="Compteur de la collecte HelloAsso" allowtransparency="true"
+    <!-- widget HelloAsso : toujours rendu à sa largeur native de 350 px (en dessous il ne
+         s'affiche pas correctement), réduit à l'échelle sur les écrans plus étroits -->
+    <iframe id="haWidgetCounter" title="Compteur de la collecte HelloAsso" allowtransparency="true" scrolling="no"
       src="https://www.helloasso.com/associations/jeremie-33/collectes/eglise-j33-notre-nouveau-local-prend-vie-soutenez-le-projet/widget-compteur"
-      style="width:100%;max-width:350px;border:none;"
-      onload="window.addEventListener('message', function(e) { const dataHeight = e.data && e.data.height; const haWidgetElement = document.getElementById('haWidgetCounter'); if (dataHeight > parseFloat(haWidgetElement.height || 0)) { haWidgetElement.height = dataHeight + 'px';}})"></iframe>
+      width="350" height="250" style="width:350px;border:none;"></iframe>
+    <script>
+    /* écouteur posé AVANT le chargement du widget : il ne rate plus le message de hauteur
+       envoyé par HelloAsso (l'ancien, posé dans onload, arrivait parfois trop tard) */
+    (function(){
+      var f = document.getElementById('haWidgetCounter'), boite = f.parentNode;
+      function caler(){
+        var s = Math.min(1, boite.clientWidth / 350), h = parseFloat(f.height) || 250;
+        f.style.transform = s < 1 ? 'scale(' + s + ')' : '';
+        f.style.transformOrigin = '0 0';
+        boite.style.height = (h * s) + 'px';
+      }
+      window.addEventListener('message', function(e){
+        if(!/helloasso\.com$/.test(String(e.origin).replace(/^https?:\/\//, ''))) return;
+        var h = e.data && parseFloat(e.data.height);
+        if(h > 0){ f.height = h; caler(); }
+      });
+      window.addEventListener('resize', caler);
+      caler();
+    })();
+    </script>
   </div>
 </section>
 
 <section class="lc-7q" id="projet" data-j33-evt="lu/local/7-questions">
   <div class="q7-fond">
-    <img src="images/local/Illustration_1.jpg" alt="" loading="lazy" decoding="async">
+    <!-- versions redimensionnées d'Illustration_1 (l'original fait 7441 px : réduit par le
+         navigateur, ses traits fins se dégradaient) ; affichée en « cover » : largeur = max(100vw, 2,12 × hauteur) -->
+    <img src="images/local/Illustration_5.jpg" srcset="images/local/Illustration_6.jpg 1800w, images/local/Illustration_5.jpg 3200w"
+         sizes="max(100vw, 212vh)" alt="" loading="lazy" decoding="async">
     <h2 class="q7-titre"><span>Le projet en</span><span class="or">7 questions clés</span></h2>
   </div>
   <div class="q7-cartes">
@@ -1736,7 +1767,8 @@ document.addEventListener('click', e => {
     const L = total * pxm;
     barre.style.width = L.toFixed(1) + 'px'; lab.style.width = L.toFixed(1) + 'px';
     barre.innerHTML = [1, 2, 3, 4].map(i => '<i style="left:' + (i * 25) + '%"></i>').join('');
-    lab.innerHTML = [0, 1, 2, 3, 4].map(i => '<span style="left:' + (i * 25) + '%">' +
+    /* barre courte (mobile) : seulement 0, moitié et total, pour que les libellés ne se chevauchent pas */
+    lab.innerHTML = (L < 220 ? [0, 2, 4] : [0, 1, 2, 3, 4]).map(i => '<span style="left:' + (i * 25) + '%">' +
       (i === 4 ? total.toLocaleString('fr-FR') + ' m' : (total * i / 4)) + '</span>').join('');
   }
   caler();
