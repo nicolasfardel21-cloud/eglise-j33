@@ -649,7 +649,14 @@ body{overflow-x:clip}   /* clip ne cree pas de conteneur de defilement, contrair
 .lc-cta .lien-paren.plein.or:hover{background:var(--or-fonce);border-color:var(--or-fonce)}
 
 /* ---------- collecte : texte + vignette HelloAsso ---------- */
-.lc-collecte{display:grid;grid-template-columns:1.15fr 1fr;gap:70px;align-items:center;padding-top:90px;padding-bottom:90px}
+.lc-collecte{display:grid;grid-template-columns:1fr 1fr;gap:0 64px;align-items:center;padding-top:90px;padding-bottom:90px}
+/* PC : écran coupé en deux au centre — texte calé à droite contre le centre, compteur qui part du centre */
+@media(min-width:901px){
+  .lc-collecte>div:first-child{text-align:right;justify-self:end}
+  .lc-collecte .texte-bloc{margin-left:auto}
+  .lc-compteur{justify-self:start !important}
+  .lc-compteur iframe{margin:0 !important}
+}
 .lc-collecte .texte-bloc{max-width:52ch}
 .lc-cta-g{justify-content:flex-start}
 .lc-compteur{justify-self:center;width:100%;max-width:350px}
@@ -864,22 +871,12 @@ nav{transition:transform .4s cubic-bezier(.2,.7,.2,1),opacity .3s ease}
 }
 
 /* ---------- avant / après fixe, avant le journal : paysage sur ordinateur ---------- */
-.lc-aa{padding-top:30px;padding-bottom:60px}
-/* PC : titre à gauche (même retrait que « Chaque pierre compte »), comparateur à sa droite,
-   le haut de l'image aligné sur le haut des lettres du titre */
-@media(min-width:901px){
-  .lc-aa{--t:clamp(2.2rem,6vw,5rem);display:grid;grid-template-columns:auto minmax(0,1fr);gap:48px;align-items:start}
-  .lc-aa .titre-bloc{margin:0}
-  .lc-aa .titre-bloc span{display:block}
-  .lc-aa .aa{justify-self:end;margin:calc(var(--t) * .1225) 0 0 !important}
-}
-.lc-aa .titre-bloc span.or{color:var(--or)}
-@media(max-width:900px){ .lc-aa .titre-bloc{text-align:center} }
-.lc-aa .aa{max-width:none;margin:40px auto 0;aspect-ratio:4/3;
-  /* photos 4:3 : le cadre prend toute la hauteur d'écran disponible, largeur au même format */
+.lc-aa{padding-top:150px;padding-bottom:60px}
+/* image seule, centrée, 4:3, sur toute la hauteur d'écran disponible */
+.lc-aa .aa{max-width:none;margin:0 auto;aspect-ratio:4/3;
   width:min(100%, calc((100vh - 96px) * 4 / 3));width:min(100%, calc((100svh - 96px) * 4 / 3));height:auto}
 @supports not (aspect-ratio:4/3){ .lc-aa .aa{width:100%;height:auto} }
-@media(max-width:900px){ .lc-aa .aa{margin-top:28px;width:100%;height:auto} }
+@media(max-width:900px){ .lc-aa{padding-top:90px} .lc-aa .aa{width:100%;height:auto} }
 
 /* ---------- visionneuse photo ---------- */
 .lb{position:fixed;inset:0;z-index:200;background:rgba(12,17,28,.96);display:flex;align-items:center;justify-content:center;
@@ -898,7 +895,7 @@ nav{transition:transform .4s cubic-bezier(.2,.7,.2,1),opacity .3s ease}
 @media(max-width:700px){.lb .lb-prec,.lb .lb-suiv{top:auto;bottom:6px;transform:none}}
 
 /* ---------- clôture : appel au don ---------- */
-.don-fin .lc-cta{margin-top:48px}
+
 .don-fin .lien-paren.plein{border-color:var(--creme);color:var(--creme)}
 .don-fin .lien-paren.plein:hover{background:var(--creme);color:var(--noir)}
 .don-fin .lien-paren.plein.or{background:var(--or);border-color:var(--or);color:#fff}
@@ -1074,7 +1071,6 @@ nav{transition:transform .4s cubic-bezier(.2,.7,.2,1),opacity .3s ease}
 </section>
 
 <section class="lc-aa reveal" id="avant-apres" data-j33-evt="lu/local/avant-apres">
-  <h2 class="titre-bloc"><span>Avant /</span> <span class="or">après</span></h2>
   <div class="aa aa-fixe">
     <img class="aa-apres" src="images/local/Illustration_11.jpg" alt="Après" loading="lazy" decoding="async" onerror="this.closest('.lc-aa').remove()">
     <img class="aa-avant" src="images/local/Illustration_10.jpg" alt="Avant" loading="lazy" decoding="async" onerror="this.closest('.lc-aa').remove()">
@@ -1100,10 +1096,6 @@ nav{transition:transform .4s cubic-bezier(.2,.7,.2,1),opacity .3s ease}
       <span class="l3">sa maison</span>
     </div>
     <cite>« Si l'Éternel ne bâtit la maison, ceux qui la bâtissent travaillent en vain » — Psaume 127 : 1</cite>
-    <div class="lc-cta">
-      <a class="lien-paren plein or" href="https://www.helloasso.com/associations/jeremie-33/collectes/eglise-j33-notre-nouveau-local-prend-vie-soutenez-le-projet" target="_blank" rel="noopener" data-j33-clic="clic/local/don-fin">Soutenir le projet</a>
-      <a class="lien-paren plein" href="/">Découvrir l'église J33</a>
-    </div>
   </div>
 </div>
 </div>
@@ -1548,7 +1540,6 @@ document.addEventListener('click', e => {
   const bande = cadre.querySelector('.pano-bande');
   const img = bande.querySelector('img');
   const mobile = window.matchMedia('(max-width:900px)');
-  const ECART = 40;                            /* bande rétrécie → bloc titre + intro */
   let H = 0, kFin = 1, course = 0, tick = false;
   const fixe = document.querySelector('.pano-fixe');    /* copie fixe de la bande, une fois rétrécie */
   const q7 = document.getElementById('projet');          /* section qui passe devant puis la fait disparaître */
@@ -1565,14 +1556,16 @@ document.addEventListener('click', e => {
     H = colle.offsetHeight;
     const ratio = img.naturalWidth ? img.naturalWidth / img.naturalHeight : 7680 / 1000;
     kFin = Math.min(1, W / (H * ratio));
-    course = H;
-    const hFin = H * kFin + ECART;
-    /* la suite de la page (titre + texte + verset en tête) n'arrive par le bas qu'une fois
-       l'image entièrement rétrécie : le cadre est prolongé de l'espace libre sous la bande,
-       puis rattrapé par une marge négative identique — le bloc remonte jusque sous la bande */
-    const libre = Math.max(0, Math.round(H - hFin));
-    cadre.style.height = (H + course + libre) + 'px';
-    cadre.style.marginBottom = -libre + 'px';
+    /* bloc « Notre local prend vie » + texte + verset (B = sa hauteur) : il entre par le bas
+       à mi-rétrécissement et se trouve centré à l'écran quand l'image est entière.
+       Il défile à 1 px par px : il doit parcourir H/2 + B/2 pendant la 2e moitié du
+       rétrécissement, d'où une course totale de H + B. La marge négative de -course/2
+       le fait arriver au bord bas exactement à mi-course. */
+    const intro = document.querySelector('.lc-intro');
+    const B = intro ? intro.offsetHeight : 0;
+    course = H + B;
+    cadre.style.height = (H + course) + 'px';
+    cadre.style.marginBottom = -Math.round(course / 2) + 'px';
     if(typeof lenis !== 'undefined' && lenis) lenis.resize();
     maj();
   }
