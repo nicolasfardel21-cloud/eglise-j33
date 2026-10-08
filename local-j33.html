@@ -733,19 +733,16 @@ body{overflow-x:clip}   /* clip ne cree pas de conteneur de defilement, contrair
 /* jauge de progression : dorée, au premier plan, sans fusion */
 .pano-prog{position:absolute;left:50%;bottom:calc(100lvh - 100svh + 28px);z-index:2;transform:translateX(-50%);width:min(320px,60vw);height:3px;background:rgba(255,255,255,.45)}
 .pano-prog span{display:block;height:100%;width:100%;background:var(--or);transform:scaleX(0);transform-origin:left}
-/* Illustration_1 : arrive par la droite, collée au bord du panorama (un seul ruban continu) */
-.pano-suite{position:absolute;inset:0;z-index:1;overflow:hidden;isolation:isolate;transform:translate3d(100%,0,0);will-change:transform}
-.pano-suite img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
-.ps-titre{position:absolute;left:0;right:0;top:max(96px,14vh);margin:0;display:flex;justify-content:center;gap:.28em;
+/* titre « Notre local prend vie » : fixe dans la partie haute de l'image d'ouverture.
+   Couche claire en difference sur la photo, couche dorée par-dessus sans fusion. */
+.ps-titre{position:absolute;left:0;right:0;top:max(96px,14vh);z-index:1;margin:0;display:flex;justify-content:center;gap:.28em;
   font-family:'Anton',sans-serif;font-weight:400;text-transform:uppercase;letter-spacing:.01em;line-height:.92;white-space:nowrap;
   font-size:calc((min(9.5vw,16vh)) * var(--zc));pointer-events:none}
-.ps-titre.ps-blend{mix-blend-mode:difference;color:#fff;z-index:1}
+.ps-titre.ps-blend{mix-blend-mode:difference;color:#fff}
 .ps-titre.ps-blend .t-or{visibility:hidden}
 .ps-titre.ps-or{color:var(--or);z-index:2}
 .ps-titre.ps-or .t-blanc{visibility:hidden}
-.pano-prog{transition:opacity .4s ease}
-/* ordinateur : le bandeau photo séparé fait doublon avec Illustration_1 dans le ruban */
-@media(min-width:901px){ .lc-pano + .hero-image{display:none} }
+@media(max-width:900px){ .ps-titre{top:max(88px,13svh);font-size:calc((10.6vw) * var(--zc))} }
 
 /* mouvement réduit : pas d'épinglage, la bande se fait défiler au doigt / à la molette */
 @media(prefers-reduced-motion: reduce){
@@ -754,9 +751,7 @@ body{overflow-x:clip}   /* clip ne cree pas de conteneur de defilement, contrair
   .pano-bande{overflow-x:auto}
   .pano-bande img{position:static;transform:none !important}
   .pano-prog{display:none}
-  .pano-suite{display:none}
 }
-@media(prefers-reduced-motion: reduce) and (min-width:901px){ .lc-pano + .hero-image{display:block} }
 /* mobile : J33 et burger masqués tant que la photo d'ouverture occupe l'écran,
    ils glissent depuis le haut quand elle a fini de défiler */
 nav{transition:transform .4s cubic-bezier(.2,.7,.2,1),opacity .3s ease}
@@ -771,7 +766,6 @@ nav{transition:transform .4s cubic-bezier(.2,.7,.2,1),opacity .3s ease}
   .pano-colle{position:relative;height:100%}
   .pano-bande img{width:100%;height:100%;object-fit:cover;transform:none !important}
   .pano-prog{display:none}
-  .pano-suite{display:none}
 }
 
 /* ---------- avant / après : deux photos superposées, curseur qui découpe celle du dessus ---------- */
@@ -792,28 +786,42 @@ nav{transition:transform .4s cubic-bezier(.2,.7,.2,1),opacity .3s ease}
 .actu:nth-of-type(odd) .aa{margin-left:auto}
 @media(max-width:900px){.aa{aspect-ratio:1/1}.aa-poignee b{width:46px;height:46px}}
 
-/* ---------- 7 questions clés : liste numérotée (gabarit « valeurs » du site) ---------- */
-.lc-7q{padding-top:70px;padding-bottom:70px}
-.lc-7q .valeurs-liste{margin-top:46px}
-.lc-7q .valeur{grid-template-columns:90px minmax(0,.8fr) minmax(0,1.7fr);align-items:baseline;padding:26px 0}
-.lc-7q .valeur h3{text-transform:uppercase;letter-spacing:.02em}
-.q-rep{font-size:1.02rem;color:var(--gris);line-height:1.6;max-width:60ch}
-.lc-7q .valeur .q-rep p{font-size:inherit;color:inherit;max-width:none}
-.q-rep p+p{margin-top:6px}
-.q-rep strong{color:var(--encre);font-weight:600}
-.q-rep a{color:var(--or);text-decoration:none;border-bottom:1px solid rgba(var(--or-rgb),.35);transition:border-color .25s}
-.q-rep a:hover{border-color:var(--or)}
-.lc-7q .valeur .q-rep .q-montant{font-family:'Anton',sans-serif;font-size:clamp(2.2rem,4.6vw,3.6rem);line-height:1;color:var(--or);letter-spacing:.01em;margin-bottom:8px}
-.q-dates{list-style:none;display:grid;gap:10px}
-.q-dates li{display:grid;grid-template-columns:minmax(0,15em) 1fr;gap:4px 18px;align-items:baseline}
-.q-dates b{font-weight:600;color:var(--encre);text-transform:uppercase;letter-spacing:.08em;font-size:.82rem}
+/* ---------- 7 questions clés : photo fixe en fond, cartes qui défilent à droite ----------
+   La photo est épinglée (sticky) sur toute la hauteur de la section ; la colonne de cartes
+   remonte par-dessus (marge négative d'un écran) et défile normalement. */
+.lc-7q{position:relative;max-width:none;padding:0;margin:0}
+.q7-fond{position:sticky;top:0;height:100vh;height:100lvh;overflow:hidden;
+  background:radial-gradient(circle at 30% 20%, var(--bleu-pale), transparent 65%),#EDEAE2}
+.q7-fond img{width:100%;height:100%;object-fit:cover;display:block}
+.q7-cartes{position:relative;z-index:1;margin-top:-100vh;margin-top:-100lvh;
+  width:min(640px,40vw);margin-left:auto;margin-right:6vw;padding:28vh 0 34vh;display:flex;flex-direction:column;gap:36px}
+.q7-carte{padding:clamp(30px,3.4vw,52px) clamp(28px,3.6vw,56px);border-radius:12px;background:var(--creme);color:var(--encre);
+  box-shadow:0 30px 60px -34px rgba(12,17,28,.55)}
+.q7-carte h3,.q7-tete h2{font-family:'Anton',sans-serif;font-weight:400;text-transform:uppercase;letter-spacing:.01em;
+  line-height:1;font-size:clamp(2.6rem,4.4vw,4.4rem);color:var(--or);margin:6px 0 22px}
+.q7-num{display:block;font-size:.74rem;font-weight:600;letter-spacing:.22em;opacity:.6}
+.q7-carte p,.q7-carte li{font-size:1.06rem;line-height:1.6}
+.q7-carte p+p{margin-top:8px}
+.q7-carte strong{font-weight:600}
+.q7-carte a{color:inherit;text-decoration:underline;text-decoration-color:currentColor;text-underline-offset:3px;font-weight:500}
+/* alternance de couleurs, palette J33 : noir (titre) puis or / noir / crème */
+.q7-tete{background:var(--noir);color:var(--creme)}
+.q7-tete .eyebrow{margin-bottom:16px}
+.q7-tete h2{color:var(--creme);margin-bottom:0}
+.q7-tete h2 span{color:var(--or)}
+.q7-carte:nth-child(3n+2){background:var(--or);color:#fff}
+.q7-carte:nth-child(3n+2) h3{color:var(--noir)}
+.q7-carte:nth-child(3n+3){background:var(--noir);color:var(--creme)}
+.q7-carte:nth-child(3n+3) .q7-num{color:var(--or);opacity:1}
+.q-montant{font-family:'Anton',sans-serif;font-size:clamp(2.4rem,4.8vw,3.8rem) !important;line-height:1 !important;letter-spacing:.01em;margin-bottom:10px}
+.q-dates{list-style:none;display:grid;gap:12px}
+.q-dates li{display:grid;gap:2px}
+.q-dates b{font-weight:600;text-transform:uppercase;letter-spacing:.08em;font-size:.8rem}
 .q-dates sup{font-size:.7em}
-@media(max-width:760px){
-  .lc-7q{padding-top:50px;padding-bottom:50px}
-  .lc-7q .titre-bloc,.lc-7q .eyebrow{text-align:center}
-  .lc-7q .valeur{grid-template-columns:50px minmax(0,1fr);gap:8px 14px;padding:22px 0}
-  .lc-7q .valeur .q-rep{grid-column:2}
-  .q-dates li{grid-template-columns:1fr;gap:0}
+@media(max-width:900px){
+  .q7-cartes{width:auto;margin-left:16px;margin-right:16px;padding:40vh 0 30vh;gap:22px}
+  .q7-carte{padding:28px 24px;border-radius:10px}
+  .q7-carte h3,.q7-tete h2{font-size:clamp(2.2rem,11vw,3.2rem);margin-bottom:16px}
 }
 
 /* ---------- avant / après fixe, avant le journal : paysage sur ordinateur ---------- */
@@ -946,25 +954,12 @@ nav{transition:transform .4s cubic-bezier(.2,.7,.2,1),opacity .3s ease}
              onerror="this.closest('.lc-pano').remove()">
       </picture>
     </div>
-    <!-- ordinateur : Illustration_1 arrive par la droite une fois le panorama parcouru -->
-    <div class="pano-suite">
-      <img src="images/local/Illustration_1.jpg" alt="" onerror="this.closest('.pano-suite').remove()">
-      <p class="ps-titre ps-blend" role="heading" aria-level="1"><span class="t-blanc">Notre local</span><span class="t-or">prend vie</span></p>
-      <div class="ps-titre ps-or" aria-hidden="true"><span class="t-blanc">Notre local</span><span class="t-or">prend vie</span></div>
-    </div>
+    <!-- titre fixe dans la partie haute de l'image d'ouverture (panorama sur PC, Illustration_4 sur mobile) -->
+    <p class="ps-titre ps-blend" role="heading" aria-level="1"><span class="t-blanc">Notre local</span><span class="t-or">prend vie</span></p>
+    <div class="ps-titre ps-or" aria-hidden="true"><span class="t-blanc">Notre local</span><span class="t-or">prend vie</span></div>
     <div class="pano-prog" aria-hidden="true"><span></span></div>
   </div>
 </div>
-
-<header class="hero-image">
-  <picture>
-    <!-- recadrage portrait sous 900 px, paysage au-dela -->
-    <source media="(max-width:900px)" srcset="images/local/Illustration_2.jpg">
-    <img src="images/local/Illustration_1.jpg" alt="" onerror="this.style.display='none'">
-  </picture>
-  <h1 class="hd-titre hd-blend"><span class="t-blanc">Notre local</span><span class="t-or">prend vie</span></h1>
-  <div class="hd-titre hd-or" aria-hidden="true"><span class="t-blanc">Notre local</span><span class="t-or">prend vie</span></div>
-</header>
 
 <div class="hero-don">
   <section class="hd-grille lc-intro">
@@ -996,28 +991,28 @@ nav{transition:transform .4s cubic-bezier(.2,.7,.2,1),opacity .3s ease}
   </div>
 </section>
 
-<section class="lc-7q reveal" id="projet" data-j33-evt="lu/local/7-questions">
-  <span class="eyebrow">Le projet en bref</span>
-  <h2 class="titre-bloc">7 questions <span class="or">clés</span></h2>
-  <div class="valeurs-liste">
-    <div class="valeur"><span class="vnum">01</span><h3>Qui ?</h3>
-      <div class="q-rep"><p><strong>Bénéficiaire :</strong> l'église J33.</p><p><strong>Contributeurs :</strong> toutes celles et ceux qui ont à cœur de nous aider à mener ce projet.</p></div></div>
-    <div class="valeur"><span class="vnum">02</span><h3>Quoi ?</h3>
-      <div class="q-rep"><p>L'aménagement de notre <strong>tout premier local d'église</strong>.</p></div></div>
-    <div class="valeur"><span class="vnum">03</span><h3>Où ?</h3>
-      <div class="q-rep"><p>À <strong>Is-sur-Tille</strong> (21120).</p></div></div>
-    <div class="valeur"><span class="vnum">04</span><h3>Quand ?</h3>
-      <div class="q-rep"><ul class="q-dates">
+<section class="lc-7q" id="projet" data-j33-evt="lu/local/7-questions">
+  <div class="q7-fond" aria-hidden="true"><img src="images/local/Illustration_1.jpg" alt="" loading="lazy" decoding="async"></div>
+  <div class="q7-cartes">
+    <div class="q7-carte q7-tete"><span class="eyebrow">Le projet en bref</span><h2>7 questions <span>clés</span></h2></div>
+    <article class="q7-carte"><span class="q7-num">01</span><h3>Qui ?</h3>
+      <p><strong>Bénéficiaire :</strong> l'église J33.</p><p><strong>Contributeurs :</strong> toutes celles et ceux qui ont à cœur de nous aider à mener ce projet.</p></article>
+    <article class="q7-carte"><span class="q7-num">02</span><h3>Quoi ?</h3>
+      <p>L'aménagement de notre <strong>tout premier local d'église</strong>.</p></article>
+    <article class="q7-carte"><span class="q7-num">03</span><h3>Où ?</h3>
+      <p>À <strong>Is-sur-Tille</strong> (21120).</p></article>
+    <article class="q7-carte"><span class="q7-num">04</span><h3>Quand ?</h3>
+      <ul class="q-dates">
         <li><b>Jusqu'à mi-décembre 2026</b>campagne de dons en cours</li>
         <li><b>Dès le 1<sup>er</sup> novembre</b>remise des clés et début des travaux</li>
         <li><b>Janvier 2027</b>ouverture espérée</li>
-      </ul></div></div>
-    <div class="valeur"><span class="vnum">05</span><h3>Comment ?</h3>
-      <div class="q-rep"><p>Grâce à la <a href="https://www.helloasso.com/associations/jeremie-33/collectes/eglise-j33-notre-nouveau-local-prend-vie-soutenez-le-projet" target="_blank" rel="noopener" data-j33-clic="clic/local/don-7q">campagne de dons en ligne</a> : chaque don, quel qu'en soit le montant, fait avancer le chantier.</p></div></div>
-    <div class="valeur"><span class="vnum">06</span><h3>Combien ?</h3>
-      <div class="q-rep"><p class="q-montant">20 000 €</p><p>Pour couvrir l'ensemble des frais : travaux, mise aux normes, décoration, mobilier, équipements…</p></div></div>
-    <div class="valeur"><span class="vnum">07</span><h3>Pourquoi ?</h3>
-      <div class="q-rep"><p><strong>Bâtir un lieu d'accueil et de vie à Is-sur-Tille</strong> pour offrir à chacun la possibilité d'entendre et de vivre l'Évangile, et voir un réveil durable jaillir dans notre région.</p></div></div>
+      </ul></article>
+    <article class="q7-carte"><span class="q7-num">05</span><h3>Comment ?</h3>
+      <p>Grâce à la <a href="https://www.helloasso.com/associations/jeremie-33/collectes/eglise-j33-notre-nouveau-local-prend-vie-soutenez-le-projet" target="_blank" rel="noopener" data-j33-clic="clic/local/don-7q">campagne de dons en ligne</a> : chaque don, quel qu'en soit le montant, fait avancer le chantier.</p></article>
+    <article class="q7-carte"><span class="q7-num">06</span><h3>Combien ?</h3>
+      <p class="q-montant">20 000 €</p><p>Pour couvrir l'ensemble des frais : travaux, mise aux normes, décoration, mobilier, équipements…</p></article>
+    <article class="q7-carte"><span class="q7-num">07</span><h3>Pourquoi ?</h3>
+      <p><strong>Bâtir un lieu d'accueil et de vie à Is-sur-Tille</strong> pour offrir à chacun la possibilité d'entendre et de vivre l'Évangile, et voir un réveil durable jaillir dans notre région.</p></article>
   </div>
 </section>
 
@@ -1204,7 +1199,7 @@ const j33Evt = (() => {
   const banniere = document.querySelector('.hero-image');
   const cloture = document.getElementById('clotureSombre');
   const pano = document.getElementById('panorama');
-  const zones = [pano, banniere, cloture].filter(Boolean);
+  const zones = [pano, banniere, (matchMedia('(min-width:901px)').matches ? document.getElementById('projet') : null), cloture]   /* mobile : voile conservé, les cartes passent sous le bandeau */.filter(Boolean);
   if(!zones.length) return;
   const nav = document.querySelector('nav');
   const titre = banniere ? banniere.querySelector('.hd-titre') : null;
@@ -1492,41 +1487,29 @@ document.addEventListener('click', e => {
   const bande = cadre.querySelector('.pano-bande');
   const img = bande.querySelector('img');
   const barre = cadre.querySelector('.pano-prog span');
-  let course = 0, entree = 0, tick = false;
-  /* Illustration_1 : arrive par la droite après le panorama (ordinateur) */
-  const suite = () => cadre.querySelector('.pano-suite');
+  let course = 0, tick = false;
   const mobile = window.matchMedia('(max-width:900px)');   /* mobile : photo fixe, pas de défilement */
 
   function mesurer(){
     if(!cadre.isConnected) return;
     if(mobile.matches){
-      course = entree = 0; cadre.style.height = ''; img.style.transform = '';
-      if(suite()) suite().style.transform = '';
+      course = 0; cadre.style.height = ''; img.style.transform = '';
       if(typeof lenis !== 'undefined' && lenis) lenis.resize();
       return;
     }
     const ratio = img.naturalWidth ? img.naturalWidth / img.naturalHeight : 7680 / 1000;
     course = Math.max(0, Math.round(bande.offsetHeight * ratio - bande.offsetWidth));
-    /* entrée d'Illustration_1 = une largeur d'écran, puis une courte pause avant que la page reprenne */
-    entree = suite() ? bande.offsetWidth : 0;
-    const pause = suite() ? Math.round(colle.offsetHeight * 0.35) : 0;
-    cadre.style.height = (colle.offsetHeight + course + entree + pause) + 'px';
+    cadre.style.height = (colle.offsetHeight + course) + 'px';
     if(typeof lenis !== 'undefined' && lenis) lenis.resize();
     maj();
   }
   function maj(){
     tick = false;
     if(mobile.matches) return;
-    const total = course + entree;
-    const s = Math.max(0, Math.min(total, -cadre.getBoundingClientRect().top));
-    /* un seul ruban : le panorama continue de glisser pendant qu'Illustration_1 arrive,
-       son bord droit reste collé au bord gauche de l'image qui entre */
+    const s = Math.max(0, Math.min(course, -cadre.getBoundingClientRect().top));
     img.style.transform = 'translate3d(' + (-s).toFixed(1) + 'px,0,0)';
-    const sv = suite();
-    if(sv) sv.style.transform = 'translate3d(' + (entree - Math.max(0, s - course)).toFixed(1) + 'px,0,0)';
-    const p = total ? s / total : 0;
+    const p = course ? s / course : 0;
     barre.style.transform = 'scaleX(' + p.toFixed(4) + ')';
-    barre.parentNode.style.opacity = p >= 1 ? '0' : '';
   }
   /* mobile : le bandeau (J33 + burger) n'apparaît qu'une fois la photo passée */
   function navMobile(){
