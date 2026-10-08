@@ -2093,7 +2093,9 @@ document.addEventListener('click', e => {
       U.uNear.value = mix(12, distFin + 30, el); U.uFar.value = mix(45, distFin + 120, el);
       /* onde de tracé : de rien (p = 0, démarrage en douceur) à tout le plan (p = .82), devant la caméra */
       /* abords : l'onde suit le regard de la caméra depuis le bout du parking */
-      const rc = RC[Math.round(p * 400)] * doux(borne(p, 0, .16));
+      /* mobile : le tracé démarre presque aussitôt (écran étroit, caméra lointaine au départ) */
+      const por = camera.aspect < 1;
+      const rc = (RC[Math.round(p * 400)] + (por ? 4 : 0)) * doux(borne(p, 0, por ? .05 : .16));
       U.uR0.value = Math.max(rc, RZ[0] * doux(borne(p, .2, .36)));
       /* pièces : chacune se trace depuis sa porte quand la caméra y entre (la Salle de culte
          s'achève pendant la montée finale) ; au-delà, rayon « infini » : zone figée, sans pointe */
