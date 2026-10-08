@@ -1042,10 +1042,22 @@ body:not(.nav-init) .burger span{background:var(--creme)}
 .lb-rang figure{flex:0 0 20%;margin:0;aspect-ratio:9/16;overflow:hidden;background:var(--noir)}
 .lb-rang img,.lb-rang video{display:block;width:100%;height:100%;object-fit:cover;filter:grayscale(1)}   /* bandeau tout en noir et blanc */
 @supports not (aspect-ratio:9/16){ .lb-rang figure{height:35.56vw} }
-/* mobile : visuels plus grands, rangée centrée sur la vidéo, débordant de l'écran */
+/* mobile : 3 visuels à la fois (2 photos + la vidéo) ; la flèche dorée fait glisser le bandeau
+   vers la gauche (vidéo à gauche, 2 dernières photos), la flèche inverse le ramène */
+.lb-fl{display:none}
 @media(max-width:900px){
-  .lb-rang figure{flex-basis:38vw}
-  @supports not (aspect-ratio:9/16){ .lb-rang figure{height:67.6vw} }
+  .lb-rang{justify-content:flex-start;transition:transform .6s cubic-bezier(.65,0,.35,1)}
+  .lb-rang figure{flex-basis:33.3334vw}
+  @supports not (aspect-ratio:9/16){ .lb-rang figure{height:59.26vw} }
+  .lb-fl{position:absolute;top:50%;z-index:2;display:flex;align-items:center;justify-content:center;width:48px;height:48px;margin-top:-24px;
+    padding:0;border:0;border-radius:50%;background:var(--or);color:#fff;cursor:pointer;box-shadow:0 6px 18px rgba(12,17,28,.35);
+    transition:opacity .35s ease}
+  .lb-fl svg{width:22px;height:22px;fill:none;stroke:currentColor;stroke-width:2.6;stroke-linecap:round;stroke-linejoin:round}
+  .lb-suiv{right:12px}
+  .lb-prec{left:12px;opacity:0;pointer-events:none}
+  .lc-bande.decale .lb-suiv{opacity:0;pointer-events:none}
+  .lc-bande.decale .lb-prec{opacity:1;pointer-events:auto}
+  .lc-bande.court .lb-fl{display:none}   /* 3 visuels ou moins : rien à faire défiler */
 }
 </style>
 <script>
@@ -1195,6 +1207,9 @@ body:not(.nav-init) .burger span{background:var(--creme)}
     <figure><img src="images/local/Illustration_14.jpg" alt="" loading="lazy" decoding="async" onerror="this.parentNode.remove()"></figure>
     <figure><img src="images/local/Illustration_15.jpg" alt="" loading="lazy" decoding="async" onerror="this.parentNode.remove()"></figure>
   </div>
+  <!-- mobile : flèches dorées pour faire glisser le bandeau (3 visuels visibles à la fois) -->
+  <button class="lb-fl lb-suiv" type="button" aria-label="Voir les photos suivantes"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 4l8 8-8 8"/></svg></button>
+  <button class="lb-fl lb-prec" type="button" aria-label="Revenir aux premières photos"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 4l-8 8 8 8"/></svg></button>
 </section>
 
 <!-- reveal sur les enfants : la section garde un fond blanc opaque pendant l'apparition -->
@@ -2123,6 +2138,26 @@ document.addEventListener('click', e => {
   } else charger();
 })();
 
+
+/* ---------- bandeau photos / vidéo (mobile) : flèches pour faire glisser la rangée ---------- */
+(function(){
+  const sec = document.getElementById('bande');
+  if(!sec) return;
+  const rang = sec.querySelector('.lb-rang'), mobile = window.matchMedia('(max-width:900px)');
+  let decale = false;
+  function placer(){
+    const n = rang.children.length, pas = Math.max(0, n - 3);   /* visuels manquants : décalage ajusté */
+    sec.classList.toggle('court', pas === 0);
+    if(!mobile.matches || pas === 0) decale = false;
+    sec.classList.toggle('decale', decale);
+    rang.style.transform = decale ? 'translateX(' + (-pas * 33.3334) + 'vw)' : '';
+  }
+  sec.querySelector('.lb-suiv').addEventListener('click', () => { decale = true; placer(); });
+  sec.querySelector('.lb-prec').addEventListener('click', () => { decale = false; placer(); });
+  window.addEventListener('resize', placer, {passive:true});
+  window.addEventListener('load', placer);   /* après retrait éventuel des visuels absents */
+  placer();
+})();
 
 /* ---------- bandeau photos / vidéo : la vidéo ne tourne que lorsqu'elle est à l'écran ---------- */
 (function(){
