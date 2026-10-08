@@ -630,14 +630,16 @@ body{overflow-x:clip}   /* clip ne cree pas de conteneur de defilement, contrair
    est posée par-dessus dans une couche jumelle sans aucun effet. Les deux couches partagent
    exactement la même mise en page : chacune masque (visibility:hidden) la ligne de l'autre,
    ce qui garde les deux lignes rigoureusement superposées. */
-.hd-titre{flex-direction:column;gap:.04em}
+.hd-titre{flex-direction:row;gap:.28em;align-items:flex-start;padding-top:max(96px,14svh);white-space:nowrap;
+  font-size:calc((min(8.2vw,15svh)) * var(--zc))}
 .hd-titre>span{display:block}
 .hd-titre.hd-blend{mix-blend-mode:difference;color:#fff}
 .hd-titre.hd-blend .t-or{visibility:hidden}
 .hd-titre.hd-or{color:var(--or);z-index:3;pointer-events:none}
 .hd-titre.hd-or .t-blanc{visibility:hidden}
 @media(max-width:900px){
-  .hd-titre{padding:0 6vw;font-size:calc((clamp(2.4rem,15vw,6rem)) * var(--zc))}
+  /* une seule ligne, partie haute de la photo */
+  .hd-titre{white-space:nowrap;padding:max(88px,13svh) 4vw 0;line-height:.92;font-size:calc((10.6vw) * var(--zc))}
 }
 
 /* ---------- intro : texte + appels ---------- */
@@ -731,6 +733,20 @@ body{overflow-x:clip}   /* clip ne cree pas de conteneur de defilement, contrair
 /* jauge de progression : dorée, au premier plan, sans fusion */
 .pano-prog{position:absolute;left:50%;bottom:calc(100lvh - 100svh + 28px);z-index:2;transform:translateX(-50%);width:min(320px,60vw);height:3px;background:rgba(255,255,255,.45)}
 .pano-prog span{display:block;height:100%;width:100%;background:var(--or);transform:scaleX(0);transform-origin:left}
+/* Illustration_1 : arrive par la droite, collée au bord du panorama (un seul ruban continu) */
+.pano-suite{position:absolute;inset:0;z-index:1;overflow:hidden;isolation:isolate;transform:translate3d(100%,0,0);will-change:transform}
+.pano-suite img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+.ps-titre{position:absolute;left:0;right:0;top:max(96px,14vh);margin:0;display:flex;justify-content:center;gap:.28em;
+  font-family:'Anton',sans-serif;font-weight:400;text-transform:uppercase;letter-spacing:.01em;line-height:.92;white-space:nowrap;
+  font-size:calc((min(9.5vw,16vh)) * var(--zc));pointer-events:none}
+.ps-titre.ps-blend{mix-blend-mode:difference;color:#fff;z-index:1}
+.ps-titre.ps-blend .t-or{visibility:hidden}
+.ps-titre.ps-or{color:var(--or);z-index:2}
+.ps-titre.ps-or .t-blanc{visibility:hidden}
+.pano-prog{transition:opacity .4s ease}
+/* ordinateur : le bandeau photo séparé fait doublon avec Illustration_1 dans le ruban */
+@media(min-width:901px){ .lc-pano + .hero-image{display:none} }
+
 /* mouvement réduit : pas d'épinglage, la bande se fait défiler au doigt / à la molette */
 @media(prefers-reduced-motion: reduce){
   .lc-pano{height:auto !important}
@@ -738,7 +754,9 @@ body{overflow-x:clip}   /* clip ne cree pas de conteneur de defilement, contrair
   .pano-bande{overflow-x:auto}
   .pano-bande img{position:static;transform:none !important}
   .pano-prog{display:none}
+  .pano-suite{display:none}
 }
+@media(prefers-reduced-motion: reduce) and (min-width:901px){ .lc-pano + .hero-image{display:block} }
 /* mobile : J33 et burger masqués tant que la photo d'ouverture occupe l'écran,
    ils glissent depuis le haut quand elle a fini de défiler */
 nav{transition:transform .4s cubic-bezier(.2,.7,.2,1),opacity .3s ease}
@@ -753,6 +771,7 @@ nav{transition:transform .4s cubic-bezier(.2,.7,.2,1),opacity .3s ease}
   .pano-colle{position:relative;height:100%}
   .pano-bande img{width:100%;height:100%;object-fit:cover;transform:none !important}
   .pano-prog{display:none}
+  .pano-suite{display:none}
 }
 
 /* ---------- avant / après : deux photos superposées, curseur qui découpe celle du dessus ---------- */
@@ -772,6 +791,12 @@ nav{transition:transform .4s cubic-bezier(.2,.7,.2,1),opacity .3s ease}
 .aa-poignee:focus-visible b{outline:2px solid #fff;outline-offset:3px}
 .actu:nth-of-type(odd) .aa{margin-left:auto}
 @media(max-width:900px){.aa{aspect-ratio:1/1}.aa-poignee b{width:46px;height:46px}}
+
+/* ---------- avant / après fixe, avant le journal : paysage sur ordinateur ---------- */
+.lc-aa{padding-top:30px;padding-bottom:60px}
+.lc-aa .titre-bloc{text-align:center}
+.lc-aa .aa{width:100%;max-width:none;margin:40px 0 0;aspect-ratio:16/9}
+@media(max-width:900px){ .lc-aa .aa{aspect-ratio:4/3;margin-top:28px} }
 
 /* ---------- visionneuse photo ---------- */
 .lb{position:fixed;inset:0;z-index:200;background:rgba(12,17,28,.96);display:flex;align-items:center;justify-content:center;
@@ -897,6 +922,12 @@ nav{transition:transform .4s cubic-bezier(.2,.7,.2,1),opacity .3s ease}
              onerror="this.closest('.lc-pano').remove()">
       </picture>
     </div>
+    <!-- ordinateur : Illustration_1 arrive par la droite une fois le panorama parcouru -->
+    <div class="pano-suite">
+      <img src="images/local/Illustration_1.jpg" alt="" onerror="this.closest('.pano-suite').remove()">
+      <p class="ps-titre ps-blend" role="heading" aria-level="1"><span class="t-blanc">Notre local</span><span class="t-or">prend vie</span></p>
+      <div class="ps-titre ps-or" aria-hidden="true"><span class="t-blanc">Notre local</span><span class="t-or">prend vie</span></div>
+    </div>
     <div class="pano-prog" aria-hidden="true"><span></span></div>
   </div>
 </div>
@@ -938,6 +969,16 @@ nav{transition:transform .4s cubic-bezier(.2,.7,.2,1),opacity .3s ease}
     <iframe title="Collecte HelloAsso — Notre nouveau local prend vie" allowtransparency="true" scrolling="no"
       src="https://www.helloasso.com/associations/jeremie-33/collectes/eglise-j33-notre-nouveau-local-prend-vie-soutenez-le-projet/widget-vignette"></iframe>
     <span class="repli">La jauge ne s'affiche pas ? <a href="https://www.helloasso.com/associations/jeremie-33/collectes/eglise-j33-notre-nouveau-local-prend-vie-soutenez-le-projet" target="_blank" rel="noopener">Voir la collecte</a></span>
+  </div>
+</section>
+
+<section class="lc-aa reveal" id="avant-apres" data-j33-evt="lu/local/avant-apres">
+  <h2 class="titre-bloc">Avant / <span class="or">après</span></h2>
+  <div class="aa aa-fixe">
+    <img class="aa-apres" src="images/local/Illustration_11.jpg" alt="Après" loading="lazy" decoding="async" onerror="this.closest('.lc-aa').remove()">
+    <img class="aa-avant" src="images/local/Illustration_10.jpg" alt="Avant" loading="lazy" decoding="async" onerror="this.closest('.lc-aa').remove()">
+    <span class="aa-lbl g" aria-hidden="true">Avant</span><span class="aa-lbl d" aria-hidden="true">Après</span>
+    <div class="aa-poignee" role="slider" tabindex="0" aria-label="Comparer avant et après" aria-valuemin="0" aria-valuemax="100" aria-valuenow="50"><b>‹ ›</b></div>
   </div>
 </section>
 
@@ -1331,10 +1372,13 @@ document.addEventListener('click', e => {
       else if(e.key === 'End'){ poser(100); e.preventDefault(); }
     });
     /* cadre calé sur les proportions réelles de la photo « avant » (paysage ou portrait) */
+    if(el.classList.contains('aa-fixe')) return;   /* comparateur fixe : format imposé par le CSS */
     const img = el.querySelector('.aa-avant');
     const caler = () => { if(img.naturalWidth) el.style.aspectRatio = img.naturalWidth + ' / ' + img.naturalHeight; };
     img.complete ? caler() : img.addEventListener('load', caler, {once:true});
   }
+
+  document.querySelectorAll('.aa-fixe').forEach(comparateur);
 
   fetch('actus-local.json?v=' + Date.now(), {cache:'no-store'})
     .then(r => r.ok ? r.json() : {actus: []})
@@ -1399,28 +1443,41 @@ document.addEventListener('click', e => {
   const bande = cadre.querySelector('.pano-bande');
   const img = bande.querySelector('img');
   const barre = cadre.querySelector('.pano-prog span');
-  let course = 0, tick = false;
+  let course = 0, entree = 0, tick = false;
+  /* Illustration_1 : arrive par la droite après le panorama (ordinateur) */
+  const suite = () => cadre.querySelector('.pano-suite');
   const mobile = window.matchMedia('(max-width:900px)');   /* mobile : photo fixe, pas de défilement */
 
   function mesurer(){
     if(!cadre.isConnected) return;
     if(mobile.matches){
-      course = 0; cadre.style.height = ''; img.style.transform = '';
+      course = entree = 0; cadre.style.height = ''; img.style.transform = '';
+      if(suite()) suite().style.transform = '';
       if(typeof lenis !== 'undefined' && lenis) lenis.resize();
       return;
     }
     const ratio = img.naturalWidth ? img.naturalWidth / img.naturalHeight : 7680 / 1000;
     course = Math.max(0, Math.round(bande.offsetHeight * ratio - bande.offsetWidth));
-    cadre.style.height = (colle.offsetHeight + course) + 'px';
+    /* entrée d'Illustration_1 = une largeur d'écran, puis une courte pause avant que la page reprenne */
+    entree = suite() ? bande.offsetWidth : 0;
+    const pause = suite() ? Math.round(colle.offsetHeight * 0.35) : 0;
+    cadre.style.height = (colle.offsetHeight + course + entree + pause) + 'px';
     if(typeof lenis !== 'undefined' && lenis) lenis.resize();
     maj();
   }
   function maj(){
     tick = false;
     if(mobile.matches) return;
-    const p = course ? Math.max(0, Math.min(1, -cadre.getBoundingClientRect().top / course)) : 0;
-    img.style.transform = 'translate3d(' + (-p * course).toFixed(1) + 'px,0,0)';
+    const total = course + entree;
+    const s = Math.max(0, Math.min(total, -cadre.getBoundingClientRect().top));
+    /* un seul ruban : le panorama continue de glisser pendant qu'Illustration_1 arrive,
+       son bord droit reste collé au bord gauche de l'image qui entre */
+    img.style.transform = 'translate3d(' + (-s).toFixed(1) + 'px,0,0)';
+    const sv = suite();
+    if(sv) sv.style.transform = 'translate3d(' + (entree - Math.max(0, s - course)).toFixed(1) + 'px,0,0)';
+    const p = total ? s / total : 0;
     barre.style.transform = 'scaleX(' + p.toFixed(4) + ')';
+    barre.parentNode.style.opacity = p >= 1 ? '0' : '';
   }
   /* mobile : le bandeau (J33 + burger) n'apparaît qu'une fois la photo passée */
   function navMobile(){
@@ -1436,6 +1493,27 @@ document.addEventListener('click', e => {
   img.addEventListener('load', mesurer);   /* changement de source (rotation, redimensionnement) */
   window.addEventListener('scroll', () => { if(!tick){ tick = true; requestAnimationFrame(maj); } }, {passive:true});
   let t; window.addEventListener('resize', () => { clearTimeout(t); t = setTimeout(mesurer, 150); }, {passive:true});
+})();
+
+/* ---------- titres « Notre local prend vie » : une seule ligne, toujours dans l'écran ----------
+   La taille CSS est la taille visée ; si la ligne dépasse 92 % de la largeur disponible,
+   elle est réduite à proportion. Les deux couches (fusion + dorée) reçoivent la même valeur. */
+(function(){
+  function ajuster(){
+    document.querySelectorAll('.ps-titre, .hd-titre').forEach(t => {
+      t.style.fontSize = '';
+      const sp = t.children;
+      if(!t.clientWidth || sp.length < 2) return;
+      const cs = getComputedStyle(t);
+      const dispo = (t.clientWidth - parseFloat(cs.paddingLeft) - parseFloat(cs.paddingRight)) * 0.92;
+      const w = sp[sp.length - 1].getBoundingClientRect().right - sp[0].getBoundingClientRect().left;
+      if(w > dispo) t.style.fontSize = (parseFloat(cs.fontSize) * dispo / w).toFixed(2) + 'px';
+    });
+  }
+  ajuster();
+  if(document.fonts && document.fonts.ready) document.fonts.ready.then(ajuster);
+  window.addEventListener('load', ajuster);
+  let t; window.addEventListener('resize', () => { clearTimeout(t); t = setTimeout(ajuster, 150); }, {passive:true});
 })();
 </script>
 <!-- mesure d'audience GoatCounter : sans cookie, sans empreinte de navigateur,
