@@ -908,10 +908,10 @@ nav{transition:transform .4s cubic-bezier(.2,.7,.2,1),opacity .3s ease}
 .lc-plan{--m:max(28px, calc((100vw - 1500px) / 2 + 28px))}
 .plan-nom,.plan-cartouche,.plan-rose,.plan-echelle{position:absolute;z-index:2;color:#fff;opacity:0;transition:opacity .8s ease;pointer-events:none}
 .lc-plan.habille .plan-nom,.lc-plan.habille .plan-cartouche,.lc-plan.habille .plan-rose,.lc-plan.habille .plan-echelle{opacity:1}
-/* nom de la ville au centre du plan : plaque sombre diffuse derrière + ombre portée pour
-   rester lisible sur les rues lumineuses du centre-ville */
+/* nom de la ville au centre du plan : ombre portée sur les lettres pour rester lisible
+   sur les rues lumineuses du centre-ville (sans voile derrière) */
 .plan-nom{left:50%;top:50%;transform:translate(-50%,-50%);text-align:center;padding:4vh 7vw;
-  background:radial-gradient(closest-side, rgba(12,17,28,.55) 0%, rgba(12,17,28,.35) 55%, rgba(12,17,28,0) 100%)}
+}
 .pc-ville{font-family:'Archivo',sans-serif;font-weight:400;text-transform:uppercase;letter-spacing:.42em;line-height:1;white-space:nowrap;
   font-size:clamp(1.6rem,4.2vw,4.4rem);margin:0 -.42em 0 0;   /* -.42em : compense l'espacement après la dernière lettre */
   text-shadow:0 0 18px rgba(12,17,28,.95),0 0 4px rgba(12,17,28,.9)}
