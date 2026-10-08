@@ -1060,6 +1060,19 @@ body:not(.nav-init) .burger span{background:var(--creme)}
   .lc-bande.decale .lb-prec{opacity:1;pointer-events:auto}
   .lc-bande.court .lb-fl{display:none}   /* 3 visuels ou moins : rien à faire défiler */
 }
+
+/* ---------- compteur : carte de secours si le widget HelloAsso ne s'affiche pas ---------- */
+.lc-secours{display:none}
+.lc-compteur.secours{overflow:visible;height:auto !important;width:auto !important}
+.lc-compteur.secours iframe{display:none}
+.lc-compteur.secours .lc-secours{display:flex;flex-direction:column;align-items:center;text-align:center;gap:6px;
+  width:min(100%,380px);padding:34px 30px 30px;border:3px solid var(--or);background:#fff}
+.ls-obj{margin:0;font-weight:600;text-transform:uppercase;letter-spacing:.24em;font-size:.8rem;color:var(--encre)}
+.ls-montant{margin:0 0 14px;font-family:'Anton',sans-serif;font-size:clamp(2.6rem,4.6vw,3.6rem);line-height:1;color:var(--or)}
+.ls-btn{display:inline-block;padding:14px 24px;background:var(--or);color:#fff;text-decoration:none;font-weight:600;
+  text-transform:uppercase;letter-spacing:.14em;font-size:.82rem;transition:background .25s}
+.ls-btn:hover{background:var(--or-fonce)}
+.ls-note{margin:12px 0 0;font-size:.85rem;line-height:1.5;color:var(--gris)}
 </style>
 <script>
 /* Les navigateurs intégrés (Instagram, Facebook, Messenger) reposent sur la WebView
@@ -1229,6 +1242,14 @@ body:not(.nav-init) .burger span{background:var(--creme)}
     <iframe id="haWidgetCounter" title="Compteur de la collecte HelloAsso" allowtransparency="true" scrolling="no"
       src="https://www.helloasso.com/associations/jeremie-33/collectes/eglise-j33-notre-nouveau-local-prend-vie-soutenez-le-projet/widget-compteur"
       width="350" height="520" style="width:350px;border:none;"></iframe>
+    <!-- secours : si le widget ne répond pas (bloqueur de publicités ou de traceurs, navigateur
+         strict, réseau filtré…), une carte simple le remplace avec le lien direct vers la collecte -->
+    <div class="lc-secours">
+      <p class="ls-obj">Objectif</p>
+      <p class="ls-montant">20 000 €</p>
+      <a class="ls-btn" href="https://www.helloasso.com/associations/jeremie-33/collectes/eglise-j33-notre-nouveau-local-prend-vie-soutenez-le-projet" target="_blank" rel="noopener" data-j33-clic="clic/local/don-secours">Faire un don sur HelloAsso</a>
+      <p class="ls-note">Suivez l'avancement de la collecte en direct sur HelloAsso.</p>
+    </div>
     <script>
     /* écouteur posé AVANT le chargement du widget : il ne rate pas le message de hauteur
        envoyé par HelloAsso. Sur PC, le widget est mis à l'échelle pour que son contenu visible
@@ -1238,6 +1259,7 @@ body:not(.nav-init) .burger span{background:var(--creme)}
       var f = document.getElementById('haWidgetCounter'), boite = f.parentNode;
       var texte = document.querySelector('.lc-collecte-texte'), pc = window.matchMedia('(min-width:901px)');
       var hMsg = 0;   /* plus grande hauteur annoncée par HelloAsso (0 : aucune encore) */
+      var recu = false, secours = false;
       /* hauteur utile du widget à sa largeur native (montant, cercle, participants, bouton) :
          le cadre envoyé par HelloAsso a du vide sous le bouton, on le rogne */
       var CONTENU = 326;   /* mesuré sur le widget affiché : bouton « Contribuer » et son ombre compris */
@@ -1247,6 +1269,7 @@ body:not(.nav-init) .burger span{background:var(--creme)}
         return dernier.getBoundingClientRect().bottom - a.getBoundingClientRect().top;
       }
       function caler(){
+        if(secours){ boite.style.width = ''; boite.style.height = ''; return; }
         var h = hMsg || parseFloat(f.height) || 520, s;
         if(pc.matches && texte){
           var col = boite.parentNode.clientWidth / 2 - 32;
@@ -1267,10 +1290,16 @@ body:not(.nav-init) .burger span{background:var(--creme)}
         var h = e.data && parseFloat(e.data.height);
         /* hauteur réelle du widget : la plus grande annoncée (un premier message, envoyé avant
            le chargement de ses polices, est trop faible) */
+        if(!recu){ recu = true; if(secours){ secours = false; boite.classList.remove('secours'); } }
         if(h > hMsg){ hMsg = h; f.height = h; caler(); }
       });
       window.addEventListener('resize', caler);
       if(window.ResizeObserver && texte) new ResizeObserver(caler).observe(texte);
+      /* aucun signe de vie du widget 8 s après le chargement de la page : carte de secours */
+      function verifier(){ if(!recu){ secours = true; boite.classList.add('secours'); caler(); } }
+      f.addEventListener('error', verifier);
+      if(document.readyState === 'complete') setTimeout(verifier, 8000);
+      else window.addEventListener('load', function(){ setTimeout(verifier, 8000); });
       caler();
     })();
     </script>
