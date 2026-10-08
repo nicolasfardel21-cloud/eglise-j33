@@ -1050,11 +1050,12 @@ body:not(.nav-init) .burger span{background:var(--creme)}
   .lb-rang figure{flex-basis:33.3334vw}
   @supports not (aspect-ratio:9/16){ .lb-rang figure{height:59.26vw} }
   .lb-fl{position:absolute;top:50%;z-index:2;display:flex;align-items:center;justify-content:center;width:48px;height:48px;margin-top:-24px;
-    padding:0;border:0;border-radius:50%;background:var(--or);color:#fff;cursor:pointer;box-shadow:0 6px 18px rgba(12,17,28,.35);
+    padding:0;border:0;background:none;color:var(--or);cursor:pointer;
+    filter:drop-shadow(0 1px 3px rgba(12,17,28,.6));   /* chevron doré seul, lisible sur photo claire */
     transition:opacity .35s ease}
-  .lb-fl svg{width:22px;height:22px;fill:none;stroke:currentColor;stroke-width:2.6;stroke-linecap:round;stroke-linejoin:round}
-  .lb-suiv{right:12px}
-  .lb-prec{left:12px;opacity:0;pointer-events:none}
+  .lb-fl svg{width:46px;height:46px;fill:none;stroke:currentColor;stroke-width:2.4;stroke-linecap:round;stroke-linejoin:round}
+  .lb-suiv{right:2px}
+  .lb-prec{left:2px;opacity:0;pointer-events:none}
   .lc-bande.decale .lb-suiv{opacity:0;pointer-events:none}
   .lc-bande.decale .lb-prec{opacity:1;pointer-events:auto}
   .lc-bande.court .lb-fl{display:none}   /* 3 visuels ou moins : rien à faire défiler */
