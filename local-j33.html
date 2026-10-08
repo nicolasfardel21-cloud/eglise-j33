@@ -804,9 +804,10 @@ nav{transition:transform .4s cubic-bezier(.2,.7,.2,1),opacity .3s ease}
 /* navigateur sans flou d'arrière-plan : fond crème plus couvrant pour garder la lisibilité */
 @supports not ((-webkit-backdrop-filter:blur(1px)) or (backdrop-filter:blur(1px))){ .q7-carte{background:rgba(243,239,228,.92)} }
 .q7-carte h3,.q7-tete h2{font-family:'Anton',sans-serif;font-weight:400;text-transform:uppercase;letter-spacing:.01em;
-  line-height:1;font-size:clamp(2.6rem,4.4vw,4.4rem);color:var(--encre);margin:0 0 22px;padding-right:84px}
+  line-height:1;font-size:clamp(2.6rem,4.4vw,4.4rem);color:var(--encre);margin:0 0 22px;padding-right:1.5em}
 /* gros numéro en haut à droite, comme les tuiles de la confession de foi */
-.q7-num{position:absolute;top:20px;right:26px;font-family:'Anton',sans-serif;font-size:clamp(2.2rem,4vw,3.4rem);line-height:1;
+/* même taille que la question, collé aux bords haut et droit de la carte */
+.q7-num{position:absolute;top:10px;right:14px;font-family:'Anton',sans-serif;font-size:clamp(2.6rem,4.4vw,4.4rem);line-height:.9;
   color:rgba(16,22,34,.16);transition:color .3s}
 .q7-carte:hover .q7-num{color:var(--or)}
 .q7-carte strong.or{color:var(--or)}
@@ -829,6 +830,7 @@ nav{transition:transform .4s cubic-bezier(.2,.7,.2,1),opacity .3s ease}
   .q7-cartes{width:auto;margin-left:16px;margin-right:16px;padding:40vh 0 30vh;gap:22px}
   .q7-carte{padding:28px 24px}
   .q7-carte h3,.q7-tete h2{font-size:clamp(2.2rem,11vw,3.2rem);margin-bottom:16px}
+  .q7-num{font-size:clamp(2.2rem,11vw,3.2rem);top:8px;right:12px}
 }
 
 /* ---------- avant / après fixe, avant le journal : paysage sur ordinateur ---------- */
@@ -1007,9 +1009,9 @@ nav{transition:transform .4s cubic-bezier(.2,.7,.2,1),opacity .3s ease}
     <article class="q7-carte"><span class="q7-num" aria-hidden="true">02</span><h3>Quoi ?</h3>
       <p>L'aménagement de notre <strong class="or">tout premier local d'église</strong> :</p>
       <ul class="q-surfaces">
-        <li><b>180 m²</b>de bâtiment</li>
-        <li><b>130 m²</b>de préau</li>
-        <li><b>+ 1</b>espace extérieur</li>
+        <li><b>180 m²</b>bâtiment</li>
+        <li><b>130 m²</b>préau</li>
+        <li><b>1</b>extérieur</li>
       </ul></article>
     <article class="q7-carte"><span class="q7-num" aria-hidden="true">03</span><h3>Où ?</h3>
       <p>À <strong class="or">Is-sur-Tille</strong> (21120).</p></article>
