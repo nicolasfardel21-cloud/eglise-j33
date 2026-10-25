@@ -1290,21 +1290,33 @@ body:not(.nav-init) .burger span{background:var(--creme)}
         var h = e.data && parseFloat(e.data.height);
         /* hauteur réelle du widget : la plus grande annoncée (un premier message, envoyé avant
            le chargement de ses polices, est trop faible) */
-        if(!recu){ recu = true; if(secours){ secours = false; boite.classList.remove('secours'); } }
+        if(!recu){ recu = true; if(motif === 'delai') secoursOff(); }
         if(h > hMsg){ hMsg = h; f.height = h; caler(); }
       });
       window.addEventListener('resize', caler);
       if(window.ResizeObserver && texte) new ResizeObserver(caler).observe(texte);
-      /* le widget est-il joignable ? On interroge discrètement son adresse : si la requête est
-         bloquée (bloqueur de publicités ou de traceurs, réseau filtré…) ou n'aboutit pas en 15 s,
-         la carte de secours remplace le compteur. HelloAsso n'envoyant pas toujours de message,
-         l'absence de message seule ne suffit pas (le compteur peut très bien s'afficher). */
-      function verifier(){ if(!recu){ secours = true; boite.classList.add('secours'); caler(); } }
-      if(window.fetch){
-        var fini = false, delai = setTimeout(function(){ if(!fini) verifier(); }, 15000);
-        fetch(f.src, {mode:'no-cors', cache:'no-store', credentials:'omit'})
-          .then(function(){ fini = true; clearTimeout(delai); }, function(){ fini = true; clearTimeout(delai); verifier(); });
+      /* carte de secours : uniquement sur PREUVE que le widget est bloqué, jamais sur simple
+         présomption (une sonde réseau échouait sur certains mobiles alors que le compteur
+         fonctionnait) :
+         - le cadre a été masqué par un bloqueur de publicités (feuille de style injectée) ;
+         - ou le cadre ne s'est toujours pas chargé au bout de 20 s (requête bloquée, réseau filtré).
+         Un message de HelloAsso ou un chargement tardif du cadre rétablissent le compteur
+         (sauf s'il est masqué : il reste alors inutilisable, même chargé). */
+      var charge = false, motif = '';
+      function secoursOn(m){ if(secours || (recu && m === 'delai')) return; secours = true; motif = m; boite.classList.add('secours'); caler(); }
+      function secoursOff(){ if(!secours) return; secours = false; motif = ''; boite.classList.remove('secours'); caler(); }
+      function masque(){
+        if(secours || !boite.offsetWidth) return false;   /* bloc lui-même non affiché : rien à conclure */
+        var cs = getComputedStyle(f);
+        return cs.display === 'none' || cs.visibility === 'hidden' || !f.offsetWidth || !f.offsetHeight;
       }
+      function controler(){ if(masque()) secoursOn('masque'); }
+      f.addEventListener('load', function(){
+        charge = true;
+        if(motif === 'delai') secoursOff();
+        controler(); setTimeout(controler, 1500); setTimeout(controler, 4000); setTimeout(controler, 8000);
+      });
+      setTimeout(function(){ if(!charge) secoursOn('delai'); }, 20000);
       caler();
     })();
     </script>
