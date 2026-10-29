@@ -1,4 +1,16 @@
 {
-  "maj": null,
-  "actus": []
+  "maj": "2026-10-29T21:12:59.874Z",
+  "actus": [
+    {
+      "id": "amvu1i8y4",
+      "date": "2026-10-29",
+      "titre": "C'est signé !",
+      "texte": "Le local d’Is-sur-Tille est officiellement à nous.\nUn immense merci à nos premiers donateurs : c'est grâce à votre générosité que cette aventure commence pour de bon !\n\nVoici un aperçu du local aujourd'hui !\n\nAujourd'hui, on retrousse nos manches : ce sont encore des cloisons à abattre et beaucoup de poussière pour tout réaménager. Demain, ce sera une grande salle pour louer et annoncer la Parole, des salles dédiées aux enfants et un bâtiment vivant pour toute notre église.\n\nEt vous, vous arrivez à vous projeter dans ce nouveau lieu ?",
+      "photos": [
+        "images/local/Illustration_20.jpg"
+      ],
+      "video": "",
+      "avantApres": null
+    }
+  ]
 }
